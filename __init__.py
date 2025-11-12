@@ -12,8 +12,10 @@ import re
 from docx.shared import Inches
 from funcionalidades.resaltado import subrayar_texto
 from flask_login import LoginManager, login_required, current_user
-from models import db, bcrypt, User
+from flask_mail import Mail
+from models import db, bcrypt, User, PasswordResetToken
 from config import Config
+from utils import validate_password_strength, validate_email_format, send_password_reset_email
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -21,6 +23,7 @@ app.config.from_object(Config)
 # Inicializar extensiones
 db.init_app(app)
 bcrypt.init_app(app)
+mail = Mail(app)
 
 # Configurar Flask-Login
 login_manager = LoginManager()
@@ -602,35 +605,54 @@ def register():
         return redirect(url_for('upload_files'))
 
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
-        # Validaciones
+        # Validación: campos requeridos
         if not username or not email or not password:
             flash('Todos los campos son requeridos', 'danger')
             return render_template('register.html')
 
+        # Validación: longitud del nombre de usuario
+        if len(username) < 3:
+            flash('El nombre de usuario debe tener al menos 3 caracteres', 'danger')
+            return render_template('register.html')
+
+        if len(username) > 80:
+            flash('El nombre de usuario no puede tener más de 80 caracteres', 'danger')
+            return render_template('register.html')
+
+        # Validación: formato del correo electrónico
+        is_valid_email, normalized_email, email_error = validate_email_format(email)
+        if not is_valid_email:
+            flash(f'Correo electrónico inválido: {email_error}', 'danger')
+            return render_template('register.html')
+
+        # Validación: contraseñas coinciden
         if password != confirm_password:
             flash('Las contraseñas no coinciden', 'danger')
             return render_template('register.html')
 
-        if len(password) < 6:
-            flash('La contraseña debe tener al menos 6 caracteres', 'danger')
+        # Validación: fortaleza de la contraseña
+        is_valid_password, password_error = validate_password_strength(password)
+        if not is_valid_password:
+            flash(password_error, 'danger')
             return render_template('register.html')
 
-        # Verificar si el usuario ya existe
-        if User.query.filter_by(username=username).first():
+        # Validación: verificar si el usuario ya existe (normalizado)
+        if User.query.filter_by(username=username.lower()).first():
             flash('El nombre de usuario ya está en uso', 'danger')
             return render_template('register.html')
 
-        if User.query.filter_by(email=email).first():
+        # Validación: verificar si el email ya está registrado (normalizado)
+        if User.query.filter_by(email=normalized_email).first():
             flash('El correo electrónico ya está registrado', 'danger')
             return render_template('register.html')
 
-        # Crear nuevo usuario
-        new_user = User(username=username, email=email, password=password, role='user')
+        # Crear nuevo usuario con email normalizado
+        new_user = User(username=username, email=normalized_email, password=password, role='user')
         db.session.add(new_user)
         db.session.commit()
 
@@ -681,6 +703,105 @@ def logout():
     return redirect(url_for('landing'))
 
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Ruta para solicitar recuperación de contraseña"""
+    if current_user.is_authenticated:
+        return redirect(url_for('upload_files'))
+
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+
+        if not email:
+            flash('Por favor ingresa tu correo electrónico', 'danger')
+            return render_template('forgot_password.html')
+
+        # Validar formato del email
+        is_valid_email, normalized_email, email_error = validate_email_format(email)
+        if not is_valid_email:
+            flash(f'Correo electrónico inválido: {email_error}', 'danger')
+            return render_template('forgot_password.html')
+
+        # Buscar usuario por email
+        user = User.query.filter_by(email=normalized_email).first()
+
+        # Por seguridad, siempre mostramos el mismo mensaje aunque el usuario no exista
+        # Esto evita que se pueda determinar qué correos están registrados
+        flash('Si el correo electrónico está registrado, recibirás instrucciones para restablecer tu contraseña', 'info')
+
+        if user:
+            # Invalidar tokens anteriores del usuario
+            old_tokens = PasswordResetToken.query.filter_by(user_id=user.id, used=False).all()
+            for token in old_tokens:
+                token.mark_as_used()
+
+            # Crear nuevo token
+            reset_token = PasswordResetToken(user_id=user.id, expiration_hours=1)
+            db.session.add(reset_token)
+            db.session.commit()
+
+            # Enviar email
+            email_sent = send_password_reset_email(user, reset_token.token, mail)
+
+            if not email_sent:
+                # Si falla el envío, eliminamos el token
+                db.session.delete(reset_token)
+                db.session.commit()
+                flash('Hubo un error al enviar el correo. Por favor intenta nuevamente más tarde.', 'danger')
+                return render_template('forgot_password.html')
+
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password.html')
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Ruta para restablecer la contraseña con un token"""
+    if current_user.is_authenticated:
+        return redirect(url_for('upload_files'))
+
+    # Verificar que el token es válido
+    reset_token = PasswordResetToken.get_valid_token(token)
+
+    if not reset_token:
+        flash('El enlace de recuperación es inválido o ha expirado. Por favor solicita uno nuevo.', 'danger')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not password or not confirm_password:
+            flash('Todos los campos son requeridos', 'danger')
+            return render_template('reset_password.html', token=token)
+
+        # Validar que las contraseñas coinciden
+        if password != confirm_password:
+            flash('Las contraseñas no coinciden', 'danger')
+            return render_template('reset_password.html', token=token)
+
+        # Validar fortaleza de la contraseña
+        is_valid_password, password_error = validate_password_strength(password)
+        if not is_valid_password:
+            flash(password_error, 'danger')
+            return render_template('reset_password.html', token=token)
+
+        # Actualizar la contraseña del usuario
+        user = reset_token.user
+        user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # Marcar el token como usado
+        reset_token.mark_as_used()
+
+        db.session.commit()
+
+        flash('Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', token=token)
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -691,6 +812,31 @@ def dashboard():
 
     users = User.query.order_by(User.created_at.desc()).all()
     return render_template('dashboard.html', users=users)
+
+
+@app.route('/download-desktop-app')
+@login_required
+def download_desktop_app():
+    """Ruta para descargar la aplicación de escritorio"""
+    try:
+        # Ruta del ejecutable
+        exe_path = os.path.join(os.path.dirname(__file__), 'downloads', 'FAT_Testing.exe')
+
+        # Verificar que el archivo existe
+        if not os.path.exists(exe_path):
+            flash('La aplicación de escritorio no está disponible en este momento. Por favor contacta al administrador.', 'warning')
+            return redirect(url_for('upload_files'))
+
+        # Enviar archivo para descarga
+        return send_file(
+            exe_path,
+            as_attachment=True,
+            download_name='FAT_Testing.exe',
+            mimetype='application/octet-stream'
+        )
+    except Exception as e:
+        flash(f'Error al descargar la aplicación: {str(e)}', 'danger')
+        return redirect(url_for('upload_files'))
 
 
 # ====== RUTAS DE LA APLICACIÓN ======
