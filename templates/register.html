@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Regístrate en FAT Testing App para comenzar a procesar pruebas FAT" />
+    <title>Registrarse - FAT TESTING</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Register Card -->
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-10 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-full mb-4">
+                    <i class="fas fa-user-plus text-4xl text-white" aria-hidden="true"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2">Crear Cuenta</h1>
+                <p class="text-indigo-100 text-sm">Únete a FAT Testing hoy</p>
+            </div>
+
+            <!-- Body -->
+            <div class="px-8 py-8">
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="mb-6 {% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg" role="alert" aria-live="polite">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            {% if category == 'success' %}
+                            <i class="fas fa-check-circle text-green-500" aria-hidden="true"></i>
+                            {% else %}
+                            <i class="fas fa-exclamation-circle text-red-500" aria-hidden="true"></i>
+                            {% endif %}
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <p class="text-sm font-medium">{{ message }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <!-- Register Form -->
+                <form method="POST" action="{{ url_for('register') }}" id="registerForm" aria-label="Formulario de registro">
+                    <!-- Username Field -->
+                    <div class="mb-5">
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user text-indigo-600 mr-1" aria-hidden="true"></i>
+                            Nombre de Usuario
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            required
+                            minlength="3"
+                            maxlength="80"
+                            autocomplete="username"
+                            placeholder="Tu nombre de usuario"
+                            aria-required="true"
+                            aria-describedby="username-help"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
+                        />
+                        <p id="username-help" class="mt-2 text-xs text-gray-500">Mínimo 3 caracteres, máximo 80</p>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="mb-5">
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-envelope text-indigo-600 mr-1" aria-hidden="true"></i>
+                            Correo Electrónico
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            autocomplete="email"
+                            placeholder="tu@email.com"
+                            aria-required="true"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
+                        />
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-5">
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock text-indigo-600 mr-1" aria-hidden="true"></i>
+                            Contraseña
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                            placeholder="Mínimo 6 caracteres"
+                            aria-required="true"
+                            aria-describedby="password-strength"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
+                        />
+                        <div id="passwordStrength" class="mt-2 text-xs font-medium px-3 py-2 rounded-lg" role="status" aria-live="polite"></div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="mb-5">
+                        <label for="confirm_password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock text-indigo-600 mr-1" aria-hidden="true"></i>
+                            Confirmar Contraseña
+                        </label>
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Repite tu contraseña"
+                            aria-required="true"
+                            aria-describedby="password-match"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
+                        />
+                        <p id="passwordMatch" class="mt-2 text-xs font-medium" role="status" aria-live="polite"></p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        aria-label="Crear cuenta nueva"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3.5 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 shadow-lg hover:shadow-xl"
+                    >
+                        <i class="fas fa-user-plus mr-2" aria-hidden="true"></i>
+                        Crear Cuenta
+                    </button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        ¿Ya tienes cuenta?
+                        <a href="{{ url_for('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-700 transition duration-200" aria-label="Ir a página de inicio de sesión">
+                            Inicia sesión aquí
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Back to Home -->
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('landing') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-200" aria-label="Volver a la página principal">
+                        <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>
+                        Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-500">
+                <i class="fas fa-shield-alt text-indigo-600 mr-1" aria-hidden="true"></i>
+                Tus datos están protegidos y encriptados
+            </p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Password strength validation
+        document.getElementById('password').addEventListener('input', function () {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+
+            if (password.length === 0) {
+                strengthDiv.textContent = '';
+                strengthDiv.className = 'mt-2 text-xs font-medium px-3 py-2 rounded-lg';
+                return;
+            }
+
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z\d]/.test(password)) strength++;
+
+            if (strength <= 2) {
+                strengthDiv.textContent = '⚠️ Contraseña débil - Considera agregar mayúsculas, números o símbolos';
+                strengthDiv.className = 'mt-2 text-xs font-medium px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-200';
+            } else if (strength <= 3) {
+                strengthDiv.textContent = '✓ Contraseña media - Puedes mejorarla';
+                strengthDiv.className = 'mt-2 text-xs font-medium px-3 py-2 rounded-lg bg-yellow-50 text-yellow-700 border border-yellow-200';
+            } else {
+                strengthDiv.textContent = '✓✓ Contraseña fuerte - Excelente seguridad';
+                strengthDiv.className = 'mt-2 text-xs font-medium px-3 py-2 rounded-lg bg-green-50 text-green-700 border border-green-200';
+            }
+        });
+
+        // Password match validation
+        document.getElementById('confirm_password').addEventListener('input', function () {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const matchDiv = document.getElementById('passwordMatch');
+
+            if (confirmPassword === '') {
+                matchDiv.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchDiv.textContent = '✓ Las contraseñas coinciden';
+                matchDiv.className = 'mt-2 text-xs font-medium text-green-600';
+            } else {
+                matchDiv.textContent = '✗ Las contraseñas no coinciden';
+                matchDiv.className = 'mt-2 text-xs font-medium text-red-600';
+            }
+        });
+
+        // Form validation before submit
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const username = document.getElementById('username').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden. Por favor, verifica que ambas sean iguales.');
+                return false;
+            }
+
+            if (username.length < 3) {
+                e.preventDefault();
+                alert('El nombre de usuario debe tener al menos 3 caracteres.');
+                return false;
+            }
+
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres.');
+                return false;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+/* ========================================
+   FAT TESTING APP - Custom Styles
+   Tailwind CSS maneja la mayoría del diseño
+   Este archivo contiene solo estilos personalizados
+   ======================================== */
+
+/* Fuente predeterminada - Inter */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+}
+
+/* Accesibilidad - Reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Smooth scrolling para navegación */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Estilos personalizados para file inputs si son necesarios */
+input[type="file"]::-webkit-file-upload-button {
+    cursor: pointer;
+}
+
+/* Asegurar que los elementos de formulario tengan el cursor correcto */
+button,
+select,
+input[type="submit"],
+input[type="button"] {
+    cursor: pointer;
+}
+
+/* Estilos de impresión básicos */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+}

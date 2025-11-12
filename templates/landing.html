@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatiza tus pruebas FAT y reduce el tiempo de generación de informes de 4 horas a 10 minutos">
+    <title>FAT Testing - Automatización Profesional de Pruebas de Red</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+</head>
+<body class="antialiased bg-white">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-network-wired text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition">Características</a>
+                    <a href="#benefits" class="text-gray-600 hover:text-gray-900 transition">Beneficios</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition">Precios</a>
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition">Iniciar Sesión</a>
+                    <a href="{{ url_for('register') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
+                        Comenzar Gratis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-40 space-y-3 max-w-md">
+        {% for category, message in messages %}
+        <div class="{% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% elif category == 'info' %}bg-blue-50 border-l-4 border-blue-500 text-blue-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg shadow-lg animate-slide-in" role="alert" aria-live="polite">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    {% if category == 'success' %}
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    {% elif category == 'info' %}
+                    <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                    {% else %}
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                    {% endif %}
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="font-medium">{{ message }}</p>
+                </div>
+                <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <style>
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+        }
+    </style>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
+                        <i class="fas fa-bolt text-sm"></i>
+                        <span class="text-sm font-medium">Ahorra hasta 95% de tiempo</span>
+                    </div>
+
+                    <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        Automatiza tus pruebas <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT</span> en minutos
+                    </h1>
+
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        Genera informes profesionales de pruebas de aceptación de fábrica en <strong>10 minutos</strong> en lugar de 4 horas.
+                        Más de 50 modelos de dispositivos soportados.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ url_for('register') }}" class="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 text-center">
+                            Empezar Ahora - Es Gratis
+                            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="#demo" class="bg-white text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl border-2 border-gray-200 transition-all duration-300 text-center">
+                            Ver Demo
+                            <i class="fas fa-play ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">96%</div>
+                            <div class="text-sm text-gray-600">Tiempo ahorrado</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">50+</div>
+                            <div class="text-sm text-gray-600">Dispositivos</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">100%</div>
+                            <div class="text-sm text-gray-600">Precisión</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-white">
+                        <div class="bg-gradient-to-br from-gray-100 to-gray-200 p-8 h-96 flex items-center justify-center">
+                            <div class="text-center">
+                                <i class="fas fa-file-invoice text-8xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600 font-medium">Vista previa del informe</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -z-10 top-8 left-8 w-full h-full bg-gradient-to-br from-blue-400 to-indigo-400 rounded-2xl opacity-20"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Todo lo que necesitas en un solo lugar
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Herramientas profesionales diseñadas para equipos de networking que valoran su tiempo
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl transition-all duration-300 border border-blue-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-robot text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Automatización Total</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Extracción automática de datos, procesamiento inteligente y generación de informes sin intervención manual.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-xl transition-all duration-300 border border-purple-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-layer-group text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Multi-Dispositivo</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Soporte para Cisco Catalyst, ISR, ASR, Wireless Controllers, CheckPoint y más de 50 modelos.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-xl transition-all duration-300 border border-emerald-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-file-word text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Informes Profesionales</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Documentos Word con formato corporativo, imágenes integradas y datos técnicos perfectamente organizados.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-orange-50 to-red-50 hover:shadow-xl transition-all duration-300 border border-orange-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Seguridad Empresarial</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Autenticación robusta, roles de usuario y protección de datos sensibles del proyecto.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 hover:shadow-xl transition-all duration-300 border border-cyan-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-images text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Gestión de Evidencias</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Carga múltiple de imágenes, organización automática e inserción inteligente en el documento.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="group p-8 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 hover:shadow-xl transition-all duration-300 border border-yellow-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-bolt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Velocidad Extrema</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        De 4 horas a 10 minutos. Procesa múltiples dispositivos simultáneamente sin esperas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits/ROI Section -->
+    <section id="benefits" class="py-20 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                        El ROI que tu empresa necesita
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                        Cada hora que ahorras es dinero que ganas. Con FAT Testing, tu equipo puede enfocarse en lo que realmente importa: proyectos de mayor valor.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Ahorro de Tiempo Inmediato</h4>
+                                <p class="text-gray-300">Reduce de 4 horas a 10 minutos por dispositivo. En un proyecto de 10 equipos, ahorras 39 horas.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Calidad Consistente</h4>
+                                <p class="text-gray-300">Elimina errores humanos. Cada informe sigue el mismo estándar profesional.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Escalabilidad Total</h4>
+                                <p class="text-gray-300">Procesa 1 dispositivo o 100 con el mismo esfuerzo. Crece sin límites.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                    <div class="text-center mb-8">
+                        <div class="text-sm text-gray-400 mb-2">Cálculo de ROI mensual</div>
+                        <div class="text-5xl font-bold mb-2">$12,800</div>
+                        <div class="text-gray-300">ahorrados por técnico</div>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between py-3 border-b border-white/10">
+                            <span class="text-gray-300">20 dispositivos/mes × 4 horas ahorradas</span>
+                            <span class="font-semibold">80 horas</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b border-white/10">
+                            <span class="text-gray-300">Costo promedio hora técnico</span>
+                            <span class="font-semibold">$160/hr</span>
+                        </div>
+                        <div class="flex justify-between py-3 text-emerald-400 font-bold text-lg">
+                            <span>Ahorro Total</span>
+                            <span>$12,800</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Planes diseñados para crecer contigo
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Sin costos ocultos. Sin contratos anuales forzados.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Free Plan -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Starter</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$0</span>
+                        <span class="text-gray-600">/mes</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">5 informes/mes</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Todos los modelos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Soporte por email</span>
+                        </li>
+                    </ul>
+                    <a href="{{ url_for('register') }}" class="block w-full bg-gray-100 text-gray-900 text-center py-3 rounded-xl font-semibold hover:bg-gray-200 transition">
+                        Comenzar Gratis
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 text-white transform scale-105 shadow-2xl">
+                    <div class="text-center mb-4">
+                        <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-medium">Más Popular</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Professional</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$49</span>
+                        <span class="opacity-90">/mes</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            <span>Informes ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            <span>Todos los modelos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            <span>Soporte prioritario</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            <span>API access</span>
+                        </li>
+                    </ul>
+                    <a href="{{ url_for('register') }}" class="block w-full bg-white text-blue-600 text-center py-3 rounded-xl font-semibold hover:shadow-xl transition">
+                        Comenzar Ahora
+                    </a>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-blue-500 transition-all duration-300">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">Custom</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Todo en Pro +</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Usuarios ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">SLA garantizado</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            <span class="text-gray-700">Implementación dedicada</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full bg-gray-900 text-white text-center py-3 rounded-xl font-semibold hover:bg-gray-800 transition">
+                        Contactar Ventas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div class="max-w-4xl mx-auto text-center text-white">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                Comienza a ahorrar tiempo hoy mismo
+            </h2>
+            <p class="text-xl mb-8 opacity-90">
+                Únete a cientos de profesionales que ya confían en FAT Testing
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('register') }}" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all duration-300">
+                    Comenzar Gratis
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a href="{{ url_for('login') }}" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+                    Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-network-wired text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold text-white">FAT Testing</span>
+            </div>
+            <p class="text-sm">&copy; 2025 FAT Testing. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
