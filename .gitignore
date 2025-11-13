@@ -71,5 +71,9 @@ dist/
 # Aplicación de escritorio compilada (no subir el .exe a git)
 downloads/*.exe
 
+# Icono generado
+fat_testing_icon.ico
+fat_testing_icon_preview.png
+
 # Mantener la carpeta downloads pero sin el .exe
 !downloads/.gitkeep
