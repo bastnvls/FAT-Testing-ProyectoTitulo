@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros - FAT Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+</head>
+<body class="antialiased bg-white">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-network-wired text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('landing') }}" class="text-gray-600 hover:text-gray-900 transition">Inicio</a>
+                    <a href="{{ url_for('terminos') }}" class="text-gray-600 hover:text-gray-900 transition">Términos</a>
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition">Iniciar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+                Sobre <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT Testing</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Transformamos la manera en que los ingenieros de redes realizan pruebas de aceptación en fábrica para equipos Cisco Catalyst
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
+                        <i class="fas fa-bullseye text-sm"></i>
+                        <span class="text-sm font-medium">Nuestra Misión</span>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                        Automatizar para Liberar Tiempo Valioso
+                    </h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        En FAT Testing, creemos que los ingenieros de redes no deberían perder tiempo valioso en tareas manuales y repetitivas. Nuestra misión es automatizar el proceso de pruebas FAT para que los profesionales puedan enfocarse en lo que realmente importa: proyectos de mayor valor y desafíos técnicos complejos.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Desarrollamos herramientas que transforman 35-45 minutos de trabajo manual en menos de 10 minutos de automatización, permitiendo a las empresas optimizar sus recursos y mejorar la calidad de sus entregables.
+                    </p>
+                </div>
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 shadow-2xl">
+                        <div class="space-y-6">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-rocket text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-semibold">Innovación Constante</div>
+                                        <div class="text-blue-100 text-sm">Mejoramos continuamente nuestro software</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-users text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-semibold">Enfoque en el Cliente</div>
+                                        <div class="text-blue-100 text-sm">Escuchamos y respondemos a sus necesidades</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-semibold">Calidad y Confiabilidad</div>
+                                        <div class="text-blue-100 text-sm">Software robusto y resultados precisos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem We Solve -->
+    <section class="py-20 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    El Problema que Resolvemos
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Identificamos un dolor crítico en la industria de redes y creamos la solución perfecta
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <!-- The Problem -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg border-2 border-red-200">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">El Problema</h3>
+                    </div>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
+                            <span><strong>Tiempo perdido:</strong> 35-45 minutos por dispositivo en pruebas manuales</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
+                            <span><strong>Errores humanos:</strong> Inconsistencias en la documentación y datos faltantes</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
+                            <span><strong>Documentación tediosa:</strong> 20 minutos adicionales creando informes Word manualmente</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
+                            <span><strong>Costos elevados:</strong> Recursos valiosos dedicados a tareas repetitivas</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- The Solution -->
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 shadow-lg border-2 border-emerald-400">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-emerald-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Nuestra Solución</h3>
+                    </div>
+                    <ul class="space-y-4 text-white">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <span><strong>Automatización:</strong> Proceso completo en menos de 10 minutos</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <span><strong>Precisión:</strong> Datos consistentes y confiables en cada prueba</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <span><strong>Informes profesionales:</strong> Documentos Word generados automáticamente con datos subrayados</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <span><strong>ROI inmediato:</strong> Ahorro de 30 minutos por dispositivo desde el primer día</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Technology -->
+    <section class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Nuestra Tecnología
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Desarrollamos software especializado para las necesidades específicas de pruebas FAT en equipos Cisco Catalyst
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
+                    <div class="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-terminal text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Software CLI</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Ejecutable para Windows que se conecta directamente a los equipos Cisco y ejecuta automáticamente los comandos CLI predefinidos para cada modelo.
+                    </p>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                    <div class="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-globe text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Plataforma Web</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Interfaz web intuitiva donde subes los datos capturados y las evidencias fotográficas para generar informes profesionales instantáneamente.
+                    </p>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border-2 border-emerald-200">
+                    <div class="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-file-word text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Generador de Informes</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Motor de generación de documentos Word con formato corporativo, información clave subrayada y estructura profesional predefinida.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who We Serve -->
+    <section class="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    ¿Para Quién es FAT Testing?
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-xl p-8 shadow-lg">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-user-tie text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Ingenieros de Redes</h3>
+                    <p class="text-gray-700 leading-relaxed text-center">
+                        Profesionales que realizan pruebas FAT frecuentemente y buscan optimizar su tiempo, reducir errores y generar documentación profesional de manera eficiente.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl p-8 shadow-lg">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+                        <i class="fas fa-building text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Empresas de Integración</h3>
+                    <p class="text-gray-700 leading-relaxed text-center">
+                        Organizaciones que gestionan proyectos de implementación de redes y necesitan escalar sus operaciones FAT sin aumentar costos ni comprometer la calidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Commitment -->
+    <section class="py-20 px-4 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                Nuestro Compromiso
+            </h2>
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-12 text-white shadow-2xl">
+                <p class="text-xl leading-relaxed mb-6">
+                    Nos comprometemos a seguir innovando y mejorando nuestro servicio para mantenernos como la solución líder en automatización de pruebas FAT en Chile.
+                </p>
+                <p class="text-lg leading-relaxed">
+                    Escuchamos a nuestros clientes, iteramos rápidamente y entregamos valor real en cada actualización. Nuestro éxito se mide por el tiempo y dinero que ahorramos a nuestros usuarios.
+                </p>
+                <div class="mt-8 pt-8 border-t border-white/20">
+                    <p class="text-2xl font-bold">
+                        Automatiza hoy. Ahorra mañana. Crece siempre.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div class="max-w-4xl mx-auto text-center text-white">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                ¿Listo para Transformar tus Pruebas FAT?
+            </h2>
+            <p class="text-xl mb-8 opacity-90">
+                Únete a las empresas que ya están ahorrando tiempo y dinero con FAT Testing
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('register') }}" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all duration-300">
+                    Suscribirme
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+                <a href="{{ url_for('landing') }}" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+                    Conocer Más
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-network-wired text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold text-white">FAT Testing</span>
+            </div>
+            <p class="text-sm mb-4">&copy; 2025 FAT Testing. Todos los derechos reservados.</p>
+            <div class="flex justify-center space-x-6 text-sm">
+                <a href="{{ url_for('landing') }}" class="hover:text-white transition">Inicio</a>
+                <a href="{{ url_for('terminos') }}" class="hover:text-white transition">Términos y Condiciones</a>
+                <a href="{{ url_for('sobre_nosotros') }}" class="hover:text-white transition">Sobre Nosotros</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

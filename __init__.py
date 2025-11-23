@@ -598,6 +598,18 @@ def landing():
     return render_template('landing.html')
 
 
+@app.route('/terminos')
+def terminos():
+    """Página de términos y condiciones"""
+    return render_template('terminos.html')
+
+
+@app.route('/sobre-nosotros')
+def sobre_nosotros():
+    """Página sobre nosotros"""
+    return render_template('sobre_nosotros.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """Ruta para registro de nuevos usuarios"""

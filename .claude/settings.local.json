@@ -5,7 +5,10 @@
       "Bash(cat:*)",
       "Bash(rm:*)",
       "Bash(mv:*)",
-      "Bash(python -m py_compile:*)"
+      "Bash(python -m py_compile:*)",
+      "Bash(dir:*)",
+      "Bash(python:*)",
+      "Bash(del doc_content.txt)"
     ],
     "deny": [],
     "ask": []
