@@ -4,18 +4,8 @@ from copy import deepcopy
 from .colores import resaltado_fallido, resaltado_na, resaltado_ok, resaltado_opcional
 from .modelos._9200 import prueba_1_9200, prueba_2_9200,prueba_3_9200,prueba_4_9200, prueba_5_9200
 from .modelos._9300 import prueba_1_9300, prueba_2_9300, prueba_3_9300, prueba_4_9300, prueba_5_9300
-from .modelos.checkpoint_6600p import prueba_1_6600, prueba_2_6600, prueba_3_6600, prueba_4_6600, prueba_5_6600, prueba_6_6600, prueba_7_6600, prueba_8_6600, prueba_9_6600
 from .modelos._9500 import prueba_1_9500, prueba_2_9500, prueba_3_9500, prueba_4_9500, prueba_5_9500
-from .modelos.IE4010 import prueba_1_ie4010, prueba_2_ie4010, prueba_3_ie4010, prueba_4_ie4010,prueba_5_ie4010, prueba_6_ie4010
-from .modelos.IE3300 import prueba_1_ie3300, prueba_2_ie3300,prueba_3_ie3300, prueba_4_ie3300, prueba_5_ie3300,prueba_6_ie3300
-from .modelos.c9130axi import prueba_1_c9130axi, prueba_2_c9130axi
-from .modelos.C9348GC import prueba_1_C9348GC, prueba_2_C9348GC, prueba_3_C9348GC, prueba_4_C9348GC, prueba_5_C9348GC
-from .modelos.C93180YC import prueba_1_C93180YC, prueba_2_C93180YC, prueba_3_C93180YC, prueba_4_C93180YC, prueba_5_C93180YC
-from .modelos.c9115axi import prueba_1_c9115axi, prueba_2_c9115axi
-from .modelos.c9120axe import prueba_1_c9120axe, prueba_2_c9120axe  
-from .modelos.ISR4431 import prueba_1_ISR4431, prueba_2_ISR4431, prueba_3_ISR4431, prueba_4_ISR4431, prueba_5_ISR4431
-from .modelos.C8500 import prueba_1_C8500, prueba_2_C8500, prueba_3_C8500, prueba_4_C8500, prueba_5_C8500
-from .modelos.checkpoint_6200p import prueba_1_6200, prueba_2_6200, prueba_3_6200, prueba_4_6200, prueba_5_6200, prueba_6_6200, prueba_7_6200, prueba_8_6200, prueba_9_6200
+
 # --------------------------------------
 # Helpers de resaltado
 # --------------------------------------
@@ -275,71 +265,4 @@ CONFIGS = {
     ("SW L2 9500", 3): prueba_3_9500,
     ("SW L2 9500", 4): prueba_4_9500,
     ("SW L2 9500", 5): prueba_5_9500,
-    # Checkpoint
-    ("Check Point 6600", 1): prueba_1_6600,
-    ("Check Point 6600", 2): prueba_2_6600,
-    ("Check Point 6600", 3): prueba_3_6600,
-    ("Check Point 6600", 4): prueba_4_6600,
-    ("Check Point 6600", 5): prueba_5_6600,
-    ("Check Point 6600", 6): prueba_6_6600,
-    ("Check Point 6600", 7): prueba_7_6600,
-    ("Check Point 6600", 8): prueba_8_6600,
-    ("Check Point 6600", 9): prueba_9_6600,
-    # Switch Industriales IE4010
-    ("SW IE4010", 1): prueba_1_ie4010,
-    ("SW IE4010", 2): prueba_2_ie4010,
-    ("SW IE4010", 3): prueba_3_ie4010,
-    ("SW IE4010", 4): prueba_4_ie4010,
-    ("SW IE4010", 5): prueba_5_ie4010,
-    ("SW IE4010", 6): prueba_6_ie4010,
-    # Switch Industriales IE3300
-    ("SW IE3300", 1): prueba_1_ie3300,
-    ("SW IE3300", 2): prueba_2_ie3300,
-    ("SW IE3300", 3): prueba_3_ie3300,
-    ("SW IE3300", 4): prueba_4_ie3300,
-    ("SW IE3300", 5): prueba_5_ie3300,
-    ("SW IE3300", 6): prueba_6_ie3300,
-    # Access Point C9130AXI
-    ("AP C9130AXI", 1): prueba_1_c9130axi,
-    ("AP C9130AXI", 2): prueba_2_c9130axi,
-    # SW L3 
-    ("SW L3 9348GC", 1): prueba_1_C9348GC,
-    ("SW L3 9348GC", 2): prueba_2_C9348GC,
-    ("SW L3 9348GC", 3): prueba_3_C9348GC,
-    ("SW L3 9348GC", 4): prueba_4_C9348GC,
-    ("SW L3 9348GC", 5): prueba_5_C9348GC,
-    # SW L3 93180YC
-    ("SW L3 C93180YC", 1): prueba_1_C93180YC,
-    ("SW L3 C93180YC", 2): prueba_2_C93180YC,
-    ("SW L3 C93180YC", 3): prueba_3_C93180YC,
-    ("SW L3 C93180YC", 4): prueba_4_C93180YC,
-    ("SW L3 C93180YC", 5): prueba_5_C93180YC,
-    # ROUTER ISR4431
-    ("Router ISR4431", 1): prueba_1_ISR4431,
-    ("Router ISR4431", 2): prueba_2_ISR4431,
-    ("Router ISR4431", 3): prueba_3_ISR4431,
-    ("Router ISR4431", 4): prueba_4_ISR4431,
-    ("Router ISR4431", 5): prueba_5_ISR4431,
-    # ROUTER ISR4431
-    ("Router C8500", 1): prueba_1_C8500,
-    ("Router C8500", 2): prueba_2_C8500,
-    ("Router C8500", 3): prueba_3_C8500,
-    ("Router C8500", 4): prueba_4_C8500,
-    ("Router C8500", 5): prueba_5_C8500,
-    # Access Point C9115AXI
-    ("AP C9115AXI", 1): prueba_1_c9115axi,
-    ("AP C9115AXI", 2): prueba_2_c9115axi,
-    # Access Point C9120AXE
-    ("AP C9120AXE", 1): prueba_1_c9120axe,
-    ("AP C9120AXE", 2): prueba_2_c9120axe,
-    # Checkpoint 6200P
-    ("Check Point 6200", 1): prueba_1_6200,
-    ("Check Point 6200", 2): prueba_2_6200,
-    ("Check Point 6200", 3): prueba_3_6200,
-    ("Check Point 6200", 4): prueba_4_6200,
-    ("Check Point 6200", 5): prueba_5_6200,
-    ("Check Point 6200", 6): prueba_6_6200,
-    ("Check Point 6200", 7): prueba_7_6200,
-    ("Check Point 6200", 8): prueba_8_6200,
-    ("Check Point 6200", 9): prueba_9_6200,
 }
