@@ -20,3 +20,4 @@ Flask-Mail==0.10.0
 PySide6
 pyinstaller
 pyserial==3.5
+python-dotenv==1.0.1
