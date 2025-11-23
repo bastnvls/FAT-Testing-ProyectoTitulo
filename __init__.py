@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, request, render_template, send_file, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from docx import Document
@@ -11,7 +12,7 @@ import os
 import re
 from docx.shared import Inches
 from funcionalidades.resaltado import subrayar_texto
-from flask_login import LoginManager, login_required, current_user
+from flask_login import LoginManager, login_required, current_user, login_user
 from flask_mail import Mail
 from models import db, bcrypt, User, PasswordResetToken
 from config import Config
@@ -33,7 +34,17 @@ login_manager.login_message = 'Por favor inicia sesión para acceder a esta pág
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    """
+    Propósito: cargar el usuario desde la sesión para Flask-Login.
+    Entradas: user_id (str/int) guardado en la cookie de sesión.
+    Salidas: instancia de User o None.
+    Dependencias: User.query.get (usa el modelo nuevo con PK entera).
+    """
+    try:
+        return User.query.get(int(user_id))  # Busca por PK entera
+    except (TypeError, ValueError):
+        return None  # Si no es un ID válido, no devuelve usuario
+
 
 
 def aplicar_fuente_cascadia_code(run, size_pt):
@@ -612,97 +623,108 @@ def sobre_nosotros():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Ruta para registro de nuevos usuarios"""
+    """
+    Propósito: registrar nuevos usuarios con email único y contraseña hasheada.
+    Entradas (POST form): email, password, confirm_password, nombre (opcional), apellido (opcional).
+    Salidas: render de la vista o redirect a login tras éxito.
+    Dependencias: validate_email_format, validate_password_strength, User, db.session.
+    """
+    # Registrar nuevos usuarios con email único y contraseña hasheada
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))
+        return redirect(url_for('upload_files'))  # Si ya está logueado, lo mandamos a la app
 
     if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip()
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+        email = request.form.get('email', '').strip()            # Correo ingresado
+        password = request.form.get('password')                  # Contraseña
+        confirm_password = request.form.get('confirm_password')  # Confirmación
+        nombre = request.form.get('nombre', '').strip()          # Nombre opcional
+        apellido = request.form.get('apellido', '').strip()      # Apellido opcional
 
-        # Validación: campos requeridos
-        if not username or not email or not password:
-            flash('Todos los campos son requeridos', 'danger')
+        if not email or not password:
+            flash('Email y contraseña son obligatorios', 'danger')
             return render_template('register.html')
 
-        # Validación: longitud del nombre de usuario
-        if len(username) < 3:
-            flash('El nombre de usuario debe tener al menos 3 caracteres', 'danger')
+        if len(email) > 150:
+            flash('El correo no puede exceder 150 caracteres', 'danger')
             return render_template('register.html')
 
-        if len(username) > 80:
-            flash('El nombre de usuario no puede tener más de 80 caracteres', 'danger')
+        if nombre and len(nombre) > 80:
+            flash('El nombre no puede exceder 80 caracteres', 'danger')
             return render_template('register.html')
 
-        # Validación: formato del correo electrónico
-        is_valid_email, normalized_email, email_error = validate_email_format(email)
+        if apellido and len(apellido) > 80:
+            flash('El apellido no puede exceder 80 caracteres', 'danger')
+            return render_template('register.html')
+
+        is_valid_email, normalized_email, email_error = validate_email_format(email)  # Normaliza y valida formato
         if not is_valid_email:
-            flash(f'Correo electrónico inválido: {email_error}', 'danger')
+            flash(f'Correo inválido: {email_error}', 'danger')
             return render_template('register.html')
 
-        # Validación: contraseñas coinciden
-        if password != confirm_password:
+        if password != confirm_password:  # Verifica coincidencia de contraseñas
             flash('Las contraseñas no coinciden', 'danger')
             return render_template('register.html')
 
-        # Validación: fortaleza de la contraseña
-        is_valid_password, password_error = validate_password_strength(password)
+        is_valid_password, password_error = validate_password_strength(password)  # Valida fortaleza
         if not is_valid_password:
             flash(password_error, 'danger')
             return render_template('register.html')
 
-        # Validación: verificar si el usuario ya existe (normalizado)
-        if User.query.filter_by(username=username.lower()).first():
-            flash('El nombre de usuario ya está en uso', 'danger')
+        if User.query.filter_by(email=normalized_email).first():  # Revisa unicidad de email
+            flash('El correo ya está registrado', 'danger')
             return render_template('register.html')
 
-        # Validación: verificar si el email ya está registrado (normalizado)
-        if User.query.filter_by(email=normalized_email).first():
-            flash('El correo electrónico ya está registrado', 'danger')
-            return render_template('register.html')
+        new_user = User(email=normalized_email, password=password, nombre=nombre, apellido=apellido)  # Crea usuario
+        db.session.add(new_user)  # Agrega a la sesión
+        db.session.commit()       # Guarda en la base
 
-        # Crear nuevo usuario con email normalizado
-        new_user = User(username=username, email=normalized_email, password=password, role='user')
-        db.session.add(new_user)
-        db.session.commit()
+        flash('Registro exitoso. Inicia sesión.', 'success')
+        return redirect(url_for('login'))  # Redirige a login
 
-        flash('Registro exitoso! Por favor inicia sesión', 'success')
-        return redirect(url_for('login'))
+    return render_template('register.html')  # Muestra formulario en GET
 
-    return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Ruta para inicio de sesión"""
+    """
+    Propósito: autenticar usuarios y registrar último acceso.
+    Entradas (POST form): email, password, remember (checkbox).
+    Salidas: render de login o redirect a la app tras éxito.
+    Dependencias: User, db.session, Flask-Login (login_user).
+    """
+    # Autenticar usuarios y registrar último acceso
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))
+        return redirect(url_for('upload_files'))  # Si ya está logueado, va a la app
 
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        remember = request.form.get('remember', False)
+        email = request.form.get('email', '').strip()  # Correo ingresado
+        password = request.form.get('password')        # Contraseña ingresada
+        remember = request.form.get('remember', False) # Checkbox “recordarme”
 
         if not email or not password:
-            flash('Por favor ingresa tu correo y contraseña', 'danger')
+            flash('Correo y contraseña son requeridos', 'danger')
             return render_template('login.html')
 
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()  # Busca por email
 
-        if user and user.check_password(password):
-            from flask_login import login_user
-            login_user(user, remember=remember)
-            flash(f'Bienvenido, {user.username}!', 'success')
+        if user and user.check_password(password):  # Valida contraseña contra el hash
+            if user.estado_cuenta != 'ACTIVA':  # Revisa estado de la cuenta
+                flash('Tu cuenta no está activa', 'danger')
+                return render_template('login.html')
 
-            # Redirigir a la página solicitada o a la app
-            next_page = request.args.get('next')
+            login_user(user, remember=remember)     # Inicia sesión
+            user.ultimo_acceso = datetime.utcnow()  # Actualiza último acceso
+            db.session.commit()                     # Guarda el cambio
+
+            next_page = request.args.get('next')    # Redirección deseada
             return redirect(next_page) if next_page else redirect(url_for('upload_files'))
         else:
             flash('Correo o contraseña incorrectos', 'danger')
 
-    return render_template('login.html')
+    return render_template('login.html')  # Muestra formulario en GET
+
+
 
 
 @app.route('/logout')
@@ -717,113 +739,117 @@ def logout():
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
-    """Ruta para solicitar recuperación de contraseña"""
+    """
+    Propósito: generar token de recuperación y enviar correo.
+    Entradas (POST form): email.
+    Salidas: render de formulario o redirect a login tras mostrar mensaje.
+    Dependencias: User, PasswordResetToken, send_password_reset_email, db.session.
+    """
+    # Generar token de recuperación y enviar correo
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))
+        return redirect(url_for('upload_files'))  # Evita que un usuario logueado pida reset
 
     if request.method == 'POST':
-        email = request.form.get('email', '').strip()
+        email = request.form.get('email', '').strip()  # Correo para recuperar
 
         if not email:
-            flash('Por favor ingresa tu correo electrónico', 'danger')
+            flash('Ingresa tu correo', 'danger')
             return render_template('forgot_password.html')
 
-        # Validar formato del email
-        is_valid_email, normalized_email, email_error = validate_email_format(email)
+        is_valid_email, normalized_email, email_error = validate_email_format(email)  # Valida formato
         if not is_valid_email:
-            flash(f'Correo electrónico inválido: {email_error}', 'danger')
+            flash(f'Correo inválido: {email_error}', 'danger')
             return render_template('forgot_password.html')
 
-        # Buscar usuario por email
-        user = User.query.filter_by(email=normalized_email).first()
-
-        # Por seguridad, siempre mostramos el mismo mensaje aunque el usuario no exista
-        # Esto evita que se pueda determinar qué correos están registrados
-        flash('Si el correo electrónico está registrado, recibirás instrucciones para restablecer tu contraseña', 'info')
+        user = User.query.filter_by(email=normalized_email).first()  # Busca al usuario
+        flash('Si el correo está registrado, recibirás instrucciones de recuperación', 'info')  # Mensaje uniforme
 
         if user:
-            # Invalidar tokens anteriores del usuario
-            old_tokens = PasswordResetToken.query.filter_by(user_id=user.id, used=False).all()
+            old_tokens = PasswordResetToken.query.filter_by(user_id=user.id, used=False).all()  # Tokens previos
             for token in old_tokens:
-                token.mark_as_used()
+                token.mark_as_used()  # Invalida tokens anteriores
 
-            # Crear nuevo token
-            reset_token = PasswordResetToken(user_id=user.id, expiration_hours=1)
-            db.session.add(reset_token)
-            db.session.commit()
+            reset_token = PasswordResetToken(user_id=user.id, expiration_hours=1)  # Crea token nuevo
+            db.session.add(reset_token)  # Agrega a la sesión
+            db.session.commit()          # Guarda en la base
 
-            # Enviar email
-            email_sent = send_password_reset_email(user, reset_token.token, mail)
-
+            email_sent = send_password_reset_email(user, reset_token.token, mail)  # Envía correo
             if not email_sent:
-                # Si falla el envío, eliminamos el token
-                db.session.delete(reset_token)
+                db.session.delete(reset_token)  # Limpia el token si falló el envío
                 db.session.commit()
-                flash('Hubo un error al enviar el correo. Por favor intenta nuevamente más tarde.', 'danger')
+                flash('Error al enviar el correo. Intenta más tarde.', 'danger')
                 return render_template('forgot_password.html')
 
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))  # Redirige a login tras procesar
 
-    return render_template('forgot_password.html')
+    return render_template('forgot_password.html')  # Muestra formulario en GET
+
 
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    """Ruta para restablecer la contraseña con un token"""
+    """
+    Propósito: permitir cambio de contraseña usando un token válido.
+    Entradas: token en la URL; (POST form) password y confirm_password.
+    Salidas: render de formulario o redirect a login tras éxito.
+    Dependencias: PasswordResetToken.get_valid_token, bcrypt, db.session.
+    """
+    # Permitir cambio de contraseña usando un token válido
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))
+        return redirect(url_for('upload_files'))  # Evita uso si ya está logueado
 
-    # Verificar que el token es válido
-    reset_token = PasswordResetToken.get_valid_token(token)
-
+    reset_token = PasswordResetToken.get_valid_token(token)  # Valida token
     if not reset_token:
-        flash('El enlace de recuperación es inválido o ha expirado. Por favor solicita uno nuevo.', 'danger')
+        flash('Enlace inválido o expirado. Solicita uno nuevo.', 'danger')
         return redirect(url_for('forgot_password'))
 
     if request.method == 'POST':
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
+        password = request.form.get('password')                # Nueva contraseña
+        confirm_password = request.form.get('confirm_password')# Confirmación
 
         if not password or not confirm_password:
             flash('Todos los campos son requeridos', 'danger')
             return render_template('reset_password.html', token=token)
 
-        # Validar que las contraseñas coinciden
-        if password != confirm_password:
+        if password != confirm_password:  # Coincidencia
             flash('Las contraseñas no coinciden', 'danger')
             return render_template('reset_password.html', token=token)
 
-        # Validar fortaleza de la contraseña
-        is_valid_password, password_error = validate_password_strength(password)
+        is_valid_password, password_error = validate_password_strength(password)  # Fortaleza
         if not is_valid_password:
             flash(password_error, 'danger')
             return render_template('reset_password.html', token=token)
 
-        # Actualizar la contraseña del usuario
-        user = reset_token.user
-        user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        user = reset_token.user                                        # Usuario dueño del token
+        user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')  # Re-hash
+        reset_token.mark_as_used()                                     # Marca token como usado
+        db.session.commit()                                            # Guarda cambios
 
-        # Marcar el token como usado
-        reset_token.mark_as_used()
-
-        db.session.commit()
-
-        flash('Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión.', 'success')
+        flash('Contraseña actualizada. Ahora puedes iniciar sesión.', 'success')
         return redirect(url_for('login'))
 
-    return render_template('reset_password.html', token=token)
+    return render_template('reset_password.html', token=token)  # Muestra formulario en GET
+
 
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    """Dashboard para administradores"""
-    if not current_user.is_admin():
+    """
+    Propósito: listar usuarios (ajusta la política de acceso según tu criterio).
+    Entradas: ninguna.
+    Salidas: render de dashboard con usuarios.
+    Dependencias: User.
+    Nota: si ya no hay roles, aquí puedes permitir solo si la cuenta está ACTIVA o implementar tu propio check.
+    """
+    # Ejemplo simple: solo usuarios con cuenta activa pueden ver el dashboard
+    if current_user.estado_cuenta != 'ACTIVA':
         flash('No tienes permisos para acceder a esta página', 'danger')
         return redirect(url_for('upload_files'))
 
-    users = User.query.order_by(User.created_at.desc()).all()
+    users = User.query.order_by(User.fecha_creacion.desc()).all()
     return render_template('dashboard.html', users=users)
+
 
 
 @app.route('/download-desktop-app')
@@ -952,20 +978,28 @@ def init_db():
 
 @app.cli.command()
 def create_admin():
-    """Crear usuario administrador"""
+    """
+    Propósito: crear un usuario desde la línea de comandos (sin roles).
+    Entradas: prompts de consola para email, password, nombre, apellido.
+    Salidas: imprime resultado en consola.
+    Dependencias: User, db.session, bcrypt (dentro del constructor).
+    """
+    # Crear un usuario desde la línea de comandos (sin roles)
     with app.app_context():
-        username = input('Nombre de usuario: ')
-        email = input('Email: ')
-        password = input('Contraseña: ')
+        email = input('Email: ').strip()         # Pide email
+        password = input('Contraseña: ')         # Pide contraseña
+        nombre = input('Nombre: ').strip()       # Pide nombre
+        apellido = input('Apellido: ').strip()   # Pide apellido
 
-        if User.query.filter_by(username=username).first():
-            print('El usuario ya existe!')
+        if User.query.filter_by(email=email).first():  # Revisa si ya existe
+            print('El correo ya existe')
             return
 
-        admin = User(username=username, email=email, password=password, role='admin')
-        db.session.add(admin)
-        db.session.commit()
-        print(f'Usuario administrador {username} creado exitosamente!')
+        user = User(email=email, password=password, nombre=nombre, apellido=apellido)  # Crea usuario
+        db.session.add(user)  # Agrega a la sesión
+        db.session.commit()   # Guarda en la base
+        print(f'Usuario {email} creado exitosamente')
+
 
 
 # Iniciar la aplicación

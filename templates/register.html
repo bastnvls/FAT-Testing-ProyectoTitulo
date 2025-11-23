@@ -4,278 +4,193 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Regístrate en FAT Testing App para comenzar a procesar pruebas FAT" />
-    <title>Registrarse - FAT TESTING</title>
-
-    <!-- Tailwind CSS -->
+    <title>Crear Cuenta | FAT Testing</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <!-- Register Card -->
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <!-- Header -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-10 text-center">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-full mb-4">
-                    <i class="fas fa-user-plus text-4xl text-white" aria-hidden="true"></i>
-                </div>
-                <h1 class="text-3xl font-bold text-white mb-2">Crear Cuenta</h1>
-                <p class="text-indigo-100 text-sm">Únete a FAT Testing hoy</p>
-            </div>
-
-            <!-- Body -->
-            <div class="px-8 py-8">
-                <!-- Flash Messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
-                <div class="mb-6 {% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg" role="alert" aria-live="polite">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            {% if category == 'success' %}
-                            <i class="fas fa-check-circle text-green-500" aria-hidden="true"></i>
-                            {% else %}
-                            <i class="fas fa-exclamation-circle text-red-500" aria-hidden="true"></i>
-                            {% endif %}
-                        </div>
-                        <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium">{{ message }}</p>
-                        </div>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-5xl bg-white shadow-2xl rounded-3xl overflow-hidden">
+        <div class="grid md:grid-cols-2">
+            <!-- Panel izquierdo -->
+            <div
+                class="bg-gradient-to-br from-indigo-600 via-indigo-600 to-purple-500 text-white p-10 flex flex-col justify-center">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-user-plus text-3xl mr-3"></i>
+                    <div>
+                        <p class="text-sm uppercase tracking-wide opacity-80">Bienvenido a</p>
+                        <h2 class="text-2xl font-bold">FAT Testing</h2>
                     </div>
                 </div>
-                {% endfor %}
+                <h1 class="text-3xl font-bold mb-3">Crear Cuenta</h1>
+                <p class="text-indigo-100 leading-relaxed mb-6">
+                    Únete hoy y mantén el control de tus pruebas, reportes y suscripciones.
+                </p>
+                <ul class="space-y-3 text-sm text-indigo-100">
+                    <li class="flex items-center"><i class="fas fa-check-circle mr-2"></i>Gestión de reportes</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle mr-2"></i>Descarga del ejecutable</li>
+                    <li class="flex items-center"><i class="fas fa-check-circle mr-2"></i>Recuperación de cuenta segura
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Panel derecho -->
+            <div class="p-10 bg-white">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="mb-5 space-y-2">
+                    {% for category, message in messages %}
+                    <div
+                        class="p-3 rounded-md text-sm
+              {% if category == 'success' %}bg-green-50 text-green-800 border border-green-200{% else %}bg-red-50 text-red-800 border border-red-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
                 {% endif %}
                 {% endwith %}
 
-                <!-- Register Form -->
-                <form method="POST" action="{{ url_for('register') }}" id="registerForm" aria-label="Formulario de registro">
-                    <!-- Username Field -->
-                    <div class="mb-5">
-                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
-                            <i class="fas fa-user text-indigo-600 mr-1" aria-hidden="true"></i>
-                            Nombre de Usuario
+                <form method="POST" action="{{ url_for('register') }}" id="registerForm" class="space-y-5">
+                    <!-- Nombre -->
+                    <div>
+                        <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-id-card text-indigo-600 mr-1"></i>Nombre
                         </label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            required
-                            minlength="3"
-                            maxlength="80"
-                            autocomplete="username"
-                            placeholder="Tu nombre de usuario"
-                            aria-required="true"
-                            aria-describedby="username-help"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                        />
-                        <p id="username-help" class="mt-2 text-xs text-gray-500">Mínimo 3 caracteres, máximo 80</p>
+                        <input id="nombre" name="nombre" type="text" required maxlength="80" autocomplete="given-name"
+                            placeholder="Tu nombre"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        <p class="mt-1 text-xs text-gray-500">Obligatorio. Máximo 80 caracteres.</p>
                     </div>
 
-                    <!-- Email Field -->
-                    <div class="mb-5">
+                    <!-- Apellido -->
+                    <div>
+                        <label for="apellido" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-id-card text-indigo-600 mr-1"></i>Apellido
+                        </label>
+                        <input id="apellido" name="apellido" type="text" required maxlength="80"
+                            autocomplete="family-name" placeholder="Tu apellido"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        <p class="mt-1 text-xs text-gray-500">Obligatorio. Máximo 80 caracteres.</p>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
                         <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                            <i class="fas fa-envelope text-indigo-600 mr-1" aria-hidden="true"></i>
-                            Correo Electrónico
+                            <i class="fas fa-envelope text-indigo-600 mr-1"></i>Correo Electrónico
                         </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            required
-                            autocomplete="email"
+                        <input id="email" name="email" type="email" required maxlength="150" autocomplete="email"
                             placeholder="tu@email.com"
-                            aria-required="true"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                        />
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                     </div>
 
-                    <!-- Password Field -->
-                    <div class="mb-5">
+                    <!-- Contraseña -->
+                    <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                            <i class="fas fa-lock text-indigo-600 mr-1" aria-hidden="true"></i>
-                            Contraseña
+                            <i class="fas fa-lock text-indigo-600 mr-1"></i>Contraseña
                         </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            required
-                            minlength="8"
-                            autocomplete="new-password"
-                            placeholder="Mínimo 8 caracteres"
-                            aria-required="true"
-                            aria-describedby="password-strength"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                        />
-
-                        <!-- Password Requirements -->
+                        <input id="password" name="password" type="password" required minlength="8"
+                            autocomplete="new-password" placeholder="Mínimo 8 caracteres"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                         <div class="mt-3 bg-gray-50 border border-gray-200 rounded-lg p-3">
                             <p class="text-xs font-semibold text-gray-700 mb-2">Requisitos de la contraseña:</p>
-                            <div class="space-y-1">
-                                <p id="req-length" class="text-xs text-gray-500"><i class="fas fa-circle text-gray-400 mr-1"></i> Mínimo 8 caracteres</p>
-                                <p id="req-upper" class="text-xs text-gray-500"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos una letra mayúscula (A-Z)</p>
-                                <p id="req-lower" class="text-xs text-gray-500"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos una letra minúscula (a-z)</p>
-                                <p id="req-digit" class="text-xs text-gray-500"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos un número (0-9)</p>
-                                <p id="req-special" class="text-xs text-gray-500"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos un carácter especial (!@#$%...)</p>
+                            <div class="space-y-1 text-xs text-gray-600" id="password-strength">
+                                <p id="req-length"><i class="fas fa-circle text-gray-400 mr-1"></i> Mínimo 8 caracteres
+                                </p>
+                                <p id="req-upper"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos una letra
+                                    mayúscula (A-Z)</p>
+                                <p id="req-lower"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos una letra
+                                    minúscula (a-z)</p>
+                                <p id="req-digit"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos un número
+                                    (0-9)</p>
+                                <p id="req-special"><i class="fas fa-circle text-gray-400 mr-1"></i> Al menos un
+                                    carácter especial (!@#$%...)</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Confirm Password Field -->
-                    <div class="mb-5">
+                    <!-- Confirmar contraseña -->
+                    <div>
                         <label for="confirm_password" class="block text-sm font-semibold text-gray-700 mb-2">
-                            <i class="fas fa-lock text-indigo-600 mr-1" aria-hidden="true"></i>
-                            Confirmar Contraseña
+                            <i class="fas fa-lock text-indigo-600 mr-1"></i>Confirmar Contraseña
                         </label>
-                        <input
-                            type="password"
-                            id="confirm_password"
-                            name="confirm_password"
-                            required
-                            autocomplete="new-password"
-                            placeholder="Repite tu contraseña"
-                            aria-required="true"
-                            aria-describedby="password-match"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400"
-                        />
-                        <p id="passwordMatch" class="mt-2 text-xs font-medium" role="status" aria-live="polite"></p>
+                        <input id="confirm_password" name="confirm_password" type="password" required minlength="8"
+                            autocomplete="new-password" placeholder="Repite tu contraseña"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
                     </div>
 
-                    <!-- Submit Button -->
-                    <button
-                        type="submit"
-                        aria-label="Crear cuenta nueva"
-                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3.5 px-6 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 shadow-lg hover:shadow-xl"
-                    >
-                        <i class="fas fa-user-plus mr-2" aria-hidden="true"></i>
-                        Crear Cuenta
+                    <button type="submit"
+                        class="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition duration-150">
+                        <i class="fas fa-user-plus mr-2"></i>Crear Cuenta
                     </button>
                 </form>
 
-                <!-- Login Link -->
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
-                        ¿Ya tienes cuenta?
-                        <a href="{{ url_for('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-700 transition duration-200" aria-label="Ir a página de inicio de sesión">
-                            Inicia sesión aquí
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Back to Home -->
-                <div class="mt-4 text-center">
-                    <a href="{{ url_for('landing') }}" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-200" aria-label="Volver a la página principal">
-                        <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>
-                        Volver al inicio
-                    </a>
-                </div>
+                <p class="mt-6 text-sm text-center text-gray-600">
+                    ¿Ya tienes cuenta?
+                    <a href="{{ url_for('login') }}" class="text-indigo-600 font-semibold hover:underline">Inicia sesión
+                        aquí</a>
+                </p>
             </div>
-        </div>
-
-        <!-- Additional Info -->
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-500">
-                <i class="fas fa-shield-alt text-indigo-600 mr-1" aria-hidden="true"></i>
-                Tus datos están protegidos y encriptados
-            </p>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Password requirements validation
-        document.getElementById('password').addEventListener('input', function () {
-            const password = this.value;
-
-            // Check each requirement
-            const hasLength = password.length >= 8;
-            const hasUpper = /[A-Z]/.test(password);
-            const hasLower = /[a-z]/.test(password);
-            const hasDigit = /\d/.test(password);
-            const hasSpecial = /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;~`]/.test(password);
-
-            // Update requirement indicators
-            updateRequirement('req-length', hasLength);
-            updateRequirement('req-upper', hasUpper);
-            updateRequirement('req-lower', hasLower);
-            updateRequirement('req-digit', hasDigit);
-            updateRequirement('req-special', hasSpecial);
-        });
-
-        function updateRequirement(id, met) {
-            const element = document.getElementById(id);
-            if (met) {
-                element.className = 'text-xs text-green-600 font-medium';
-                element.innerHTML = element.innerHTML.replace('fa-circle text-gray-400', 'fa-check-circle text-green-600');
-            } else {
-                element.className = 'text-xs text-gray-500';
-                element.innerHTML = element.innerHTML.replace('fa-check-circle text-green-600', 'fa-circle text-gray-400');
-            }
-        }
-
-        // Password match validation
-        document.getElementById('confirm_password').addEventListener('input', function () {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            const matchDiv = document.getElementById('passwordMatch');
-
-            if (confirmPassword === '') {
-                matchDiv.textContent = '';
-                return;
-            }
-
-            if (password === confirmPassword) {
-                matchDiv.textContent = '✓ Las contraseñas coinciden';
-                matchDiv.className = 'mt-2 text-xs font-medium text-green-600';
-            } else {
-                matchDiv.textContent = '✗ Las contraseñas no coinciden';
-                matchDiv.className = 'mt-2 text-xs font-medium text-red-600';
-            }
-        });
-
-        // Form validation before submit
+        // Validación cliente: nombre/apellido obligatorios y contraseña
         document.getElementById('registerForm').addEventListener('submit', function (e) {
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
-            const username = document.getElementById('username').value;
 
+            if (!nombre || !apellido) {
+                e.preventDefault(); alert('Nombre y apellido son obligatorios.'); return false;
+            }
+            if (nombre.length > 80 || apellido.length > 80) {
+                e.preventDefault(); alert('Máximo 80 caracteres en nombre y apellido.'); return false;
+            }
             if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden. Por favor, verifica que ambas sean iguales.');
-                return false;
+                e.preventDefault(); alert('Las contraseñas no coinciden.'); return false;
             }
-
-            if (username.length < 3) {
-                e.preventDefault();
-                alert('El nombre de usuario debe tener al menos 3 caracteres.');
-                return false;
-            }
-
-            // Validate password requirements
             const hasLength = password.length >= 8;
             const hasUpper = /[A-Z]/.test(password);
             const hasLower = /[a-z]/.test(password);
             const hasDigit = /\d/.test(password);
             const hasSpecial = /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;~`]/.test(password);
-
             if (!hasLength || !hasUpper || !hasLower || !hasDigit || !hasSpecial) {
-                e.preventDefault();
-                alert('La contraseña no cumple con todos los requisitos de seguridad. Por favor, verifica que cumpla con todos los requisitos mostrados.');
-                return false;
+                e.preventDefault(); alert('La contraseña no cumple con todos los requisitos.'); return false;
             }
+        });
+
+        // Indicadores de requisitos
+        const pwdInput = document.getElementById('password');
+        const reqs = {
+            length: document.getElementById('req-length'),
+            upper: document.getElementById('req-upper'),
+            lower: document.getElementById('req-lower'),
+            digit: document.getElementById('req-digit'),
+            special: document.getElementById('req-special'),
+        };
+        pwdInput.addEventListener('input', () => {
+            const v = pwdInput.value;
+            const ok = {
+                length: v.length >= 8,
+                upper: /[A-Z]/.test(v),
+                lower: /[a-z]/.test(v),
+                digit: /\d/.test(v),
+                special: /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/;~`]/.test(v),
+            };
+            Object.entries(ok).forEach(([k, pass]) => {
+                reqs[k].classList.toggle('text-green-600', pass);
+                reqs[k].classList.toggle('text-gray-500', !pass);
+                reqs[k].querySelector('i').classList.toggle('fa-check-circle', pass);
+                reqs[k].querySelector('i').classList.toggle('fa-circle', !pass);
+                reqs[k].querySelector('i').classList.toggle('text-green-500', pass);
+                reqs[k].querySelector('i').classList.toggle('text-gray-400', !pass);
+            });
         });
     </script>
 </body>
