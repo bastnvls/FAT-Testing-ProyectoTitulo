@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de automatización FAT para equipos Cisco Catalyst. Reduce pruebas de 35-45 min a menos de 10 min. Software CLI + generador de informes Word. Soporte para Catalyst 9200, 9300 y 9500">
+
+    <title>{% block title %}FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="antialiased bg-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-network-wired text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                </div>
+
+                <!-- Links -->
+                <div class="hidden md:flex items-center space-x-8">
+
+                    <!-- Enlaces a secciones de la landing (siempre visibles) -->
+                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition">Características</a>
+                    <a href="#benefits" class="text-gray-600 hover:text-gray-900 transition">Beneficios</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition">Precios</a>
+                    <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">Sobre Nosotros</a>
+
+                    {% if current_user.is_authenticated %}
+                        <!-- Usuario logueado -->
+
+                        <span class="text-sm text-gray-700">
+                            Hola,
+                            {% if current_user.nombre %}
+                                {{ current_user.nombre }}
+                            {% else %}
+                                {{ current_user.email }}
+                            {% endif %}
+                        </span>
+
+                        {% if current_user.estado_suscripcion == 'ACTIVA' %}
+                            <!-- Con suscripción activa -->
+                            <a href="{{ url_for('upload_files') }}"
+                               class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-sm">
+                                Ir a la App
+                            </a>
+                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-300">
+                                Suscripción activa
+                            </span>
+                        {% else %}
+                            <!-- Sin suscripción activa -->
+                            <a href="{{ url_for('suscripcion_checkout') }}"
+                               class="bg-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-600 transition-all duration-300 text-sm">
+                                Activar Suscripción
+                            </a>
+                        {% endif %}
+
+                        <!-- Cerrar sesión -->
+                        <a href="{{ url_for('logout') }}"
+                           class="text-gray-600 hover:text-gray-900 transition text-sm">
+                            Cerrar sesión
+                        </a>
+
+                    {% else %}
+                        <!-- Invitado / no logueado -->
+                        <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition">
+                            Iniciar Sesión
+                        </a>
+                        <a href="{{ url_for('register') }}"
+                           class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
+                            Suscribirme
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-40 space-y-3 max-w-md">
+        {% for category, message in messages %}
+        <div class="{% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% elif category == 'info' %}bg-blue-50 border-l-4 border-blue-500 text-blue-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg shadow-lg animate-slide-in" role="alert" aria-live="polite">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    {% if category == 'success' %}
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    {% elif category == 'info' %}
+                    <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                    {% else %}
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                    {% endif %}
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="font-medium">{{ message }}</p>
+                </div>
+                <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <style>
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+        }
+    </style>
+    {% endif %}
+    {% endwith %}
+
+    {# ====== AQUÍ IRÁ EL CONTENIDO DE CADA PÁGINA ====== #}
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <!-- Brand -->
+                <div class="col-span-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-network-wired text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">FAT Testing</span>
+                    </div>
+                    <p class="text-sm">Automatización profesional de pruebas FAT para equipos Cisco Catalyst.</p>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h3 class="text-white font-semibold mb-4">Producto</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#features" class="hover:text-white transition">Características</a></li>
+                        <li><a href="#benefits" class="hover:text-white transition">Beneficios</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition">Precios</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h3 class="text-white font-semibold mb-4">Empresa</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{{ url_for('sobre_nosotros') }}" class="hover:text-white transition">Sobre Nosotros</a></li>
+                        <li><a href="{{ url_for('terminos') }}" class="hover:text-white transition">Términos y Condiciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="text-white font-semibold mb-4">Soporte</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="mailto:soporte@fattesting.cl" class="hover:text-white transition">Contacto</a></li>
+                        <li class="text-sm">Lunes a Viernes<br>9:00 - 18:00 hrs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 text-center">
+                <p class="text-sm">&copy; 2025 FAT Testing. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

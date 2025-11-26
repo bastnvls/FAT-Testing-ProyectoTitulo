@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-
+import mercadopago
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
@@ -38,3 +38,5 @@ class Config:
     PASSWORD_REQUIRE_LOWERCASE = True
     PASSWORD_REQUIRE_DIGITS = True
     PASSWORD_REQUIRE_SPECIAL = True
+
+    sdk_mp = mercadopago.SDK(os.environ["MP_ACCESS_TOKEN"])

@@ -21,3 +21,4 @@ PySide6
 pyinstaller
 pyserial==3.5
 python-dotenv==1.0.1
+mercadopago==2.3.0

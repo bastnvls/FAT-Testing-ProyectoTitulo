@@ -1,5 +1,5 @@
-from datetime import datetime
-from flask import Flask, request, render_template, send_file, redirect, url_for, flash
+from datetime import datetime, timedelta
+from flask import Flask, request, render_template, send_file, redirect, url_for, flash, jsonify, json
 from werkzeug.utils import secure_filename
 from docx import Document
 from docx.shared import Pt
@@ -17,6 +17,7 @@ from flask_mail import Mail
 from models import db, bcrypt, User, PasswordResetToken
 from config import Config
 from utils import validate_password_strength, validate_email_format, send_password_reset_email
+from functools import wraps
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -44,8 +45,6 @@ def load_user(user_id):
         return User.query.get(int(user_id))  # Busca por PK entera
     except (TypeError, ValueError):
         return None  # Si no es un ID válido, no devuelve usuario
-
-
 
 def aplicar_fuente_cascadia_code(run, size_pt):
     run.font.name = 'Cascadia Code'
@@ -599,14 +598,246 @@ def procesar_archivo(file_stream, docx_template_path,img_1,img_2,img_3,proyecto,
     return buffer, nombre
 
 
-# ====== RUTAS DE AUTENTICACIÓN ======
+def suscripcion_vigente(user):
+    """
+    Propósito:
+        Determinar si la suscripción del usuario está actualmente vigente,
+        es decir, si está en estado ACTIVA y la fecha de fin aún no ha vencido.
+
+    Entradas:
+        - user: instancia del modelo User que contiene, entre otros,
+          los campos estado_suscripcion y fecha_fin_suscripcion.
+
+    Salidas:
+        - bool: True si la suscripción está activa y no vencida,
+          False en cualquier otro caso.
+
+    Dependencias:
+        - Campo user.estado_suscripcion (string).
+        - Campo user.fecha_fin_suscripcion (date o None).
+        - datetime.utcnow().date() para obtener la fecha actual.
+    """
+
+    # Si no hay usuario (None o similar), no puede tener suscripción vigente.
+    if not user:
+        return False
+
+    # Verificamos si el estado de suscripción del usuario es exactamente 'ACTIVA'.
+    esta_activa = user.estado_suscripcion == 'ACTIVA'
+
+    # Verificamos que exista una fecha de fin de suscripción (no sea None).
+    tiene_fecha_fin = bool(user.fecha_fin_suscripcion)
+
+    # Obtenemos la fecha de hoy en UTC, sin componente de hora.
+    hoy_utc = datetime.utcnow().date()
+
+    # Comprobamos que la fecha de fin sea hoy o una fecha futura (no esté vencida).
+    no_esta_vencida = tiene_fecha_fin and user.fecha_fin_suscripcion >= hoy_utc
+
+    # Devolvemos True solo si está activa y no ha vencido; en caso contrario, False.
+    return esta_activa and no_esta_vencida
+
+
+
+def necesita_pago(user):
+    """
+    Propósito:
+        Indicar si el usuario se encuentra en un estado de suscripción que
+        requiere pasar por el flujo de pago / checkout de Mercado Pago.
+
+    Entradas:
+        - user: instancia del modelo User con el campo estado_suscripcion.
+
+    Salidas:
+        - bool: True si debe ir a la pasarela de pago, False si no.
+
+    Dependencias:
+        - Campo user.estado_suscripcion (string).
+        - Conjunto de estados definidos como "requiere pago".
+    """
+
+    # Definimos el conjunto de estados que consideramos que necesitan pago.
+    estados_que_necesitan_pago = {
+        'SIN_SUSCRIPCION',  # Nunca ha contratado un plan.
+        'PENDIENTE_MP',     # Ya inició el proceso en MP pero aún no se autorizó.
+        'PAUSADA',          # La suscripción está pausada en MP.
+        'CANCELADA',        # La suscripción fue cancelada.
+        'VENCIDA',          # La fecha de fin de suscripción ya pasó.
+        'EN_GRACIA',        # Periodo de gracia, pero aún queremos forzar pago.
+    }
+
+    # Devolvemos True si el estado actual del usuario está en el conjunto anterior.
+    return user.estado_suscripcion in estados_que_necesitan_pago
+
+def suscripcion_requerida(vista):
+    """
+    Propósito:
+        Decorador para vistas de Flask que obliga a que el usuario:
+        1. Esté autenticado (logueado), y
+        2. Tenga una suscripción vigente.
+
+    Entradas:
+        vista: función de vista de Flask que queremos proteger
+               (por ejemplo: upload_files, dashboard, etc.).
+
+    Salidas:
+        Devuelve una nueva función (vista_protegida) que envuelve a vista
+        y agrega la lógica de:
+            - verificar login
+            - verificar suscripción
+            - redirigir si no cumple
+
+    Dependencias:
+        - @login_required: decorador de Flask-Login que exige usuario autenticado.
+        - current_user: objeto de Flask-Login que representa al usuario actual.
+        - suscripcion_vigente(user): función tuya que devuelve True/False.
+        - flash: función de Flask para mostrar mensajes al usuario.
+        - redirect, url_for: funciones de Flask para redirigir a otra ruta.
+    """
+
+    # Hace que vista_protegida conserve el nombre y metadatos de vista original,
+    # como si siguiera siendo la misma función a ojos de Flask y las herramientas.
+    @wraps(vista)
+
+    # Este decorador de Flask-Login fuerza SOLO usuarios logueados
+    @login_required
+    def vista_protegida(*args, **kwargs):
+
+        # Si el usuario actual NO tiene una suscripción vigente...
+        if not suscripcion_vigente(current_user):
+            # Mostramos un mensaje de advertencia en la interfaz (con Flash).
+            flash(
+                'Necesitas una suscripción ACTIVA para acceder a esta sección.',
+                'warning'
+            )
+
+            # Redirigimos al usuario a la ruta donde puede pagar/activar
+            # su suscripción
+            return redirect(url_for('suscripcion_checkout'))
+
+        # Si tiene suscripción vigente, ejecutamos la vista original
+        # con sus mismos argumentos (*args, **kwargs) y retornamos su resultado.
+        return vista(*args, **kwargs)
+
+    # devolvemos la función "envuelta" (vista_protegida)
+    return vista_protegida
+
+
+def extraer_evento_mp(body, query):
+    # Propósito:
+    #   A partir del body (JSON) y de la query string del webhook de Mercado Pago,
+    #   obtener el "tipo" de evento (topic) y el "id" del recurso principal.
+    #
+    # Entradas:
+    #   body  -> diccionario con el JSON del webhook.
+    #   query -> diccionario con los parámetros de la URL (?type=..., data.id=...).
+    #
+    # Salidas:
+    #   (topic, resource_id) -> tupla de dos strings, o (None, None) si no se puede.
+    #
+    # Dependencias:
+    #   Solo usa tipos básicos de Python (dict, str), no requiere imports extra.
+
+    # Intentamos obtener el tipo de evento directamente desde el body.
+    topic = body.get("type")
+
+    # Si en el body no vino "type", probamos tomarlo desde la query string.
+    if topic is None:
+        topic = query.get("type")
+
+    # Obtenemos el campo "data" del body, si existe, o un diccionario vacío.
+    data_dict = body.get("data") or {}
+
+    # Dentro de "data", intentamos leer el identificador principal del recurso.
+    resource_id = data_dict.get("id")
+
+    # Si no encontramos el id dentro de "data", probamos con "data.id" en la query.
+    if resource_id is None:
+        resource_id = query.get("data.id")
+
+    # Como último intento, miramos si hay un "id" en la raíz del body.
+    if resource_id is None:
+        resource_id = body.get("id")
+
+    # Si falta el topic o el id del recurso, devolvemos (None, None) para indicar error.
+    if topic is None or resource_id is None:
+        return None, None
+
+    # Devolvemos la tupla (topic, resource_id) cuando ambos existen.
+    return topic, resource_id
+
+
+def obtener_usuario_desde_preapproval(preapproval):
+    # Propósito:
+    #   Dado un objeto "preapproval" de Mercado Pago, encontrar el usuario
+    #   en nuestra base de datos usando, en este orden:
+    #       1) external_reference con formato "user:<id>".
+    #       2) el campo mp_preapproval_id guardado en el modelo User.
+    #
+    # Entradas:
+    #   preapproval -> diccionario que representa la suscripción en Mercado Pago.
+    #
+    # Salidas:
+    #   Instancia de User si se encuentra, o None en caso contrario.
+    #
+    # Dependencias:
+    #   - Modelo User (from models import User).
+    #   - Campo mp_preapproval_id en la tabla de usuarios.
+
+    # Intentamos leer el external_reference definido cuando se creó la suscripción.
+    external_reference = preapproval.get("external_reference")
+
+    # Inicializamos user en None para ir actualizándolo si encontramos coincidencias.
+    user = None
+
+    # Verificamos si external_reference existe y comienza con el prefijo esperado.
+    if external_reference and external_reference.startswith("user:"):
+        # Separamos el texto después de "user:" para obtener el id en formato string.
+        parte_id = external_reference.split(":", 1)[1]
+        try:
+            # Convertimos la parte numérica del string a un entero.
+            user_id = int(parte_id)
+            # Buscamos en la base de datos al usuario con esa clave primaria.
+            user = User.query.get(user_id)
+        except ValueError:
+            # Si no se puede convertir a entero, ignoramos este método y seguimos.
+            user = None
+
+    # Si todavía no encontramos usuario, probamos buscar por mp_preapproval_id.
+    if user is None:
+        # Obtenemos el id de la suscripción desde el objeto preapproval.
+        preapproval_id = preapproval.get("id")
+        # Si existe un id, buscamos un usuario que lo tenga guardado.
+        if preapproval_id:
+            user = User.query.filter_by(mp_preapproval_id=preapproval_id).first()
+
+    # Devolvemos el usuario encontrado o None si no hubo coincidencias.
+    return user
+
+
+# ====== RUTAS ======
 
 @app.route('/')
 def landing():
-    """Landing page con información del proyecto"""
+    """
+    Landing page con información del proyecto.
+
+    Lógica:
+    - No autenticado -> muestra landing.
+    - Autenticado + suscripción ACTIVA -> redirige a /app.
+    - Autenticado + sin suscripción vigente -> se queda en landing
+      (desde aquí puede ir a /suscripcion, logout, etc.).
+    """
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))
+        if suscripcion_vigente(current_user):
+            return redirect(url_for('upload_files'))
+        # Si está autenticado pero NO tiene suscripción vigente,
+        # simplemente mostramos la landing.
+        # Así el botón "Volver" de suscripción puede traerte aquí sin bucles.
+
     return render_template('landing.html')
+
+
 
 
 @app.route('/terminos')
@@ -624,108 +855,477 @@ def sobre_nosotros():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """
-    Propósito: registrar nuevos usuarios con email único y contraseña hasheada.
-    Entradas (POST form): email, password, confirm_password, nombre (opcional), apellido (opcional).
-    Salidas: render de la vista o redirect a login tras éxito.
-    Dependencias: validate_email_format, validate_password_strength, User, db.session.
+    Propósito:
+        Registrar nuevos usuarios en la aplicación usando un email único y
+        almacenando la contraseña de forma segura (hasheada desde el modelo User).
+
+    Entradas:
+        - Método GET:
+            * Muestra el formulario de registro.
+        - Método POST (formulario):
+            * email: correo electrónico del usuario.
+            * password: contraseña elegida por el usuario.
+            * confirm_password: repetición de la contraseña.
+            * nombre: nombre del usuario (opcional).
+            * apellido: apellido del usuario (opcional).
+
+    Salidas:
+        - Renderiza 'register.html' cuando:
+            * Es una petición GET.
+            * Falta información o hay errores de validación.
+        - Redirige a 'login' cuando:
+            * El registro se completa correctamente.
+
+    Dependencias:
+        - validate_email_format para validar y normalizar el correo.
+        - validate_password_strength para comprobar la fortaleza de la contraseña.
+        - Modelo User para crear el registro en la base de datos.
+        - db.session para guardar el nuevo usuario.
+        - current_user para saber si ya hay alguien autenticado.
     """
-    # Registrar nuevos usuarios con email único y contraseña hasheada
+
+    # Comprobamos si ya hay un usuario autenticado en la sesión actual.
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))  # Si ya está logueado, lo mandamos a la app
+        # Si ya está logueado, no tiene sentido registrar otro usuario; lo mandamos a la app.
+        return redirect(url_for('upload_files'))
 
+    # Revisamos si la petición es de tipo POST (envío del formulario de registro).
     if request.method == 'POST':
-        email = request.form.get('email', '').strip()            # Correo ingresado
-        password = request.form.get('password')                  # Contraseña
-        confirm_password = request.form.get('confirm_password')  # Confirmación
-        nombre = request.form.get('nombre', '').strip()          # Nombre opcional
-        apellido = request.form.get('apellido', '').strip()      # Apellido opcional
+        # Obtenemos el email del formulario y quitamos espacios extra al inicio y final.
+        email = request.form.get('email', '').strip()
+        # Obtenemos la contraseña tal como fue ingresada por el usuario.
+        password = request.form.get('password')
+        # Obtenemos la confirmación de la contraseña.
+        confirm_password = request.form.get('confirm_password')
+        # Obtenemos el nombre, opcional, y eliminamos espacios sobrantes.
+        nombre = request.form.get('nombre', '').strip()
+        # Obtenemos el apellido, opcional, y eliminamos espacios sobrantes.
+        apellido = request.form.get('apellido', '').strip()
 
+        # Validamos que se haya ingresado un email y una contraseña.
         if not email or not password:
+            # Mostramos un mensaje de error indicando que ambos campos son obligatorios.
             flash('Email y contraseña son obligatorios', 'danger')
+            # Volvemos a mostrar el formulario de registro.
             return render_template('register.html')
 
+        # Comprobamos que el correo no exceda el máximo permitido (150 caracteres).
         if len(email) > 150:
+            # Si es demasiado largo, mostramos un mensaje de error.
             flash('El correo no puede exceder 150 caracteres', 'danger')
+            # Renderizamos de nuevo el formulario para que pueda corregirlo.
             return render_template('register.html')
 
+        # Si el usuario escribió un nombre, revisamos que no sea demasiado largo.
         if nombre and len(nombre) > 80:
+            # Mostramos error si el nombre supera los 80 caracteres.
             flash('El nombre no puede exceder 80 caracteres', 'danger')
+            # Volvemos a mostrar el formulario.
             return render_template('register.html')
 
+        # Si el usuario escribió un apellido, revisamos que no sea demasiado largo.
         if apellido and len(apellido) > 80:
+            # Mostramos error si el apellido supera los 80 caracteres.
             flash('El apellido no puede exceder 80 caracteres', 'danger')
+            # Volvemos a mostrar el formulario.
             return render_template('register.html')
 
-        is_valid_email, normalized_email, email_error = validate_email_format(email)  # Normaliza y valida formato
+        # Llamamos a la función que valida y normaliza el correo electrónico.
+        is_valid_email, normalized_email, email_error = validate_email_format(email)
+        # Si el correo no pasa la validación de formato, mostramos el motivo.
         if not is_valid_email:
+            # Mostramos el mensaje de error específico que devuelve la función.
             flash(f'Correo inválido: {email_error}', 'danger')
+            # Volvemos a mostrar el formulario de registro.
             return render_template('register.html')
 
-        if password != confirm_password:  # Verifica coincidencia de contraseñas
+        # Comparamos la contraseña con la confirmación para asegurarnos de que coincidan.
+        if password != confirm_password:
+            # Si no son iguales, informamos al usuario del error.
             flash('Las contraseñas no coinciden', 'danger')
+            # Renderizamos de nuevo el formulario para que las vuelva a ingresar.
             return render_template('register.html')
 
-        is_valid_password, password_error = validate_password_strength(password)  # Valida fortaleza
+        # Llamamos a la función que evalúa la fortaleza de la contraseña.
+        is_valid_password, password_error = validate_password_strength(password)
+        # Si la contraseña no cumple los requisitos, mostramos el motivo.
         if not is_valid_password:
+            # Mostramos el mensaje de error devuelto por la validación.
             flash(password_error, 'danger')
+            # Volvemos a mostrar el formulario de registro.
             return render_template('register.html')
 
-        if User.query.filter_by(email=normalized_email).first():  # Revisa unicidad de email
+        # Buscamos si ya existe un usuario con ese correo normalizado en la base de datos.
+        if User.query.filter_by(email=normalized_email).first():
+            # Si ya hay un registro con ese correo, no permitimos un duplicado.
             flash('El correo ya está registrado', 'danger')
+            # Mostramos otra vez el formulario para que use otro correo.
             return render_template('register.html')
 
-        new_user = User(email=normalized_email, password=password, nombre=nombre, apellido=apellido)  # Crea usuario
-        db.session.add(new_user)  # Agrega a la sesión
-        db.session.commit()       # Guarda en la base
+        # Creamos una nueva instancia de User con los datos ingresados.
+        # El modelo se encargará de hashear la contraseña internamente.
+        new_user = User(
+            email=normalized_email,
+            password=password,
+            nombre=nombre,
+            apellido=apellido
+        )
 
+        # Añadimos el nuevo usuario a la sesión de la base de datos.
+        db.session.add(new_user)
+        # Confirmamos los cambios guardando el nuevo registro en la base.
+        db.session.commit()
+
+        # Mostramos un mensaje indicando que el registro fue exitoso.
         flash('Registro exitoso. Inicia sesión.', 'success')
-        return redirect(url_for('login'))  # Redirige a login
+        # Redirigimos al usuario a la página de login para que pueda iniciar sesión.
+        return redirect(url_for('login'))
 
-    return render_template('register.html')  # Muestra formulario en GET
-
-
+    # Si la petición es GET (o no se cumplió ninguna condición anterior), mostramos el formulario.
+    return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Propósito: autenticar usuarios y registrar último acceso.
-    Entradas (POST form): email, password, remember (checkbox).
-    Salidas: render de login o redirect a la app tras éxito.
-    Dependencias: User, db.session, Flask-Login (login_user).
+    Propósito:
+        Autenticar usuarios, manejar el inicio de sesión y registrar el último acceso.
+        Además, redirigir a la página de suscripción si el usuario no tiene una
+        suscripción vigente y necesita pagar.
+
+    Entradas:
+        - Método GET:
+            * Muestra el formulario de inicio de sesión.
+        - Método POST (formulario):
+            * email: correo del usuario.
+            * password: contraseña del usuario.
+
+    Salidas:
+        - Renderiza la plantilla 'login.html' cuando:
+            * Es un GET.
+            * Faltan datos.
+            * Las credenciales son incorrectas.
+            * La cuenta no está activa.
+        - Redirige a:
+            * /suscripcion si necesita pagar.
+            * /app (upload_files) si la suscripción está vigente.
+            * next (si viene de una página protegida) tras login exitoso.
+
+    Dependencias:
+        - Modelo User y db.session para consultar y actualizar la BD.
+        - Flask-Login: current_user, login_user.
+        - Funciones suscripcion_vigente(user) y necesita_pago(user) para la lógica de suscripción.
+        - datetime.utcnow para registrar el último acceso.
     """
-    # Autenticar usuarios y registrar último acceso
+
+    # Verificamos si ya hay un usuario autenticado en la sesión actual.
     if current_user.is_authenticated:
-        return redirect(url_for('upload_files'))  # Si ya está logueado, va a la app
+        # Revisamos si su suscripción NO está vigente y además requiere pago.
+        if not suscripcion_vigente(current_user) and necesita_pago(current_user):
+            # Si debe pagar, lo redirigimos a la página de suscripción.
+            return redirect(url_for('suscripcion_checkout'))
+        # Si la suscripción está bien o no necesita pago, lo mandamos a la app principal.
+        return redirect(url_for('upload_files'))
 
+    # Comprobamos si la petición es de tipo POST (envío del formulario).
     if request.method == 'POST':
-        email = request.form.get('email', '').strip()  # Correo ingresado
-        password = request.form.get('password')        # Contraseña ingresada
-        remember = request.form.get('remember', False) # Checkbox “recordarme”
+        # Obtenemos el correo desde el formulario y eliminamos espacios extra.
+        email = request.form.get('email', '').strip()
+        # Obtenemos la contraseña desde el formulario tal como viene.
+        password = request.form.get('password')
+        # Obtenemos el valor del checkbox "remember" (puede venir como 'on' o no venir).
+        remember = request.form.get('remember', False)
 
+        # Verificamos que el correo y la contraseña no estén vacíos.
         if not email or not password:
+            # Mostramos un mensaje de error si faltan datos.
             flash('Correo y contraseña son requeridos', 'danger')
+            # Renderizamos de nuevo la plantilla de login para que intente otra vez.
             return render_template('login.html')
 
-        user = User.query.filter_by(email=email).first()  # Busca por email
+        # Buscamos en la base de datos un usuario con ese correo electrónico.
+        user = User.query.filter_by(email=email).first()
 
-        if user and user.check_password(password):  # Valida contraseña contra el hash
-            if user.estado_cuenta != 'ACTIVA':  # Revisa estado de la cuenta
+        # Verificamos que el usuario exista y que la contraseña sea correcta.
+        if user and user.check_password(password):
+            # Comprobamos si la cuenta del usuario está marcada como ACTIVA.
+            if user.estado_cuenta != 'ACTIVA':
+                # Si la cuenta no está activa, mostramos un mensaje y no iniciamos sesión.
                 flash('Tu cuenta no está activa', 'danger')
+                # Volvemos a mostrar el formulario de login.
                 return render_template('login.html')
 
-            login_user(user, remember=remember)     # Inicia sesión
-            user.ultimo_acceso = datetime.utcnow()  # Actualiza último acceso
-            db.session.commit()                     # Guarda el cambio
+            # Llamamos a login_user para guardar al usuario en la sesión.
+            login_user(user, remember=remember)
+            # Actualizamos el campo ultimo_acceso con la fecha y hora actual en UTC.
+            user.ultimo_acceso = datetime.utcnow()
+            # Guardamos los cambios en la base de datos.
+            db.session.commit()
 
-            next_page = request.args.get('next')    # Redirección deseada
+            # Revisamos si la suscripción NO está vigente y además requiere pago.
+            if not suscripcion_vigente(user) and necesita_pago(user):
+                # Si debe pagar, lo redirigimos a la página de suscripción.
+                return redirect(url_for('suscripcion_checkout'))
+
+            # Obtenemos la página a la que quería ir originalmente (si existe).
+            next_page = request.args.get('next')
+            # Si existe next_page, redirigimos allí; si no, vamos a la app principal.
             return redirect(next_page) if next_page else redirect(url_for('upload_files'))
+
         else:
+            # Si el usuario no existe o la contraseña es incorrecta, mostramos un mensaje de error.
             flash('Correo o contraseña incorrectos', 'danger')
 
-    return render_template('login.html')  # Muestra formulario en GET
+    # Si es una petición GET, o hubo un error, mostramos el formulario de login.
+    return render_template('login.html')
 
 
 
+@app.route('/suscripcion')
+@login_required
+def suscripcion_checkout():
+    # Propósito:
+    #   Mostrar la página con la información del plan de suscripción
+    #   y un botón para iniciar el proceso con Mercado Pago.
+    #
+    # Entradas:
+    #   Ninguna directa (usa current_user solo para validar acceso).
+    #
+    # Salidas:
+    #   Render del template 'suscripcion.html' con datos del plan.
+    #
+    # Dependencias:
+    #   - current_user de Flask-Login (para validar acceso).
+    #   - Template 'suscripcion.html'.
+
+    # Definimos los datos básicos del plan que se mostrará en la página.
+    if suscripcion_vigente(current_user):
+        # Ya está al día, mejor mandarlo a la app
+        return redirect(url_for('upload_files'))
+    
+    plan = {
+        "nombre": "Plan Standard FAT Testing",
+        "monto": 150000,
+        "moneda": "CLP",
+        "renovacion": "Mensual",
+    }
+
+    # Calculamos la fecha estimada de próxima renovación (por ahora, la fecha de hoy).
+    proxima_fecha = datetime.utcnow().date()
+
+    # Esta ruta interna creará la suscripción vía SDK y luego redirigirá a Mercado Pago.
+    checkout_url = url_for('iniciar_suscripcion_mp')
+
+    # Renderizamos el template de suscripción con los datos del plan y la URL del botón.
+    return render_template('suscripcion.html', plan=plan, proxima_fecha=proxima_fecha, checkout_url=checkout_url)
+
+
+
+@app.route('/suscripcion/iniciar')
+@login_required
+def iniciar_suscripcion_mp():
+    # Obtenemos el SDK de Mercado Pago desde la configuración global.
+    sdk = Config.sdk_mp
+
+    # Construimos el external_reference con el id del usuario actual.
+    external_reference = f"user:{current_user.id}"
+
+    # Obtenemos el correo del payer.
+    # En sandbox: usamos MP_TEST_PAYER_EMAIL si existe.
+    # Si no está definido, usamos el correo del usuario.
+    payer_email = os.environ.get("MP_TEST_PAYER_EMAIL", current_user.email)
+
+    # Preparamos los datos del preapproval usando el esquema de Checkout MP.
+    preapproval_data = {
+        "auto_recurring": {
+            "currency_id": "CLP",
+            "transaction_amount": 150000,
+            "frequency": 1,
+            "frequency_type": "months",
+        },
+        "back_url": url_for("upload_files", _external=True),
+        "external_reference": external_reference,
+        "payer_email": payer_email,
+        "reason": "Plan Standard FAT Testing",
+    }
+
+    # Inicializamos variables para usar después de llamar a la API.
+    preapproval_id = None
+    init_point = None
+
+    # Intentamos crear la suscripción en Mercado Pago dentro de un bloque try/except.
+    try:
+        # Llamamos a la API de Mercado Pago para crear la suscripción.
+        response = sdk.preapproval().create(preapproval_data)
+
+        # Mostramos la respuesta cruda de Mercado Pago para depurar en caso de error.
+        print("[MP] Respuesta completa al crear preapproval:", response)
+
+        # Obtenemos el diccionario de respuesta principal.
+        preapproval = response.get("response", {})
+
+        # Extraemos el id de la suscripción creada.
+        preapproval_id = preapproval.get("id")
+
+        # Extraemos la URL donde se debe redirigir al usuario para completar la suscripción.
+        init_point = preapproval.get("init_point") or preapproval.get("sandbox_init_point")
+
+        # Mostramos en consola algo de información para depuración.
+        print(f"[MP] preapproval creado: id={preapproval_id}, init_point={init_point}")
+
+    except Exception as e:
+        # Si ocurre un error al hablar con Mercado Pago, lo mostramos en consola.
+        print(f"[MP] Error al crear preapproval: {e}")
+        # Mostramos un mensaje de error al usuario.
+        flash("Ocurrió un problema al iniciar la suscripción. Intenta de nuevo.", "danger")
+        # Redirigimos de vuelta a la página de suscripción.
+        return redirect(url_for("suscripcion_checkout"))
+
+    # Verificamos si realmente obtuvimos un id de suscripción.
+    if preapproval_id:
+        # Guardamos el id de Mercado Pago en el usuario actual para futuras referencias.
+        current_user.mp_preapproval_id = preapproval_id
+        # Marcamos el estado de la suscripción como pendiente de confirmación en Mercado Pago.
+        current_user.estado_suscripcion = "PENDIENTE_MP"
+        # Guardamos los cambios en la base de datos.
+        db.session.commit()
+    else:
+        # Si no hay id en la respuesta, registramos esto en la consola para depuración.
+        print("[MP] La respuesta de preapproval no contiene 'id'.")
+        # Mostramos un mensaje al usuario indicando que hubo un problema.
+        flash("No se pudo crear la suscripción en Mercado Pago.", "danger")
+        # Redirigimos nuevamente a la página de suscripción.
+        return redirect(url_for("suscripcion_checkout"))
+
+    # Si no se obtuvo una URL de checkout, no podemos continuar con el flujo normal.
+    if not init_point:
+        # Informamos por consola que falta la URL de redirección.
+        print("[MP] La respuesta de preapproval no trae init_point.")
+        # Informamos al usuario con un mensaje amigable.
+        flash("No se pudo obtener la URL de pago de Mercado Pago.", "danger")
+        # Redirigimos a la página de suscripción.
+        return redirect(url_for("suscripcion_checkout"))
+
+    # Si todo salió bien, redirigimos al usuario al checkout de Mercado Pago.
+    return redirect(init_point)
+
+
+@app.route('/mp/webhook', methods=['GET', 'POST'])
+def mp_webhook():
+    # Propósito:
+    #   Recibir las notificaciones (webhooks) de Mercado Pago tanto reales como
+    #   las de prueba del simulador, imprimir lo que llega y, si es un evento
+    #   de suscripción, consultar la API para actualizar el estado del usuario.
+    #
+    # Entradas:
+    #   - Método GET: usado por algunas pruebas / healthchecks → solo log y 200.
+    #   - Método POST: notificaciones reales de Mercado Pago con body JSON.
+    #
+    # Salidas:
+    #   - Siempre devuelve 200 OK para que Mercado Pago considere el webhook
+    #     como recibido, aunque internamente algo falle.
+    #
+    # Dependencias:
+    #   - request, json (de Flask).
+    #   - extraer_evento_mp, obtener_usuario_desde_preapproval.
+    #   - Config.sdk_mp, User, db, datetime, timedelta.
+
+    # --- 1) Si llega un GET (simulador / prueba simple) ---
+    # Si el método HTTP es GET, solo registramos la llamada y devolvemos 200.
+    if request.method == "GET":
+        # Imprimimos el método y los parámetros de la query para depurar.
+        print("=== WEBHOOK MP (GET) ===")
+        print("Query:", request.args.to_dict())
+        print("========================")
+        # Respondemos con 200 OK sin procesar nada más.
+        return "", 200
+
+    # --- 2) Aquí manejamos solo los POST (notificaciones reales) ---
+    try:
+        # Obtenemos el body del webhook como diccionario (puede venir vacío).
+        body = request.get_json(silent=True) or {}
+        # Obtenemos los parámetros de la query string (?type=..., data.id=..., etc.).
+        query = request.args.to_dict()
+
+        # Imprimimos todo el contenido del webhook para depuración.
+        print("=== WEBHOOK MP (POST) ===")
+        print("Query:", query)
+        print("Body:", json.dumps(body, indent=2, ensure_ascii=False))
+        print("=========================")
+
+        # Obtenemos el tipo de evento (topic) y el id del recurso (resource_id).
+        topic, resource_id = extraer_evento_mp(body, query)
+
+        # Mostramos qué tipo de evento y cuál es el id asociado.
+        print(f"[MP] topic={topic}, resource_id={resource_id}")
+
+        # Obtenemos el SDK de Mercado Pago desde la configuración global.
+        sdk = Config.sdk_mp
+
+        # Si el evento corresponde a una suscripción (preapproval).
+        if topic == "subscription_preapproval" and resource_id:
+            try:
+                # Consultamos la API de MP para obtener la suscripción completa.
+                response = sdk.preapproval().get(resource_id)
+                preapproval = response.get("response", {})
+
+                # Mostramos en consola el preapproval recibido.
+                print(f"[MP] preapproval recibido en webhook: {preapproval}")
+
+                # Usamos el helper para encontrar al usuario en nuestra base.
+                user = obtener_usuario_desde_preapproval(preapproval)
+
+                # Si no encontramos usuario, lo registramos y terminamos.
+                if user is None:
+                    print(f"[MP] No se encontró usuario para preapproval {resource_id}.")
+                else:
+                    # Obtenemos el estado de la suscripción en MP.
+                    status = preapproval.get("status")
+                    # Obtenemos la fecha actual en UTC (solo fecha).
+                    hoy = datetime.utcnow().date()
+                    # Obtenemos el id real de la suscripción.
+                    preapproval_id_real = preapproval.get("id")
+
+                    # Mostramos un resumen en consola.
+                    print(f"[MP] status={status}, preapproval_id={preapproval_id_real}, user_id={user.id}")
+
+                    # Si la suscripción está autorizada, la marcamos como ACTIVA.
+                    if status == "authorized":
+                        user.estado_suscripcion = "ACTIVA"
+                        if user.fecha_fin_suscripcion is None or user.fecha_fin_suscripcion < hoy:
+                            user.fecha_fin_suscripcion = hoy + timedelta(days=30)
+                        if preapproval_id_real:
+                            user.mp_preapproval_id = preapproval_id_real
+
+                    # Si está pausada, la marcamos como PAUSADA.
+                    elif status == "paused":
+                        user.estado_suscripcion = "PAUSADA"
+
+                    # Si está cancelada, la marcamos como CANCELADA.
+                    elif status == "cancelled":
+                        user.estado_suscripcion = "CANCELADA"
+
+                    # Para otros estados, solo los registramos.
+                    else:
+                        print(f"[MP] Status de preapproval no manejado aún: {status}")
+
+                    # Guardamos los cambios en la base de datos.
+                    db.session.commit()
+                    print("[MP] Suscripción de usuario actualizada correctamente.")
+
+            except Exception as e:
+                # Mostramos el error en consola para poder depurarlo luego.
+                print(f"[MP] Error procesando subscription_preapproval: {e}")
+
+        # Si el tipo de evento no es de suscripción, por ahora solo lo registramos.
+        else:
+            print(f"[MP] Topic no manejado todavía o resource_id vacío: topic={topic}, resource_id={resource_id}")
+
+    except Exception as e:
+        # Cualquier error inesperado lo capturamos para que igual devolvamos 200.
+        print(f"[MP] Error general en mp_webhook: {e}")
+
+    # Siempre respondemos con 200 OK para que Mercado Pago considere el webhook como recibido.
+    return "", 200
 
 @app.route('/logout')
 @login_required
@@ -831,9 +1431,8 @@ def reset_password(token):
     return render_template('reset_password.html', token=token)  # Muestra formulario en GET
 
 
-
 @app.route('/dashboard')
-@login_required
+@suscripcion_requerida
 def dashboard():
     """
     Propósito: listar usuarios (ajusta la política de acceso según tu criterio).
@@ -851,9 +1450,8 @@ def dashboard():
     return render_template('dashboard.html', users=users)
 
 
-
 @app.route('/download-desktop-app')
-@login_required
+@suscripcion_requerida
 def download_desktop_app():
     """Ruta para descargar la aplicación de escritorio"""
     try:
@@ -880,25 +1478,14 @@ def download_desktop_app():
 # ====== RUTAS DE LA APLICACIÓN ======
 
 @app.route('/app', methods=['GET', 'POST'])
-@login_required
+@suscripcion_requerida
 def upload_files():
 
     opciones = [
-        'AP C9115AXI',
-        'AP C9120AXE',
-        'AP C9130AXI',
         'SW L2 9200',
         'SW L2 9300',
         'SW L2 9500',
-        'SW L3 9348GC',
-        'SW L3 C93180YC',
-        'SW IE3300',
-        'SW IE4010',
-        'Check Point 6200',
-        'Check Point 6600',
-        'Router ISR4431',
-        'Router C8500',
-        ]
+    ]
 
     if request.method == 'POST':
 
@@ -964,7 +1551,7 @@ def upload_files():
         return send_file(word_buffer, as_attachment=True, download_name=download_filename, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
     
-    return render_template('index.html', opciones=opciones)
+    return render_template('informes.html', opciones=opciones)
 
 # ====== COMANDOS CLI ======
 
