@@ -46,39 +46,41 @@ def show_message(parent, title, message, msg_type="info"):
     elif msg_type == "success":
         msg_box.setIcon(QMessageBox.Information)
 
-    # Aplicar estilo Corporativo
+    # Estilo compacto y profesional
     msg_box.setStyleSheet("""
         QMessageBox {
-            background-color: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
         }
         QMessageBox QLabel {
             color: #1e293b;
             font-size: 10pt;
-            padding: 16px;
-            line-height: 1.6;
-            min-height: 24px;
+            padding: 8px 12px;
         }
         QMessageBox QPushButton {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #2563eb, stop:1 #4f46e5);
-            color: white;
+            background-color: #1a56db;
+            color: #ffffff;
             border: none;
-            border-radius: 6px;
-            padding: 10px 24px;
-            min-height: 36px;
-            font-weight: 600;
+            border-radius: 4px;
+            padding: 6px 16px;
             min-width: 80px;
             font-size: 9pt;
+            font-weight: 600;
         }
         QMessageBox QPushButton:hover {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                stop:0 #1d4ed8, stop:1 #4338ca);
+            background-color: #1e40af;
+        }
+        QMessageBox QPushButton:pressed {
+            background-color: #1e3a8a;
         }
     """)
 
+    # Anchura mínima razonable para que no se estire demasiado
+    msg_box.setMinimumWidth(360)
+
     return msg_box.exec()
+
 
 
 # =============================================================================
@@ -109,7 +111,7 @@ MAPEO_DISPOSITIVOS = {
             ]
         },
         "prueba_4": {
-            "descripcion": "reload, show version, enable",
+            "descripcion": "reload, enable, show version",
             "ejecutar_reload": True,
             "comandos": []  # El reload se maneja de forma especial
         },
@@ -121,20 +123,88 @@ MAPEO_DISPOSITIVOS = {
             ]
         }
     },
+
     "Cisco Catalyst 9300": {
-        "prueba_1": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_2": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_3": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_4": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_5": {"descripcion": "Pendiente de configuración", "comandos": []}
+        "prueba_1": {
+            "descripcion": "show version, show inventory",
+            "comandos": [
+                {"comando": "show version", "espera": 2},
+                {"comando": "show inventory", "espera": 2}
+            ]
+        },
+        "prueba_2": {
+            "descripcion": "show environment power",
+            "repetir_por_fuentes": True,
+            "comandos": [
+                {"comando": "show environment power", "espera": 2}
+            ]
+        },
+        "prueba_3": {
+            "descripcion": "show environment fan",
+            "repetir_por_ventiladores": True,
+            "comandos": [
+                {"comando": "show environment fan", "espera": 2}
+            ]
+        },
+        "prueba_4": {
+            "descripcion": "reload, enable, show version",
+            "ejecutar_reload": True,
+            "comandos": []  # Usa la misma lógica de reload que el 9200
+        },
+        "prueba_5": {
+            "descripcion": "show inventory all, show interfaces ethernet",
+            "comandos": [
+                {"comando": "show inventory all", "espera": 3},
+                {"comando": "show interfaces ethernet", "espera": 5}
+            ]
+        }
     },
+
     "Cisco Catalyst 9500": {
-        "prueba_1": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_2": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_3": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_4": {"descripcion": "Pendiente de configuración", "comandos": []},
-        "prueba_5": {"descripcion": "Pendiente de configuración", "comandos": []}
+        "prueba_1": {
+            "descripcion": "show version, show inventory",
+            "comandos": [
+                {"comando": "show version", "espera": 2},
+                {"comando": "show inventory", "espera": 2}
+            ]
+        },
+        "prueba_2": {
+            "descripcion": "show environment status",
+            "repetir_por_fuentes": True,
+            "comandos": [
+                {"comando": "show environment status", "espera": 2}
+            ]
+        },
+        "prueba_3": {
+            "descripcion": "show environment status",
+            "repetir_por_ventiladores": True,
+            "comandos": [
+                {"comando": "show environment status", "espera": 2}
+            ]
+        },
+        "prueba_4": {
+            "descripcion": "reload, enable, show version",
+            "ejecutar_reload": True,
+            "comandos": []  # Usa la misma lógica de reload que el 9200
+        },
+        "prueba_5": {
+            "descripcion": "show inventory all, show interface ethernet",
+            "comandos": [
+                {"comando": "show inventory all", "espera": 3},
+                {"comando": "show interface ethernet", "espera": 5}
+            ]
+        }
     }
+}
+
+
+ESTADOS_QUE_NECESITAN_PAGO = {
+    "SIN_SUSCRIPCION",  # Nunca ha contratado un plan
+    "PENDIENTE_MP",     # Proceso iniciado en MP, aún no autorizado
+    "PAUSADA",          # Suscripción pausada
+    "CANCELADA",        # Suscripción cancelada
+    "VENCIDA",          # Fecha de término ya pasó
+    "EN_GRACIA",        # Periodo de gracia, pero queremos forzar pago
 }
 
 # =============================================================================
@@ -173,7 +243,24 @@ def cerrar_conexion_serial(conexion):
     """Cierra la conexión serial de forma segura"""
     if conexion and conexion.is_open:
         conexion.close()
-
+        
+def limpiar_caracteres_control(texto):
+    """
+    Elimina caracteres de control no imprimibles de la salida,
+    dejando solo saltos de línea, retorno de carro y tabulaciones.
+    Esto evita que en el archivo aparezcan cuadros raros.
+    """
+    resultado = []
+    for ch in texto:
+        codigo = ord(ch)
+        # Permitimos salto de línea, retorno de carro y tabulación
+        if ch in ("\n", "\r", "\t"):
+            resultado.append(ch)
+        # Permitimos caracteres imprimibles estándar
+        elif 32 <= codigo <= 126:
+            resultado.append(ch)
+        # El resto de caracteres de control se descarta
+    return "".join(resultado)
 
 def leer_respuesta_completa(conexion, timeout_total=10):
     """Lee la respuesta completa del dispositivo hasta que no haya más datos"""
@@ -187,9 +274,14 @@ def leer_respuesta_completa(conexion, timeout_total=10):
         if conexion.in_waiting > 0:
             datos = conexion.read(conexion.in_waiting)
             try:
-                respuesta_completa += datos.decode('ascii', errors='ignore')
+                texto = datos.decode("ascii", errors="ignore")
             except:
-                respuesta_completa += datos.decode('latin-1', errors='ignore')
+                texto = datos.decode("latin-1", errors="ignore")
+
+            # LIMPIAR caracteres de control no imprimibles
+            texto = limpiar_caracteres_control(texto)
+
+            respuesta_completa += texto
             tiempo_inicio = time.time()
         else:
             time.sleep(0.1)
@@ -200,6 +292,7 @@ def leer_respuesta_completa(conexion, timeout_total=10):
                     break
 
     return respuesta_completa
+
 
 
 def enviar_comando(conexion, comando, espera=ESPERA_COMANDO):
@@ -413,60 +506,59 @@ class TestThread(QThread):
         msg_box = QMessageBox(self.parent_window)
         msg_box.setWindowTitle(titulo)
         msg_box.setText(mensaje)
-        msg_box.setIcon(QMessageBox.Information)
         msg_box.setStandardButtons(QMessageBox.Ok)
 
         # Determinar el icono según el tipo de acción
         if "Desconecte" in mensaje or "desconectar" in mensaje.lower():
-            icon_color = "#f59e0b"  # Naranja para advertencia
+            icon_color = "#f59e0b"
             msg_box.setIcon(QMessageBox.Warning)
         elif "Reconecte" in mensaje or "reconectar" in mensaje.lower():
-            icon_color = "#10b981"  # Verde para reconexión
+            icon_color = "#10b981"
             msg_box.setIcon(QMessageBox.Information)
         elif "Verifique" in mensaje or "verificar" in mensaje.lower():
-            icon_color = "#3b82f6"  # Azul para verificación
+            icon_color = "#3b82f6"
             msg_box.setIcon(QMessageBox.Information)
         else:
             icon_color = "#3b82f6"
             msg_box.setIcon(QMessageBox.Information)
 
+        # Estilo compacto y profesional para los pop ups de prueba
         msg_box.setStyleSheet(f"""
             QMessageBox {{
                 background-color: #ffffff;
-                border: 2px solid {icon_color};
-                border-radius: 10px;
+                border: 1px solid {icon_color};
+                border-radius: 6px;
             }}
             QLabel {{
                 color: #1e293b;
-                font-size: 13px;
-                font-weight: 500;
-                min-width: 400px;
-                padding: 15px;
-                line-height: 1.6;
+                font-size: 10pt;
+                padding: 8px 12px;
             }}
             QPushButton {{
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #1a56db, stop:1 #1e40af);
-                color: white;
+                background-color: #1a56db;
+                color: #ffffff;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 30px;
-                font-weight: bold;
-                font-size: 12px;
-                min-width: 100px;
-                margin: 10px;
+                border-radius: 4px;
+                padding: 6px 18px;
+                min-width: 90px;
+                font-size: 9pt;
+                font-weight: 600;
+                margin: 6px;
             }}
             QPushButton:hover {{
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #1e40af, stop:1 #1e3a8a);
+                background-color: #1e40af;
             }}
             QPushButton:pressed {{
-                background: #1e3a8a;
-                padding: 13px 30px 11px 30px;
+                background-color: #1e3a8a;
             }}
         """)
+
+        # Evita que el diálogo se estire demasiado a lo ancho
+        msg_box.setMinimumWidth(360)
+
         msg_box.exec()
         self.popup_confirmado = True
+
 
     def mostrar_popup(self, titulo, mensaje):
         """Solicita mostrar un popup y espera confirmación"""
@@ -509,7 +601,6 @@ class TestThread(QThread):
         """
         # Escribir EXACTAMENTE como viene del CLI - sin tocar nada
         self.escribir_en_archivo(resultado)
-
     def ejecutar_prueba_generica(self, conexion, numero_prueba, config_prueba):
         """Ejecuta una prueba genérica basada en la configuración del mapeo"""
         if not config_prueba or not config_prueba.get("comandos"):
@@ -538,7 +629,7 @@ class TestThread(QThread):
 
         self.escribir_fin_prueba(numero_prueba)
         return resultado_acumulado
-
+    
     def ejecutar_prueba_repetitiva(self, conexion, numero_prueba, config_prueba, cantidad_repeticiones, tipo="", nombre_componente="componente"):
         """
         Ejecuta una prueba que se repite varias veces (fuentes/ventiladores)
@@ -560,7 +651,10 @@ class TestThread(QThread):
         # Verificar si se permite desconexión Y hay más de 1 componente
         if self.permitir_desconexion and cantidad_repeticiones > 1:
             # MODO CON DESCONEXIÓN
-            self.escribir_inicio_prueba(numero_prueba, f"{descripcion} - Prueba con desconexión ({cantidad_repeticiones} {tipo})")
+            self.escribir_inicio_prueba(
+                numero_prueba,
+                f"{descripcion} - Prueba con desconexión ({cantidad_repeticiones} {tipo})"
+            )
 
             # PASO 1: Verificar que todos estén conectados
             self.log(f"Solicitando verificación: Todos los {tipo} conectados", "warning")
@@ -579,13 +673,14 @@ class TestThread(QThread):
                 resultado = ejecutar_comando_completo_con_prompt(conexion, comando, espera=espera)
                 self.escribir_comando_resultado(resultado)
 
-            # PASO 2: Para cada componente, solicitar desconexión, ejecutar comando y reconectar
+            # PASO 2: Para cada componente, desconectar -> comando -> reconectar -> comando
             for i in range(1, cantidad_repeticiones + 1):
                 # Solicitar desconexión
                 self.log(f"Solicitando desconexión: {nombre_componente} {i}", "warning")
                 self.mostrar_popup(
                     f"⚠️ Desconectar {nombre_componente.capitalize()} {i}",
-                    f"Por favor, desconecte el {nombre_componente} {i} del dispositivo.\n\nUna vez desconectado, presione OK para ejecutar la verificación."
+                    f"Por favor, desconecte el {nombre_componente} {i} del dispositivo.\n\n"
+                    f"Una vez desconectado, presione OK para ejecutar la verificación."
                 )
 
                 self.escribir_en_archivo(f"\n=== {nombre_componente.capitalize()} {i} DESCONECTADO ===\n")
@@ -605,10 +700,20 @@ class TestThread(QThread):
                 self.log(f"Solicitando reconexión: {nombre_componente} {i}", "info")
                 self.mostrar_popup(
                     f"✅ Reconectar {nombre_componente.capitalize()} {i}",
-                    f"Por favor, vuelva a conectar el {nombre_componente} {i} al dispositivo.\n\nUna vez conectado, presione OK para continuar."
+                    f"Por favor, vuelva a conectar el {nombre_componente} {i} al dispositivo.\n\n"
+                    f"Una vez conectado, presione OK para continuar."
                 )
 
                 self.escribir_en_archivo(f"\n=== {nombre_componente.capitalize()} {i} RECONECTADO ===\n")
+
+                # Ejecutar comando nuevamente con el componente YA reconectado
+                for cmd_config in config_prueba.get("comandos", []):
+                    comando = cmd_config.get("comando")
+                    espera = cmd_config.get("espera", ESPERA_COMANDO)
+
+                    self.log(f"Ejecutando: {comando} ({nombre_componente} {i} reconectado)", "command")
+                    resultado = ejecutar_comando_completo_con_prompt(conexion, comando, espera=espera)
+                    self.escribir_comando_resultado(resultado)
 
             # PASO 3: Verificación final (todos reconectados)
             self.log(f"Verificación final: Todos los {tipo} reconectados", "success")
@@ -620,8 +725,10 @@ class TestThread(QThread):
         else:
             # MODO SIN DESCONEXIÓN
             # Si no se permite desconexión, solo se ejecuta el comando 1 VEZ
-            # porque se verán todos los componentes en una sola ejecución
-            self.escribir_inicio_prueba(numero_prueba, f"{descripcion} ({cantidad_repeticiones} {tipo})")
+            self.escribir_inicio_prueba(
+                numero_prueba,
+                f"{descripcion} ({cantidad_repeticiones} {tipo})"
+            )
 
             self.log(f"Ejecutando sin desconexión - Se verán todos los {tipo} en una sola ejecución", "info")
             self.escribir_en_archivo(f"\n=== Verificación de {tipo} (todos conectados) ===\n")
@@ -636,40 +743,61 @@ class TestThread(QThread):
 
         self.escribir_fin_prueba(numero_prueba)
 
+
     def ejecutar_prueba_4(self, conexion):
-        """Prueba 4: reload, show version, enable"""
-        self.escribir_inicio_prueba(4, "reload, show version, enable")
+        """Prueba 4: reload, enable, show version"""
+        self.escribir_inicio_prueba(4, "reload, enable, show version")
 
         self.escribir_en_archivo("\n=== INICIANDO RELOAD DEL EQUIPO ===\n")
         self.escribir_en_archivo(f"Hora de inicio reload: {datetime.now().strftime('%H:%M:%S')}\n")
-        self.log("INICIANDO RELOAD DEL EQUIPO - El dispositivo se reiniciará", "warning")
+        self.log("INICIANDO RELOAD DEL EQUIPO  El dispositivo se reiniciará", "warning")
 
-        # Enviar comando reload
-        self.log("Enviando comando: reload", "command")
-        conexion.write(b"reload\n")
-        time.sleep(2)
+        # ==============================
+        # Paso 0  ejecutar reload capturando CLI completo
+        # ==============================
+        self.log("Enviando comando  reload", "command")
 
-        # Leer respuesta inicial
-        respuesta = leer_respuesta_completa(conexion, timeout_total=5)
-        self.escribir_en_archivo(f"Respuesta inicial: {respuesta}\n")
-        self.log(f"Respuesta: {respuesta[:100]}", "info")
+        # Esto captura
+        #   prompt anterior
+        #   eco del comando reload
+        #   mensaje "Save? [yes/no]" si aparece
+        resultado_reload = ejecutar_comando_completo_con_prompt(conexion, "reload", espera=2)
 
-        # Manejar "Save?"
-        if "Save?" in respuesta or "save" in respuesta.lower():
-            self.log("Respondiendo a Save? -> no", "info")
-            conexion.write(b"no\n")
-            time.sleep(2)
-            respuesta = leer_respuesta_completa(conexion, timeout_total=5)
-            self.escribir_en_archivo(f"Respuesta a Save: {respuesta}\n")
+        # Escribir en el archivo exactamente lo que devolvió el CLI
+        self.escribir_comando_resultado(resultado_reload)
 
-        # Manejar "confirm" - enviar Enter para confirmar
-        if "confirm" in respuesta.lower() or "proceed" in respuesta.lower():
+        # Usaremos este acumulador para detectar Save y confirm
+        texto_reload_total = resultado_reload
+
+        # ==============================
+        # Paso 0 1  responder a "Save? [yes/no]"
+        # ==============================
+        if "Save?" in texto_reload_total or "save" in texto_reload_total.lower():
+            self.log("Respondiendo a Save  -> no", "info")
+
+            # enviar_comando escribe "no" y captura la respuesta del equipo
+            respuesta_save = enviar_comando(conexion, "no", espera=2)
+
+            # De nuevo se escribe el CLI tal cual
+            self.escribir_comando_resultado(respuesta_save)
+            texto_reload_total += respuesta_save
+
+        # ==============================
+        # Paso 0 2  responder a "Proceed with reload? [confirm]"
+        # ==============================
+        if "confirm" in texto_reload_total.lower() or "proceed" in texto_reload_total.lower():
             self.log("Confirmando reload...", "info")
+
+            # Aquí solo se envía Enter
             conexion.write(b"\n")
             time.sleep(2)
-            respuesta = leer_respuesta_completa(conexion, timeout_total=5)
-            self.escribir_en_archivo(f"Confirmación enviada: {respuesta}\n")
+            respuesta_confirm = leer_respuesta_completa(conexion, timeout_total=5)
 
+            # Guardar la respuesta del equipo
+            self.escribir_comando_resultado(respuesta_confirm)
+            texto_reload_total += respuesta_confirm
+
+        # A partir de aquí el equipo ya está en proceso de reinicio
         self.log(f"Esperando {ESPERA_RELOAD} segundos para que el equipo reinicie...", "warning")
         self.escribir_en_archivo(f"\nEsperando {ESPERA_RELOAD} segundos para reinicio...\n")
 
@@ -689,11 +817,12 @@ class TestThread(QThread):
         # Esperar un poco más después de detectar el arranque
         time.sleep(10)
 
-        self.escribir_en_archivo("\n=== EQUIPO REINICIADO, RECONECTANDO ===\n")
-        self.log("Equipo reiniciado, intentando reconectar...", "info")
+        self.escribir_en_archivo("\n=== EQUIPO REINICIADO  RECONECTANDO ===\n")
+        self.log("Equipo reiniciado  intentando reconectar...", "info")
 
         # Intentar despertar la consola
         for intento in range(15):
+            # Log SOLO en la UI
             self.log(f"Intento de reconexión {intento + 1}/15", "info")
 
             # Enviar varios Enter
@@ -702,7 +831,10 @@ class TestThread(QThread):
                 time.sleep(0.5)
 
             respuesta = leer_respuesta_completa(conexion, timeout_total=3)
-            self.escribir_en_archivo(f"\nIntento {intento + 1}: {respuesta}\n")
+
+            # En el archivo NO escribimos "Intento X", solo lo que responde el switch
+            if respuesta:
+                self.escribir_en_archivo(respuesta)
 
             if ">" in respuesta or "#" in respuesta:
                 self.log(f"Consola disponible después de {intento + 1} intentos", "success")
@@ -710,28 +842,37 @@ class TestThread(QThread):
 
             time.sleep(5)
 
-        # Configurar terminal
+
+        # ==============================
+        # Paso 1  ENTRAR A MODO ENABLE
+        # ==============================
+        self.escribir_en_archivo("\n=== ENTRANDO A MODO ENABLE (POST RELOAD) ===\n")
+        self.log("Entrando a modo enable...", "info")
+
+        resultado_enable = ejecutar_comando_completo_con_prompt(conexion, "enable", espera=2)
+        self.escribir_comando_resultado(resultado_enable)
+
+        if self.password_enable and ("Password:" in resultado_enable or "password:" in resultado_enable.lower()):
+            self.log("Se requiere contraseña de enable, enviando credenciales...", "info")
+            respuesta_pwd = enviar_comando(conexion, self.password_enable, espera=2)
+            self.escribir_comando_resultado(respuesta_pwd)
+
+        # ==============================
+        # Paso 2  CONFIGURAR TERMINAL
+        # ==============================
         self.log("Configurando terminal...", "info")
         configurar_terminal(conexion)
 
-        # Ejecutar show version después del reload
-        self.log("Ejecutando: show version (post-reload)", "command")
-        # Usar la nueva función que captura TODO incluyendo prompts
+        # ==============================
+        # Paso 3  SHOW VERSION POST RELOAD
+        # ==============================
+        self.escribir_en_archivo("\n=== EJECUTANDO SHOW VERSION (POST RELOAD) ===\n")
+        self.log("Ejecutando  show version (post reload)", "command")
         resultado_version = ejecutar_comando_completo_con_prompt(conexion, "show version", espera=3)
-
-        # Escribir EXACTAMENTE lo que viene del CLI
         self.escribir_comando_resultado(resultado_version)
 
-        # Entrar a modo enable
-        self.escribir_en_archivo("\n=== ENTRANDO A MODO ENABLE ===\n")
-        self.log("Entrando a modo enable...", "info")
-        entrar_modo_enable(conexion, self.password_enable)
-
-        # Verificar prompt
-        respuesta_enable = ejecutar_comando_completo(conexion, "", espera=1)
-        self.escribir_en_archivo(f"Prompt actual: {respuesta_enable}\n")
-
         self.escribir_fin_prueba(4)
+
 
     def run(self):
         """Método principal del thread que ejecuta todas las pruebas"""
@@ -1244,7 +1385,7 @@ class LoginWindow(QMainWindow):
         email = self.email_input.text().strip()
         password = self.password_input.text()
 
-        # Validación mejorada
+        # Validación de campos obligatorios
         if not email or not password:
             show_message(self, "Campos Incompletos", "Complete todos los campos para continuar", "warning")
             return
@@ -1260,20 +1401,49 @@ class LoginWindow(QMainWindow):
         try:
             with app.app_context():
                 user = User.query.filter_by(email=email).first()
-                if user and user.check_password(password):
-                    self.main_window = MainWindow(user)
-                    self.main_window.show()
-                    self.close()
-                else:
+
+                # Primero validar credenciales
+                if not user or not user.check_password(password):
                     show_message(self, "Authentication Failed", "Invalid email or password", "error")
                     self.login_button.setEnabled(True)
                     self.login_button.setText("Sign In")
                     self.password_input.clear()
                     self.password_input.setFocus()
+                    return
+
+                # Segundo validar estado de suscripción
+                estado = (user.estado_suscripcion or "").upper()
+
+                if estado in ESTADOS_QUE_NECESITAN_PAGO or estado != "ACTIVA":
+                    # Texto más legible del estado, por si quieres mostrarlo
+                    estado_legible = estado.replace("_", " ").title() if estado else "Desconocido"
+
+                    mensaje = (
+                        "Su usuario se autenticó correctamente, pero su suscripción no se encuentra activa.\n\n"
+                        f"Estado actual de su suscripción: {estado_legible}.\n\n"
+                        "Para utilizar el ejecutable de FAT Testing debe contar con una suscripción ACTIVA.\n"
+                        "Por favor ingrese a la página oficial de FAT Testing y complete el proceso de suscripción "
+                        "o reactivación de su plan. Una vez que su suscripción esté activa podrá iniciar sesión en el aplicativo de escritorio."
+                    )
+
+                    show_message(self, "Suscripción no activa", mensaje, "warning")
+
+                    self.login_button.setEnabled(True)
+                    self.login_button.setText("Sign In")
+                    self.password_input.clear()
+                    self.password_input.setFocus()
+                    return
+
+                # Si llegó aquí, credenciales correctas y suscripción ACTIVA
+                self.main_window = MainWindow(user)
+                self.main_window.show()
+                self.close()
+
         except Exception as e:
             show_message(self, "Connection Error", f"Database connection failed:\n{str(e)}", "error")
             self.login_button.setEnabled(True)
             self.login_button.setText("Sign In")
+
 
 
 class MainWindow(QMainWindow):
