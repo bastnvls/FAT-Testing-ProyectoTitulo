@@ -1,40 +1,32 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {# Descripción por defecto, se puede sobreescribir en cada template hija #}
-    <meta name="description" content="Sistema de automatización FAT para equipos Cisco Catalyst. Reduce pruebas de 35-45 min a menos de 10 min. Software CLI + generador de informes Word. Soporte para Catalyst 9200, 9300 y 9500">
+    <meta name="description"
+          content="Sistema de automatización FAT para equipos Cisco Catalyst. Reduce pruebas de 35-45 min a menos de 10 min. Software CLI + generador de informes Word. Soporte para Catalyst 9200, 9300 y 9500">
 
     <title>
         {% block title %}
-            FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst
+        FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst
         {% endblock %}
     </title>
 
-    {# ==== CDNs GLOBALES (todas las páginas) ==== #}
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome (CSS) -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-    <!-- Estilos globales -->
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* Botón azul reutilizable (suscripción / Mercado Pago) */
         .blue-button {
             background-color: #3483FA;
             color: white;
@@ -47,6 +39,7 @@
             transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 10px 22px rgba(52, 131, 250, 0.35);
         }
+
         .blue-button:hover {
             background-color: #2a68c8;
             transform: translateY(-1px);
@@ -54,80 +47,125 @@
         }
     </style>
 
-    {# Bloque opcional para CSS extra o meta-tags específicos de cada página #}
     {% block extra_head %}{% endblock %}
 </head>
 
 <body class="antialiased bg-white">
 
-    <!-- Navigation -->
+    <!-- NAVBAR A ANCHO COMPLETO -->
     <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <div class="flex items-center space-x-2">
+        <!-- OJO: aquí ya NO hay max-w-7xl mx-auto, solo padding -->
+        <div class="w-full px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                <!-- BLOQUE 1: LOGO -->
+                <div class="flex-none flex items-center space-x-2">
                     <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
-                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                             <i class="fas fa-network-wired text-white text-sm"></i>
                         </div>
                         <span class="text-xl font-bold text-gray-900">FAT Testing</span>
                     </a>
                 </div>
 
-                <!-- Links -->
-                <div class="hidden md:flex items-center space-x-8">
+                <!-- BLOQUE 2: LINKS CENTRALES -->
+                <div class="hidden md:flex flex-1 items-center justify-center">
+                    <div class="flex items-center space-x-8 ml-10">
+                        <a href="{{ url_for('landing') }}#features"
+                           class="text-gray-600 hover:text-gray-900 transition">
+                            Características
+                        </a>
+                        <a href="{{ url_for('landing') }}#benefits"
+                           class="text-gray-600 hover:text-gray-900 transition">
+                            Beneficios
+                        </a>
+                        <a href="{{ url_for('landing') }}#pricing"
+                           class="text-gray-600 hover:text-gray-900 transition">
+                            Precios
+                        </a>
+                        <a href="{{ url_for('sobre_nosotros') }}"
+                           class="text-gray-600 hover:text-gray-900 transition">
+                            Sobre Nosotros
+                        </a>
 
-                    {# Enlaces a secciones de la landing usando url_for siempre #}
-                    <a href="{{ url_for('landing') }}#features" class="text-gray-600 hover:text-gray-900 transition">
-                        Características
-                    </a>
-                    <a href="{{ url_for('landing') }}#benefits" class="text-gray-600 hover:text-gray-900 transition">
-                        Beneficios
-                    </a>
-                    <a href="{{ url_for('landing') }}#pricing" class="text-gray-600 hover:text-gray-900 transition">
-                        Precios
-                    </a>
-                    <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">
-                        Sobre Nosotros
-                    </a>
+                        {% if current_user.is_authenticated and current_user.estado_suscripcion == 'ACTIVA' %}
+                            <a href="{{ url_for('upload_files') }}"
+                               class="text-gray-600 hover:text-gray-900 transition whitespace-nowrap">
+                                Generación de Informes
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- BLOQUE 3: USUARIO / APP / ESTADO / LOGOUT -->
+                <div class="hidden md:flex flex-none items-center space-x-5">
 
                     {% if current_user.is_authenticated %}
-                        <!-- Usuario logueado -->
-                        <span class="text-sm text-gray-700">
-                            Hola,
-                            {% if current_user.nombre %}
-                                {{ current_user.nombre }}
+                        {% set nombre = current_user.nombre or '' %}
+                        {% set apellido = current_user.apellido or '' %}
+                        {% set email_name = current_user.email.split('@')[0] %}
+
+                        {% if nombre or apellido %}
+                            {% set full_name = (nombre ~ ' ' ~ apellido)|trim %}
+                        {% else %}
+                            {% set full_name = email_name %}
+                        {% endif %}
+
+                        {% if nombre and apellido %}
+                            {% set initials = (nombre[0] ~ apellido[0])|upper %}
+                        {% elif nombre %}
+                            {% set initials = nombre[0]|upper %}
+                        {% else %}
+                            {% if email_name|length >= 2 %}
+                                {% set initials = email_name[0:2]|upper %}
                             {% else %}
-                                {{ current_user.email }}
+                                {% set initials = email_name[0]|upper %}
                             {% endif %}
-                        </span>
+                        {% endif %}
+
+                        <div class="text-right leading-tight">
+                            <p class="text-sm font-semibold text-gray-900">
+                                {{ full_name }}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                {{ current_user.email }}
+                            </p>
+                        </div>
+
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600
+                                    flex items-center justify-center text-xs font-semibold text-white shadow-md">
+                            {{ initials }}
+                        </div>
+
+                        <a href="{{ url_for('download_desktop_app') }}"
+                           class="inline-flex items-center px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 whitespace-nowrap">
+                            <i class="fas fa-desktop mr-2"></i>
+                            App escritorio
+                        </a>
 
                         {% if current_user.estado_suscripcion == 'ACTIVA' %}
-                            <!-- Con suscripción activa -->
-                            <a href="{{ url_for('upload_files') }}"
-                               class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-sm">
-                                Ir a la App
-                            </a>
-                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-300">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 text-xs font-semibold whitespace-nowrap">
+                                <i class="fas fa-check-circle mr-1.5"></i>
                                 Suscripción activa
                             </span>
                         {% else %}
-                            <!-- Sin suscripción activa -->
                             <a href="{{ url_for('suscripcion_checkout') }}"
-                               class="bg-amber-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-amber-600 transition-all duration-300 text-sm">
-                                Activar Suscripción
+                               class="inline-flex items-center px-3 py-1 rounded-full border border-amber-300 bg-amber-50 text-amber-700 text-xs font-semibold hover:bg-amber-100 transition whitespace-nowrap">
+                                <i class="fas fa-exclamation-circle mr-1.5"></i>
+                                Activar suscripción
                             </a>
                         {% endif %}
 
-                        <!-- Cerrar sesión -->
                         <a href="{{ url_for('logout') }}"
-                           class="text-gray-600 hover:text-gray-900 transition text-sm">
+                           class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition whitespace-nowrap">
+                            <i class="fas fa-sign-out-alt mr-1.5"></i>
                             Cerrar sesión
                         </a>
 
                     {% else %}
-                        <!-- Invitado / no logueado -->
-                        <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('login') }}"
+                           class="text-gray-600 hover:text-gray-900 transition">
                             Iniciar Sesión
                         </a>
                         <a href="{{ url_for('register') }}"
@@ -145,21 +183,23 @@
     {% if messages %}
     <div class="fixed top-20 right-4 z-40 space-y-3 max-w-md">
         {% for category, message in messages %}
-        <div class="{% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% elif category == 'info' %}bg-blue-50 border-l-4 border-blue-500 text-blue-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg shadow-lg animate-slide-in" role="alert" aria-live="polite">
+        <div class="{% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% elif category == 'info' %}bg-blue-50 border-l-4 border-blue-500 text-blue-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg shadow-lg animate-slide-in"
+             role="alert" aria-live="polite">
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     {% if category == 'success' %}
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
                     {% elif category == 'info' %}
-                    <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                        <i class="fas fa-info-circle text-blue-500 text-xl"></i>
                     {% else %}
-                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                        <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
                     {% endif %}
                 </div>
                 <div class="ml-3 flex-1">
                     <p class="font-medium">{{ message }}</p>
                 </div>
-                <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
+                <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600"
+                        onclick="this.parentElement.parentElement.style.display='none'">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -168,33 +208,24 @@
     </div>
     <style>
         @keyframes slide-in {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to   { transform: translateX(0);   opacity: 1; }
         }
-        .animate-slide-in {
-            animation: slide-in 0.3s ease-out;
-        }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
     </style>
     {% endif %}
     {% endwith %}
 
-    {# ====== CONTENIDO ESPECÍFICO DE CADA PÁGINA ====== #}
     {% block content %}{% endblock %}
 
     <!-- Footer global -->
     <footer class="bg-gray-900 text-gray-400 py-12 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <!-- Brand -->
                 <div class="col-span-1">
                     <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                             <i class="fas fa-network-wired text-white text-sm"></i>
                         </div>
                         <span class="text-xl font-bold text-white">FAT Testing</span>
@@ -204,30 +235,33 @@
                     </p>
                 </div>
 
-                <!-- Product -->
                 <div>
                     <h3 class="text-white font-semibold mb-4">Producto</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url_for('landing') }}#features" class="hover:text-white transition">Características</a></li>
-                        <li><a href="{{ url_for('landing') }}#benefits" class="hover:text-white transition">Beneficios</a></li>
-                        <li><a href="{{ url_for('landing') }}#pricing" class="hover:text-white transition">Precios</a></li>
+                        <li><a href="{{ url_for('landing') }}#features"
+                               class="hover:text-white transition">Características</a></li>
+                        <li><a href="{{ url_for('landing') }}#benefits"
+                               class="hover:text-white transition">Beneficios</a></li>
+                        <li><a href="{{ url_for('landing') }}#pricing"
+                               class="hover:text-white transition">Precios</a></li>
                     </ul>
                 </div>
 
-                <!-- Company -->
                 <div>
                     <h3 class="text-white font-semibold mb-4">Empresa</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url_for('sobre_nosotros') }}" class="hover:text-white transition">Sobre Nosotros</a></li>
-                        <li><a href="{{ url_for('terminos') }}" class="hover:text-white transition">Términos y Condiciones</a></li>
+                        <li><a href="{{ url_for('sobre_nosotros') }}"
+                               class="hover:text-white transition">Sobre Nosotros</a></li>
+                        <li><a href="{{ url_for('terminos') }}"
+                               class="hover:text-white transition">Términos y Condiciones</a></li>
                     </ul>
                 </div>
 
-                <!-- Support -->
                 <div>
                     <h3 class="text-white font-semibold mb-4">Soporte</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="mailto:soporte@fattesting.cl" class="hover:text-white transition">Contacto</a></li>
+                        <li><a href="mailto:soporte@fattesting.cl"
+                               class="hover:text-white transition">Contacto</a></li>
                         <li class="text-sm">Lunes a Viernes<br>9:00 - 18:00 hrs</li>
                     </ul>
                 </div>
@@ -239,11 +273,10 @@
         </div>
     </footer>
 
-    {# Bloque para JS adicional de cada página (ej. validación en register.html) #}
     {% block extra_scripts %}{% endblock %}
 
-    <!-- Font Awesome JS (usado en algunas páginas como suscripción) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
 
 </body>
+
 </html>

@@ -1,239 +1,101 @@
-<!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Iniciar sesión en FAT Testing App para procesar pruebas FAT" />
-    <title>Iniciar Sesión - FAT Testing</title>
+{% extends "base.html" %}
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+{% block title %}Iniciar Sesión - FAT Testing{% endblock %}
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% block extra_head %}
+<meta name="description" content="Iniciar sesión en FAT Testing App para procesar pruebas FAT">
+{% endblock %}
 
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-    </style>
-</head>
-
-<body class="antialiased bg-white">
-    <!-- Navigation (mismo que landing) -->
-    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-network-wired text-white text-sm"></i>
+{% block content %}
+<main class="pt-28 pb-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 flex justify-center items-start">
+        <div class="w-full max-w-md">
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <!-- Header tarjeta -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-10 text-center">
+                    <div
+                        class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-full mb-4">
+                        <i class="fas fa-lock text-4xl text-white" aria-hidden="true"></i>
                     </div>
-                    <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                    <h1 class="text-3xl font-bold text-white mb-2">Bienvenido</h1>
+                    <p class="text-blue-100 text-sm">Inicia sesión para acceder a FAT Testing</p>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="{{ url_for('landing') }}#features" class="text-gray-600 hover:text-gray-900 transition">Características</a>
-                    <a href="{{ url_for('landing') }}#benefits" class="text-gray-600 hover:text-gray-900 transition">Beneficios</a>
-                    <a href="{{ url_for('landing') }}#pricing" class="text-gray-600 hover:text-gray-900 transition">Precios</a>
-                    <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">Sobre Nosotros</a>
-                    <a href="{{ url_for('login') }}" class="text-gray-900 font-semibold">Iniciar Sesión</a>
-                    <a href="{{ url_for('register') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300">
-                        Suscribirme
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Flash Messages (mismo estilo que landing) -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="fixed top-20 right-4 z-40 space-y-3 max-w-md">
-        {% for category, message in messages %}
-        <div class="{% if category == 'success' %}bg-green-50 border-l-4 border-green-500 text-green-800{% elif category == 'info' %}bg-blue-50 border-l-4 border-blue-500 text-blue-800{% else %}bg-red-50 border-l-4 border-red-500 text-red-800{% endif %} p-4 rounded-lg shadow-lg animate-slide-in" role="alert" aria-live="polite">
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    {% if category == 'success' %}
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    {% elif category == 'info' %}
-                    <i class="fas fa-info-circle text-blue-500 text-xl"></i>
-                    {% else %}
-                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
-                    {% endif %}
-                </div>
-                <div class="ml-3 flex-1">
-                    <p class="font-medium">{{ message }}</p>
-                </div>
-                <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.style.display='none'">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <style>
-        @keyframes slide-in {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        .animate-slide-in {
-            animation: slide-in 0.3s ease-out;
-        }
-    </style>
-    {% endif %}
-    {% endwith %}
-
-    <!-- Contenido principal: tarjeta de login centrada -->
-    <main class="pt-28 pb-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-        <div class="max-w-7xl mx-auto px-4 flex justify-center items-start">
-            <div class="w-full max-w-md">
-                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                    <!-- Header tarjeta -->
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-10 text-center">
-                        <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-full mb-4">
-                            <i class="fas fa-lock text-4xl text-white" aria-hidden="true"></i>
-                        </div>
-                        <h1 class="text-3xl font-bold text-white mb-2">Bienvenido</h1>
-                        <p class="text-blue-100 text-sm">Inicia sesión para acceder a FAT Testing</p>
-                    </div>
-
-                    <!-- Body tarjeta -->
-                    <div class="px-8 py-8 bg-white">
-                        <form method="POST" action="{{ url_for('login') }}" aria-label="Formulario de inicio de sesión">
-                            <!-- Email -->
-                            <div class="mb-5">
-                                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class="fas fa-envelope text-blue-600 mr-1" aria-hidden="true"></i>
-                                    Correo Electrónico
-                                </label>
-                                <input type="email" id="email" name="email" required autocomplete="email"
-                                       placeholder="tu@email.com" aria-required="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400" />
-                                <p class="mt-2 text-xs text-gray-500">Ingresa tu correo electrónico registrado</p>
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-5">
-                                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class="fas fa-lock text-blue-600 mr-1" aria-hidden="true"></i>
-                                    Contraseña
-                                </label>
-                                <input type="password" id="password" name="password" required autocomplete="current-password"
-                                       placeholder="Tu contraseña" aria-required="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400" />
-                            </div>
-
-                            <!-- Links -->
-                            <div class="mb-6 flex items-center justify-between">
-                                <a href="{{ url_for('forgot_password') }}"
-                                   class="text-sm font-medium text-blue-600 hover:text-blue-700 transition duration-200"
-                                   aria-label="Recuperar contraseña">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
-                            </div>
-
-                            <!-- Botón -->
-                            <button type="submit" aria-label="Iniciar sesión"
-                                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3.5 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 shadow-lg hover:shadow-xl">
-                                <i class="fas fa-sign-in-alt mr-2" aria-hidden="true"></i>
-                                Iniciar Sesión
-                            </button>
-                        </form>
-
-                        <!-- Register Link -->
-                        <div class="mt-6 text-center">
-                            <p class="text-sm text-gray-600">
-                                ¿No tienes cuenta?
-                                <a href="{{ url_for('register') }}"
-                                   class="font-semibold text-blue-600 hover:text-blue-700 transition duration-200"
-                                   aria-label="Ir a página de registro">
-                                    Regístrate aquí
-                                </a>
-                            </p>
+                <!-- Body tarjeta -->
+                <div class="px-8 py-8 bg-white">
+                    <form method="POST" action="{{ url_for('login') }}" aria-label="Formulario de inicio de sesión">
+                        <!-- Email -->
+                        <div class="mb-5">
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-envelope text-blue-600 mr-1" aria-hidden="true"></i>
+                                Correo Electrónico
+                            </label>
+                            <input type="email" id="email" name="email" required autocomplete="email"
+                                placeholder="tu@email.com" aria-required="true"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400" />
+                            <p class="mt-2 text-xs text-gray-500">Ingresa tu correo electrónico registrado</p>
                         </div>
 
-                        <!-- Volver a inicio -->
-                        <div class="mt-4 text-center">
-                            <a href="{{ url_for('landing') }}"
-                               class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-200"
-                               aria-label="Volver a la página principal">
-                                <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>
-                                Volver al inicio
+                        <!-- Password -->
+                        <div class="mb-5">
+                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-lock text-blue-600 mr-1" aria-hidden="true"></i>
+                                Contraseña
+                            </label>
+                            <input type="password" id="password" name="password" required
+                                autocomplete="current-password" placeholder="Tu contraseña" aria-required="true"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-gray-900 placeholder-gray-400" />
+                        </div>
+
+                        <!-- Links -->
+                        <div class="mb-6 flex items-center justify-between">
+                            <a href="{{ url_for('forgot_password') }}"
+                                class="text-sm font-medium text-blue-600 hover:text-blue-700 transition duration-200"
+                                aria-label="Recuperar contraseña">
+                                ¿Olvidaste tu contraseña?
                             </a>
                         </div>
 
-                        <!-- Info seguridad -->
-                        <div class="mt-6 text-center">
-                            <p class="text-xs text-gray-500">
-                                <i class="fas fa-shield-alt text-blue-600 mr-1" aria-hidden="true"></i>
-                                Tus datos están protegidos y encriptados
-                            </p>
-                        </div>
+                        <!-- Botón -->
+                        <button type="submit" aria-label="Iniciar sesión"
+                            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3.5 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-sign-in-alt mr-2" aria-hidden="true"></i>
+                            Iniciar Sesión
+                        </button>
+                    </form>
+
+                    <!-- Register Link -->
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            ¿No tienes cuenta?
+                            <a href="{{ url_for('register') }}"
+                                class="font-semibold text-blue-600 hover:text-blue-700 transition duration-200"
+                                aria-label="Ir a página de registro">
+                                Regístrate aquí
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Volver a inicio -->
+                    <div class="mt-4 text-center">
+                        <a href="{{ url_for('landing') }}"
+                            class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 transition duration-200"
+                            aria-label="Volver a la página principal">
+                            <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>
+                            Volver al inicio
+                        </a>
+                    </div>
+
+                    <!-- Info seguridad -->
+                    <div class="mt-6 text-center">
+                        <p class="text-xs text-gray-500">
+                            <i class="fas fa-shield-alt text-blue-600 mr-1" aria-hidden="true"></i>
+                            Tus datos están protegidos y encriptados
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-
-    <!-- Footer (igual a landing) -->
-    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <!-- Brand -->
-                <div class="col-span-1">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-network-wired text-white text-sm"></i>
-                        </div>
-                        <span class="text-xl font-bold text-white">FAT Testing</span>
-                    </div>
-                    <p class="text-sm">Automatización profesional de pruebas FAT para equipos Cisco Catalyst.</p>
-                </div>
-
-                <!-- Product -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Producto</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url_for('landing') }}#features" class="hover:text-white transition">Características</a></li>
-                        <li><a href="{{ url_for('landing') }}#benefits" class="hover:text-white transition">Beneficios</a></li>
-                        <li><a href="{{ url_for('landing') }}#pricing" class="hover:text-white transition">Precios</a></li>
-                    </ul>
-                </div>
-
-                <!-- Company -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Empresa</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url_for('sobre_nosotros') }}" class="hover:text-white transition">Sobre Nosotros</a></li>
-                        <li><a href="{{ url_for('terminos') }}" class="hover:text-white transition">Términos y Condiciones</a></li>
-                    </ul>
-                </div>
-
-                <!-- Support -->
-                <div>
-                    <h3 class="text-white font-semibold mb-4">Soporte</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="mailto:soporte@fattesting.cl" class="hover:text-white transition">Contacto</a></li>
-                        <li class="text-sm">Lunes a Viernes<br>9:00 - 18:00 hrs</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="pt-8 border-t border-gray-800 text-center">
-                <p class="text-sm">&copy; 2025 FAT Testing. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
-</body>
-</html>
+    </div>
+</main>
+{% endblock %}
