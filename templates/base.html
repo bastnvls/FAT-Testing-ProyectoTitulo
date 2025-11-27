@@ -3,29 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Descripción por defecto, se puede sobreescribir en cada template hija #}
     <meta name="description" content="Sistema de automatización FAT para equipos Cisco Catalyst. Reduce pruebas de 35-45 min a menos de 10 min. Software CLI + generador de informes Word. Soporte para Catalyst 9200, 9300 y 9500">
 
-    <title>{% block title %}FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst{% endblock %}</title>
+    <title>
+        {% block title %}
+            FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst
+        {% endblock %}
+    </title>
+
+    {# ==== CDNs GLOBALES (todas las páginas) ==== #}
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome (CSS) -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
+    <!-- Estilos globales -->
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
+
+        /* Botón azul reutilizable (suscripción / Mercado Pago) */
+        .blue-button {
+            background-color: #3483FA;
+            color: white;
+            padding: 12px 28px;
+            text-decoration: none;
+            border-radius: 10px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 22px rgba(52, 131, 250, 0.35);
+        }
+        .blue-button:hover {
+            background-color: #2a68c8;
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(52, 131, 250, 0.4);
+        }
     </style>
 
+    {# Bloque opcional para CSS extra o meta-tags específicos de cada página #}
     {% block extra_head %}{% endblock %}
 </head>
+
 <body class="antialiased bg-white">
 
     <!-- Navigation -->
@@ -34,24 +66,33 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-network-wired text-white text-sm"></i>
-                    </div>
-                    <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                    <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-network-wired text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">FAT Testing</span>
+                    </a>
                 </div>
 
                 <!-- Links -->
                 <div class="hidden md:flex items-center space-x-8">
 
-                    <!-- Enlaces a secciones de la landing (siempre visibles) -->
-                    <a href="#features" class="text-gray-600 hover:text-gray-900 transition">Características</a>
-                    <a href="#benefits" class="text-gray-600 hover:text-gray-900 transition">Beneficios</a>
-                    <a href="#pricing" class="text-gray-600 hover:text-gray-900 transition">Precios</a>
-                    <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">Sobre Nosotros</a>
+                    {# Enlaces a secciones de la landing usando url_for siempre #}
+                    <a href="{{ url_for('landing') }}#features" class="text-gray-600 hover:text-gray-900 transition">
+                        Características
+                    </a>
+                    <a href="{{ url_for('landing') }}#benefits" class="text-gray-600 hover:text-gray-900 transition">
+                        Beneficios
+                    </a>
+                    <a href="{{ url_for('landing') }}#pricing" class="text-gray-600 hover:text-gray-900 transition">
+                        Precios
+                    </a>
+                    <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">
+                        Sobre Nosotros
+                    </a>
 
                     {% if current_user.is_authenticated %}
                         <!-- Usuario logueado -->
-
                         <span class="text-sm text-gray-700">
                             Hola,
                             {% if current_user.nombre %}
@@ -94,7 +135,6 @@
                             Suscribirme
                         </a>
                     {% endif %}
-
                 </div>
             </div>
         </div>
@@ -144,10 +184,10 @@
     {% endif %}
     {% endwith %}
 
-    {# ====== AQUÍ IRÁ EL CONTENIDO DE CADA PÁGINA ====== #}
+    {# ====== CONTENIDO ESPECÍFICO DE CADA PÁGINA ====== #}
     {% block content %}{% endblock %}
 
-    <!-- Footer -->
+    <!-- Footer global -->
     <footer class="bg-gray-900 text-gray-400 py-12 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
@@ -159,16 +199,18 @@
                         </div>
                         <span class="text-xl font-bold text-white">FAT Testing</span>
                     </div>
-                    <p class="text-sm">Automatización profesional de pruebas FAT para equipos Cisco Catalyst.</p>
+                    <p class="text-sm">
+                        Automatización profesional de pruebas FAT para equipos Cisco Catalyst.
+                    </p>
                 </div>
 
                 <!-- Product -->
                 <div>
                     <h3 class="text-white font-semibold mb-4">Producto</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#features" class="hover:text-white transition">Características</a></li>
-                        <li><a href="#benefits" class="hover:text-white transition">Beneficios</a></li>
-                        <li><a href="#pricing" class="hover:text-white transition">Precios</a></li>
+                        <li><a href="{{ url_for('landing') }}#features" class="hover:text-white transition">Características</a></li>
+                        <li><a href="{{ url_for('landing') }}#benefits" class="hover:text-white transition">Beneficios</a></li>
+                        <li><a href="{{ url_for('landing') }}#pricing" class="hover:text-white transition">Precios</a></li>
                     </ul>
                 </div>
 
@@ -196,6 +238,12 @@
             </div>
         </div>
     </footer>
+
+    {# Bloque para JS adicional de cada página (ej. validación en register.html) #}
+    {% block extra_scripts %}{% endblock %}
+
+    <!-- Font Awesome JS (usado en algunas páginas como suscripción) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
 
 </body>
 </html>
