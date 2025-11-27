@@ -51,6 +51,36 @@ def aplicar_fuente_cascadia_code(run, size_pt):
     run.font.size = Pt(size_pt)
     run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Cascadia Code')
 
+def limpiar_texto_xml(texto):
+    """
+    Limpia el texto de caracteres incompatibles con XML.
+    Elimina NULL bytes y caracteres de control excepto tab, newline y carriage return.
+
+    Args:
+        texto: String a limpiar
+
+    Returns:
+        String limpio compatible con XML
+    """
+    if not texto:
+        return texto
+
+    # Eliminar NULL bytes
+    texto = texto.replace('\x00', '')
+
+    # Eliminar caracteres de control (0x00-0x1F) excepto tab (0x09), newline (0x0A), carriage return (0x0D)
+    # También eliminar DEL (0x7F) y caracteres de control en rango extendido (0x80-0x9F)
+    caracteres_permitidos = []
+    for char in texto:
+        code = ord(char)
+        # Permitir caracteres normales, tab, newline, carriage return
+        if code >= 0x20 or code in (0x09, 0x0A, 0x0D):
+            # Excluir DEL y caracteres de control extendidos
+            if code != 0x7F and not (0x80 <= code <= 0x9F):
+                caracteres_permitidos.append(char)
+
+    return ''.join(caracteres_permitidos)
+
 # Función para extraer bloques
 def pruebas(lines, start_re, end_re):
     blocks = []
@@ -268,17 +298,20 @@ def replace_marker_with_text(doc, marker, text):
             # Eliminar runs viejos
             for run in list(p.runs):
                 p._p.remove(run._r)
-            
+
             # Limpiar el texto del párrafo (por si queda el marcador)
             p.text = ''
-            
+
+            # Limpiar el texto de caracteres incompatibles con XML
+            text = limpiar_texto_xml(str(text))
+
             # Crear run con el texto nuevo
-            run = p.add_run(str(text))
+            run = p.add_run(text)
             run.font.name = 'Arial'
-            
+
             # Compatibilidad para fuentes
             run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
-            
+
             if marker == "{{proyecto}}":
                 run.font.size = Pt(13)
                 run.bold = True
@@ -288,7 +321,7 @@ def replace_marker_with_text(doc, marker, text):
                 run.font.size = Pt(11)
                 run.bold = False
                 p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT  # opcional, por defecto ya es izquierda
-            
+
             return
         
 
@@ -300,6 +333,10 @@ def insertar_texto(doc, marker, texto, size_pt):
     Devuelve la lista de párrafos creados (para más tarde resaltar).
     """
     paras = []
+
+    # Limpiar el texto de caracteres incompatibles con XML
+    texto = limpiar_texto_xml(texto)
+
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -308,6 +345,8 @@ def insertar_texto(doc, marker, texto, size_pt):
                     para = cell.add_paragraph()
                     para.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
                     for line in texto.split('\n'):
+                        # Limpiar cada línea individualmente por seguridad
+                        line = limpiar_texto_xml(line)
                         run = para.add_run(line)
                         aplicar_fuente_cascadia_code(run, size_pt)
                         para.add_run('\n')  # salto tras cada línea
@@ -315,13 +354,17 @@ def insertar_texto(doc, marker, texto, size_pt):
     return paras
 
 def insertar_info_dispositivo(doc, modelo, serial, version):
+    # Limpiar los valores de caracteres incompatibles con XML
+    modelo = limpiar_texto_xml(modelo) if modelo else ""
+    serial = limpiar_texto_xml(serial) if serial else ""
+    version = limpiar_texto_xml(version) if version else ""
 
     # También revisamos las celdas de todas las tablas en el documento, por si no están en párrafos
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 if "{{modelo}}" in cell.text:
-                    cell.text = cell.text.replace("{{modelo}}", modelo if modelo else "")
+                    cell.text = cell.text.replace("{{modelo}}", modelo)
                     para = cell.paragraphs[0]
                     para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # Centrar texto
                     # Aplicar formato Arial 11 a todo el párrafo
@@ -331,7 +374,7 @@ def insertar_info_dispositivo(doc, modelo, serial, version):
                         run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
 
                 if "{{serial}}" in cell.text:
-                    cell.text = cell.text.replace("{{serial}}", serial if serial else "")
+                    cell.text = cell.text.replace("{{serial}}", serial)
                     para = cell.paragraphs[0]
                     para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # Centrar texto
                     for run in para.runs:
@@ -340,7 +383,7 @@ def insertar_info_dispositivo(doc, modelo, serial, version):
                         run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Arial')
 
                 if "{{version}}" in cell.text:
-                    cell.text = cell.text.replace("{{version}}", version if version else "")
+                    cell.text = cell.text.replace("{{version}}", version)
                     para = cell.paragraphs[0]
                     para.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # Centrar texto
                     for run in para.runs:

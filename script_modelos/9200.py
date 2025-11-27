@@ -15,15 +15,12 @@ import re
 from datetime import datetime
 
 
-# =============================================================================
-# CONFIGURACIÓN GENERAL - AJUSTAR SEGÚN TU ENTORNO
-# =============================================================================
+# =====================
+# CONFIGURACIÓN GENERAL 
+# =====================
 
-# Puerto serial (ajustar según tu sistema operativo)
-# Windows: "COM3", "COM4", etc.
-# Linux: "/dev/ttyUSB0", "/dev/ttyS0", etc.
-# Mac: "/dev/tty.usbserial-XXXX"
-PUERTO_SERIAL = "/dev/ttyUSB0"
+# Puerto serial
+PUERTO_SERIAL = "COM3"
 
 # Configuración estándar para consola Cisco
 BAUDRATE = 9600
@@ -32,11 +29,11 @@ PARITY = serial.PARITY_NONE
 STOPBITS = serial.STOPBITS_ONE
 TIMEOUT_LECTURA = 2  # segundos
 
-# Credenciales (ajustar según tu dispositivo)
-PASSWORD_ENABLE = "cisco"  # Contraseña para modo privilegiado
+# Credenciales 
+PASSWORD_ENABLE = "admin"  # Contraseña para modo privilegiado
 
 # Archivo de salida
-ARCHIVO_SALIDA = "resultado_pruebas_cisco_9200.txt"
+ARCHIVO_SALIDA = "resultado_pruebas_cisco_9200_PRUEBASW2.txt" #Falta modificar para que tenga el nombre del modelo al igual que el informe
 
 # Tiempos de espera (segundos)
 ESPERA_COMANDO = 1
@@ -52,8 +49,8 @@ def abrir_conexion_serial(puerto, baudrate):
     Abre una conexión serial con el dispositivo Cisco.
     
     Args:
-        puerto: Puerto serial (ej: COM3, /dev/ttyUSB0)
-        baudrate: Velocidad de transmisión (normalmente 9600)
+        puerto: Puerto serial
+        baudrate: Velocidad de transmisión (Configurada en 9600)
     
     Returns:
         Objeto serial si la conexión es exitosa, None si falla
@@ -70,11 +67,11 @@ def abrir_conexion_serial(puerto, baudrate):
             rtscts=False,
             dsrdtr=False
         )
-        print(f"[OK] Conexión establecida en {puerto} a {baudrate} baudios")
+        #print(f"[OK] Conexión establecida en {puerto} a {baudrate} baudios")
         return conexion
     
     except serial.SerialException as error:
-        print(f"[ERROR] No se pudo abrir el puerto {puerto}: {error}")
+        #print(f"[ERROR] No se pudo abrir el puerto {puerto}: {error}")
         return None
 
 
@@ -87,12 +84,12 @@ def cerrar_conexion_serial(conexion):
     """
     if conexion and conexion.is_open:
         conexion.close()
-        print("[OK] Conexión serial cerrada")
+        #print("[OK] Conexión serial cerrada")
 
 
-# =============================================================================
+# =============================================
 # FUNCIONES DE COMUNICACIÓN CON EL DISPOSITIVO
-# =============================================================================
+# =============================================
 
 def leer_respuesta_completa(conexion, timeout_total=10):
     """
@@ -149,11 +146,11 @@ def enviar_comando(conexion, comando, espera=ESPERA_COMANDO):
     # Limpiar buffer de entrada antes de enviar
     conexion.reset_input_buffer()
     
-    # Enviar comando con retorno de carro
+    # Enviar comando con retorno de ¿'carro'?
     comando_bytes = (comando + "\n").encode('ascii')
     conexion.write(comando_bytes)
     
-    print(f"[ENVIADO] {comando}")
+    #print(f"[ENVIADO] {comando}")
     
     # Esperar a que el dispositivo procese el comando
     time.sleep(espera)
@@ -210,9 +207,9 @@ def ejecutar_comando_completo(conexion, comando, espera=ESPERA_COMANDO):
     return respuesta
 
 
-# =============================================================================
+# =========================================
 # FUNCIONES DE AUTENTICACIÓN Y PREPARACIÓN
-# =============================================================================
+# =========================================
 
 def despertar_consola(conexion):
     """
@@ -609,29 +606,22 @@ def ejecutar_prueba_4(conexion, archivo, password_enable):
 
 def ejecutar_prueba_5(conexion, archivo):
     """
-    Prueba 5: show inventory all, show interface ethernet
-    
-    Nota: "show interface ethernet" no es sintaxis válida en Cisco IOS-XE.
-    Se ejecuta "show interfaces" y "show interfaces status" como alternativas.
-    
+    Prueba 5: show inventory, show interfaces
+
     Args:
         conexion: Objeto serial activo
         archivo: Archivo de salida
     """
-    escribir_inicio_prueba(archivo, 5, "show inventory all, show interfaces")
-    
-    # Ejecutar show inventory all
-    resultado_inventory = ejecutar_comando_completo(conexion, "show inventory all", espera=3)
-    escribir_comando_resultado(archivo, "show inventory all", resultado_inventory)
-    
-    # Ejecutar show interfaces (todas las interfaces)
+    escribir_inicio_prueba(archivo, 5, "show inventory, show interfaces")
+
+    # Ejecutar show inventory
+    resultado_inventory = ejecutar_comando_completo(conexion, "show inventory", espera=3)
+    escribir_comando_resultado(archivo, "show inventory", resultado_inventory)
+
+    # Ejecutar show interfaces
     resultado_interfaces = ejecutar_comando_completo(conexion, "show interfaces", espera=5)
     escribir_comando_resultado(archivo, "show interfaces", resultado_interfaces)
-    
-    # Mostrar estado resumido de interfaces
-    resultado_status = ejecutar_comando_completo(conexion, "show interfaces status", espera=2)
-    escribir_comando_resultado(archivo, "show interfaces status", resultado_status)
-    
+
     escribir_fin_prueba(archivo, 5)
 
 
@@ -643,16 +633,7 @@ def main():
     """
     Función principal que ejecuta todas las pruebas en secuencia.
     """
-    print("\n" + "=" * 60)
-    print("SCRIPT DE PRUEBAS - CISCO CATALYST 9200")
-    print("=" * 60 + "\n")
-    
-    # Mostrar configuración actual
-    print(f"Puerto serial: {PUERTO_SERIAL}")
-    print(f"Baudrate: {BAUDRATE}")
-    print(f"Archivo de salida: {ARCHIVO_SALIDA}")
-    print()
-    
+        
     # Inicializar archivo de salida
     if not iniciar_archivo_salida(ARCHIVO_SALIDA):
         print("[ERROR] No se pudo inicializar el archivo de salida. Abortando.")
