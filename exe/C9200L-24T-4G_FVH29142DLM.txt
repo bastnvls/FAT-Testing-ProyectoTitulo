@@ -1,13 +1,13 @@
 ================================================================================
 RESULTADO DE PRUEBAS - CISCO CATALYST 9200
 ================================================================================
-Fecha y hora de inicio: 2025-11-27 17:32:08
+Fecha y hora de inicio: 2025-11-27 19:43:12
 ================================================================================
 
 
 ################################################################################
 ### INICIO PRUEBA 1: show version, show inventory
-### Hora: 17:32:15
+### Hora: 19:43:19
 ################################################################################
 
 
@@ -34,8 +34,8 @@ software.
 ROM: IOS-XE ROMMON
 BOOTLDR: System Bootstrap, Version 17.14.1r [FC1], RELEASE SOFTWARE (P) 
 
-Switch uptime is 14 minutes
-Uptime for this control processor is 16 minutes
+Switch uptime is 5 minutes
+Uptime for this control processor is 7 minutes
 System returned to ROM by Reload Command
 System image file is "flash:packages.conf"
 Last reload reason: Reload Command
@@ -70,7 +70,7 @@ dna-essentials      	Subscription Smart License    	 dna-essentials
 
 Smart Licensing Status: Smart Licensing Using Policy
 
-cisco C9200L-24T-4G (ARM64) processor with 502825K/3071K bytes of memory.
+cisco C9200L-24T-4G (ARM64) processor with 502841K/3071K bytes of memory.
 Processor board ID FVH29142DLM
 1 Virtual Ethernet interface
 28 Gigabit Ethernet interfaces
@@ -112,13 +112,13 @@ PID: PWR-C5-125WAC     , VID: V01  , SN: ART2909D296
 Switch#
 ################################################################################
 ### FIN PRUEBA 1
-### Hora: 17:32:26
+### Hora: 19:43:31
 ################################################################################
 
 
 ################################################################################
-### INICIO PRUEBA 2: show environment power (1 fuente(s))
-### Hora: 17:32:26
+### INICIO PRUEBA 2: show environment power (2 fuente(s))
+### Hora: 19:43:31
 ################################################################################
 
 
@@ -134,93 +134,53 @@ SW  PID                 Serial#     Status           Sys Pwr  PoE Pwr  Watts
 Switch#
 ################################################################################
 ### FIN PRUEBA 2
-### Hora: 17:32:30
+### Hora: 19:43:35
 ################################################################################
 
 
 ################################################################################
-### INICIO PRUEBA 3: show environment fan - Prueba con desconexión (2 ventilador(es))
-### Hora: 17:32:30
+### INICIO PRUEBA 3: show environment fan (2 ventilador(es))
+### Hora: 19:43:35
 ################################################################################
 
 
-=== Verificación inicial - Todos los ventilador(es) conectados ===
+=== Verificación de ventilador(es) (todos conectados) ===
 
 Switch#
 Switch#show environment fan
 Switch	 FAN	 Speed	 State	 Airflow direction
 ---------------------------------------------------
-  1  	  1	5025 	  OK	 Front to Back
+  1  	  1	5010 	  OK	 Front to Back
   1  	  2	4995 	  OK	 Front to Back
-
-Switch#
-=== Ventilador 1 DESCONECTADO ===
-
-Switch#
-Switch#show environment fan
-Switch	 FAN	 Speed	 State	 Airflow direction
----------------------------------------------------
-  1  	  1	5025 	  OK	 Front to Back
-  1  	  2	5010 	  OK	 Front to Back
-
-Switch#
-=== Ventilador 1 RECONECTADO ===
-
-Switch#
-Switch#show environment fan
-Switch	 FAN	 Speed	 State	 Airflow direction
----------------------------------------------------
-  1  	  1	5010 	  OK	 Front to Back
-  1  	  2	5010 	  OK	 Front to Back
-
-Switch#
-=== Ventilador 2 DESCONECTADO ===
-
-Switch#
-Switch#show environment fan
-Switch	 FAN	 Speed	 State	 Airflow direction
----------------------------------------------------
-  1  	  1	5010 	  OK	 Front to Back
-  1  	  2	5010 	  OK	 Front to Back
-
-Switch#
-=== Ventilador 2 RECONECTADO ===
-
-Switch#
-Switch#show environment fan
-Switch	 FAN	 Speed	 State	 Airflow direction
----------------------------------------------------
-  1  	  1	5010 	  OK	 Front to Back
-  1  	  2	5010 	  OK	 Front to Back
 
 Switch#
 ################################################################################
 ### FIN PRUEBA 3
-### Hora: 17:33:08
+### Hora: 19:43:39
 ################################################################################
 
 
 ################################################################################
 ### INICIO PRUEBA 4: reload, enable, show version
-### Hora: 17:33:08
+### Hora: 19:43:39
 ################################################################################
 
 
 === INICIANDO RELOAD DEL EQUIPO ===
-Hora de inicio reload: 17:33:08
+Hora de inicio reload: 19:43:39
 
 Switch#
 Switch#reload
 Reload command is being issued on Active unit, this will reload the whole stack
 Proceed with reload? [confirm]
 
-*Nov 27 20:32:50.121: %SYS-5-RELOAD: Reload requested by console. Reload Reason: Reload Command.
+*Nov 27 22:43:16.051: %SYS-5-RELOAD: Reload requested by console. Reload Reason: Reload Command.
 Esperando 120 segundos para reinicio...
 
 Chassis 1 reloading, reason - Reload command
-Nov 27 20:32:56.616: %PMAN-5-EXITACTION: C0/0: pvp: Process manager is exiting: reload cc action requested
-Nov 27 20:32:56.616: %PMAN-5-EXITACTION: F0/0: pvp: Process manager is exiting: reload fp action requested
-Nov 27 20:32:59.168: %PMAN-5-EXITACTION: R0/0: pvp: Process manager is exiting: process exit with reload stack code
+Nov 27 22:43:22.239: %PMAN-5-EXITACTION: C0/0: pvp: Process manager is exiting: reload cc action requested
+Nov 27 22:43:22.750: %PMAN-5-EXITACTION: F0/0: pvp: Process manager is exiting: reload fp action requested
+Nov 27 22:43:25.255: %PMAN-5-EXITACTION: R0/0: pvp: Process manager is exiting: process exit with reload stack code
 
 
 
@@ -313,45 +273,45 @@ CLEI Code Number                   : INM6G00ARD
 Press RETURN to get started!
 
 
-*Nov 27 20:35:32.090: %CRYPTO-5-SELF_TEST_START: Crypto algorithms release (Rel5a), Entropy release (3.4.1)
+*Nov 27 22:45:57.476: %CRYPTO-5-SELF_TEST_START: Crypto algorithms release (Rel5a), Entropy release (3.4.1)
        begin self-test
-*Nov 27 20:35:33.564: %CRYPTO-5-SELF_TEST_END: Crypto algorithms self-test completed successfully
+*Nov 27 22:45:58.803: %CRYPTO-5-SELF_TEST_END: Crypto algorithms self-test completed successfully
        All tests passed.
-*Nov 27 20:35:36.274: %SMART_LIC-6-AGENT_ENABLED: Smart Agent for Licensing is enabled 
-*Nov 27 20:35:41.706: %TLSCLIENT-5-TLSCLIENT_IOS: TLS Client is IOS based
-*Nov 27 20:35:42.299: %CRYPTO-4-AUDITWARN: Encryption audit check could not be performed
-*Nov 27 20:35:42.315: %CRYPTO_ENGINE-4-CSDL_COMPLIANCE_DISABLED: Cisco PSB security compliance has been disabled by platform
-*Nov 27 20:35:43.397: %SPANTREE-5-EXTENDED_SYSID: Extended SysId enabled for type vlan
-*Nov 27 20:35:44.316: %LINK-5-UPDOWN: Interface Lsmpi10/3, changed state to up
-*Nov 27 20:35:44.736: %PNP-6-PNP_DISCOVERY_STARTED: PnP Discovery started
-*Nov 27 20:35:44.887: %HMANRP-6-HMAN_IOS_CHANNEL_INFO: HMAN-IOS channel event for switch 1: EMP_RELAY: Channel UP!
-*Nov 27 20:35:45.258: %LINK-5-UPDOWN: Interface EOBC10/1, changed state to up
-*Nov 27 20:35:45.259: %LINEPROTO-5-UPDOWN: Line protocol on Interface LIIN10/2, changed state to up
-*Nov 27 20:35:45.260: %LINK-5-UPDOWN: Interface LIIN10/2, changed state to up
-*Nov 27 20:35:45.260: %LINK-5-UPDOWN: Interface GigabitEthernet0/0, changed state to down
-*Nov 27 20:35:45.261: %LINK-5-CHANGED: Interface Bluetooth0/4, changed state to administratively down
-*Nov 27 20:35:45.346: %HMANRP-6-EMP_NO_ELECTION_INFO: Could not elect active EMP switch, setting emp active switch to 0: EMP_RELAY: Could not elect switch with mgmt port UP
-*Nov 27 20:35:19.500: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 1 on Switch 1 is cable-not-connected
-*Nov 27 20:35:19.500: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 2 on Switch 1 is down
-*Nov 27 20:35:19.501: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 2 on Switch 1 is cable-not-connected
-*Nov 27 20:35:20.069: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
-*Nov 27 20:35:23.297: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
-*Nov 27 20:35:25.366: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
-*Nov 27 20:35:25.366: %STACKMGR-6-ACTIVE_ELECTED: Switch 1 R0/0: stack_mgr: Switch 1 has been elected ACTIVE.
-*Nov 27 20:35:45.351: %HMANRP-6-EMP_NO_ELECTION_INFO: Could not elect active EMP switch, setting emp active switch to 0: EMP_RELAY: Could not elect switch with mgmt port UP
-*Nov 27 20:35:45.360: %LINEPROTO-5-UPDOWN: Line protocol on Interface Lsmpi10/3, changed state to up
-*Nov 27 20:35:46.351: %LINEPROTO-5-UPDOWN: Line protocol on Interface EOBC10/1, changed state to up
-*Nov 27 20:35:46.352: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to down
-*Nov 27 20:35:46.352: %LINEPROTO-5-UPDOWN: Line protocol on Interface Bluetooth0/4, changed state to down
-*Nov 27 20:35:46.927: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
-*Nov 27 20:35:47.147: %IOSXE_MGMTVRF-6-CREATE_SUCCESS_INFO: Management vrf Mgmt-vrf created with ID 1, ipv4 table-id 0x1, ipv6 table-id 0x1E000001
-*Nov 27 20:35:47.155: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
-*Nov 27 20:35:47.175: %IOSXE_MGMTVRF-6-CREATE_SUCCESS_INFO: Management vrf Mgmt-vrf created with ID 1, ipv4 table-id 0x1, ipv6 table-id 0x1E000001
-*Nov 27 20:35:47.176: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
-*Nov 27 20:35:47.359: %ONEP_BASE-6-SS_ENABLED: ONEP: Service set Base was enabled by Default
-*Nov 27 20:35:47.413: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to down
-*Nov 27 20:35:48.330: %SYS-7-NVRAM_INIT_WAIT_TIME: Waited 0 seconds for NVRAM to be available
-*Nov 27 20:35:48.586: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named TP-self-signed-955485984 has been generated or impor
+*Nov 27 22:46:01.400: %SMART_LIC-6-AGENT_ENABLED: Smart Agent for Licensing is enabled 
+*Nov 27 22:46:07.210: %TLSCLIENT-5-TLSCLIENT_IOS: TLS Client is IOS based
+*Nov 27 22:46:07.795: %CRYPTO-4-AUDITWARN: Encryption audit check could not be performed
+*Nov 27 22:46:07.812: %CRYPTO_ENGINE-4-CSDL_COMPLIANCE_DISABLED: Cisco PSB security compliance has been disabled by platform
+*Nov 27 22:46:08.790: %SPANTREE-5-EXTENDED_SYSID: Extended SysId enabled for type vlan
+*Nov 27 22:46:09.642: %LINK-5-UPDOWN: Interface Lsmpi10/3, changed state to up
+*Nov 27 22:46:10.058: %PNP-6-PNP_DISCOVERY_STARTED: PnP Discovery started
+*Nov 27 22:46:10.224: %HMANRP-6-HMAN_IOS_CHANNEL_INFO: HMAN-IOS channel event for switch 1: EMP_RELAY: Channel UP!
+*Nov 27 22:46:10.286: %HMANRP-6-EMP_NO_ELECTION_INFO: Could not elect active EMP switch, setting emp active switch to 0: EMP_RELAY: Could not elect switch with mgmt port UP
+*Nov 27 22:45:44.822: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 1 on Switch 1 is cable-not-connected
+*Nov 27 22:45:44.822: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 2 on Switch 1 is down
+*Nov 27 22:45:44.823: %STACKMGR-6-STACK_LINK_CHANGE: Switch 1 R0/0: stack_mgr: Stack port 2 on Switch 1 is cable-not-connected
+*Nov 27 22:45:45.387: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
+*Nov 27 22:45:48.621: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
+*Nov 27 22:45:50.701: %STACKMGR-4-SWITCH_ADDED: Switch 1 R0/0: stack_mgr: Switch 1 has been added to the stack.
+*Nov 27 22:45:50.701: %STACKMGR-6-ACTIVE_ELECTED: Switch 1 R0/0: stack_mgr: Switch 1 has been elected ACTIVE.
+*Nov 27 22:46:10.291: %HMANRP-6-EMP_NO_ELECTION_INFO: Could not elect active EMP switch, setting emp active switch to 0: EMP_RELAY: Could not elect switch with mgmt port UP
+*Nov 27 22:46:10.542: %LINK-5-UPDOWN: Interface EOBC10/1, changed state to up
+*Nov 27 22:46:10.542: %LINEPROTO-5-UPDOWN: Line protocol on Interface LIIN10/2, changed state to up
+*Nov 27 22:46:10.543: %LINK-5-UPDOWN: Interface LIIN10/2, changed state to up
+*Nov 27 22:46:10.544: %LINK-5-UPDOWN: Interface GigabitEthernet0/0, changed state to down
+*Nov 27 22:46:10.544: %LINK-5-CHANGED: Interface Bluetooth0/4, changed state to administratively down
+*Nov 27 22:46:10.712: %LINEPROTO-5-UPDOWN: Line protocol on Interface Lsmpi10/3, changed state to up
+*Nov 27 22:46:11.617: %LINEPROTO-5-UPDOWN: Line protocol on Interface EOBC10/1, changed state to up
+*Nov 27 22:46:11.617: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to down
+*Nov 27 22:46:11.618: %LINEPROTO-5-UPDOWN: Line protocol on Interface Bluetooth0/4, changed state to down
+*Nov 27 22:46:12.205: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
+*Nov 27 22:46:12.389: %IOSXE_MGMTVRF-6-CREATE_SUCCESS_INFO: Management vrf Mgmt-vrf created with ID 1, ipv4 table-id 0x1, ipv6 table-id 0x1E000001
+*Nov 27 22:46:12.393: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
+*Nov 27 22:46:12.419: %IOSXE_MGMTVRF-6-CREATE_SUCCESS_INFO: Management vrf Mgmt-vrf created with ID 1, ipv4 table-id 0x1, ipv6 table-id 0x1E000001
+*Nov 27 22:46:12.420: %SYS-5-CONFIG_P: Configured programmatically by process MGMT VRF Process from console as vty0
+*Nov 27 22:46:12.620: %ONEP_BASE-6-SS_ENABLED: ONEP: Service set Base was enabled by Default
+*Nov 27 22:46:12.762: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to down
+*Nov 27 22:46:13.504: %SYS-7-NVRAM_INIT_WAIT_TIME: Waited 0 seconds for NVRAM to be available
+*Nov 27 22:46:13.760: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named TP-self-signed-955485984 has been generated or impor
 Switch>
 Switch>
 Switch>
@@ -376,51 +336,51 @@ Switch>
 Switch>
 Switch>
 Switch>ted by crypto config
-*Nov 27 20:35:48.672: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: SLA-TrustPoint created succesfully
-*Nov 27 20:35:48.676: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: TP-self-signed-955485984 created succesfully
-*Nov 27 20:35:49.217: %SYS-5-CONFIG_I: Configured from memory by console
-*Nov 27 20:35:49.503: %SYS-5-CONFIG_P: Configured programmatically by process CPP MQC QoS Policy manager from console as vty1
-*Nov 27 20:35:49.533: %CRYPTO-5-SELF_TEST_START: Crypto algorithms release (Rel5a), Entropy release (3.4.1)
+*Nov 27 22:46:13.847: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: SLA-TrustPoint created succesfully
+*Nov 27 22:46:13.851: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: TP-self-signed-955485984 created succesfully
+*Nov 27 22:46:14.314: %LINK-5-CHANGED: Interface GigabitEthernet0/0, changed state to administratively down
+*Nov 27 22:46:14.396: %SYS-5-CONFIG_I: Configured from memory by console
+*Nov 27 22:46:14.690: %SYS-5-CONFIG_P: Configured programmatically by process CPP MQC QoS Policy manager from console as vty1
+*Nov 27 22:46:14.721: %CRYPTO-5-SELF_TEST_START: Crypto algorithms release (Rel5a), Entropy release (3.4.1)
        begin self-test
-*Nov 27 20:35:49.578: %CRYPTO-5-SELF_TEST_END: Crypto algorithms self-test completed successfully
+*Nov 27 22:46:14.765: %CRYPTO-5-SELF_TEST_END: Crypto algorithms self-test completed successfully
        All tests passed.
-*Nov 27 20:35:50.415: %SYS-5-RESTART: System restarted --
+*Nov 27 22:46:15.786: %SYS-5-RESTART: System restarted --
 Cisco IOS Software [Dublin], Catalyst L3 Switch Software (CAT9K_LITE_IOSXE), Version 17.12.4, RELEASE SOFTWARE (fc3)
 Technical Support: http://www.cisco.com/techsupport
 Copyright (c) 1986-2024 by Cisco Systems, Inc.
 Compiled Tue 23-Jul-24 09:41 by mcpre
-*Nov 27 20:35:50.585: %SSH-5-ENABLED: SSH 2.0 has been enabled
-*Nov 27 20:35:51.110: %LINK-5-CHANGED: Interface GigabitEthernet0/0, changed state to administratively down
-*Nov 27 20:35:52.406: %LINK-5-UPDOWN: Interface Vlan1, changed state to up
-*Nov 27 20:35:54.802: %SYS-6-BOOTTIME: Time taken to reboot after reload =  185 seconds
-*Nov 27 20:35:55.908: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named TP-self-signed-955485984.server has been generated or imported by crypto-engine
-*Nov 27 20:35:56.034: %PNP-6-PNP_BEST_UDI_UPDATE: Best UDI [PID:C9200L-24T-4G,VID:J0,SN:FVH29142DLM] identified via (master-registry)
-*Nov 27 20:35:56.034: %PNP-6-PNP_CDP_UPDATE: Device UDI [PID:C9200L-24T-4G,VID:J0,SN:FVH29142DLM] identified for CDP
-*Nov 27 20:35:56.054: %PNP-6-PNP_DISCOVERY_STOPPED: PnP Discovery stopped (Startup Config Present)
+*Nov 27 22:46:15.988: %SSH-5-ENABLED: SSH 2.0 has been enabled
+*Nov 27 22:46:17.775: %LINK-5-UPDOWN: Interface Vlan1, changed state to up
+*Nov 27 22:46:20.047: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named TP-self-signed-955485984.server has been generated or imported by crypto-engine
+*Nov 27 22:46:20.233: %SYS-6-BOOTTIME: Time taken to reboot after reload =  185 seconds
+*Nov 27 22:46:21.483: %PNP-6-PNP_BEST_UDI_UPDATE: Best UDI [PID:C9200L-24T-4G,VID:J0,SN:FVH29142DLM] identified via (master-registry)
+*Nov 27 22:46:21.483: %PNP-6-PNP_CDP_UPDATE: Device UDI [PID:C9200L-24T-4G,VID:J0,SN:FVH29142DLM] identified for CDP
+*Nov 27 22:46:21.499: %PNP-6-PNP_DISCOVERY_STOPPED: PnP Discovery stopped (Startup Config Present)
 === ENTRANDO A MODO ENABLE (POST RELOAD) ===
 
 Switch>
 Switch>enable
 Password: 
-*Nov 27 20:36:03.518: %CRYPTO-6-ISAKMP_ON_OFF: ISAKMP is OFF
-*Nov 27 20:36:04.017: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: CISCO_IDEVID_SUDI created succesfully
-*Nov 27 20:36:04.038: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named CISCO_IDEVID_SUDI has been generated or imported by pki-sudi
-*Nov 27 20:36:04.082: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: CISCO_IDEVID_SUDI0 created succesfully
-*Nov 27 20:36:04.088: %PKI-2-NON_AUTHORITATIVE_CLOCK: PKI functions can not be initialized until an authoritative time source, like NTP, can be obtained.
+*Nov 27 22:46:28.913: %CRYPTO-6-ISAKMP_ON_OFF: ISAKMP is OFF
+*Nov 27 22:46:29.410: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: CISCO_IDEVID_SUDI created succesfully
+*Nov 27 22:46:29.430: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named CISCO_IDEVID_SUDI has been generated or imported by pki-sudi
+*Nov 27 22:46:29.474: %PKI-6-TRUSTPOINT_CREATE: Trustpoint: CISCO_IDEVID_SUDI0 created succesfully
+*Nov 27 22:46:29.481: %PKI-2-NON_AUTHORITATIVE_CLOCK: PKI functions can not be initialized until an authoritative time source, like NTP, can be obtained.
 Switch#
 === EJECUTANDO SHOW VERSION (POST RELOAD) ===
 
+*Nov 27 22:46:37.881: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/1, changed state to up
+*Nov 27 22:46:38.062: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/2, changed state to up
+*Nov 27 22:46:38.243: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/12, changed state to up
+*Nov 27 22:46:38.878: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/1, changed state to up
+*Nov 27 22:46:38.882: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/14, changed state to up
+*Nov 27 22:46:38.919: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to up
+*Nov 27 22:46:39.063: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/2, changed state to up
+*Nov 27 22:46:39.243: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/12, changed state to up
+*Nov 27 22:46:39.882: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/14, changed state to up
 Switch#
-Switch#
-*Nov 27 20:36:13.362: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/1, changed state to up
-*Nov 27 20:36:13.459: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/2, changed state to up
-*Nov 27 20:36:13.507: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/12, changed state to up
-*Nov 27 20:36:14.278: %LINK-5-UPDOWN: Interface GigabitEthernet1/0/14, changed state to up
-*Nov 27 20:36:14.364: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/1, changed state to up
-*Nov 27 20:36:14.459: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/2, changed state to up
-*Nov 27 20:36:14.467: %LINEPROTO-5-UPDOWN: Line protocol on Interface Vlan1, changed state to up
-*Nov 27 20:36:14.507: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/12, changed state to up
-*Nov 27 20:36:15.278: %LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet1/0/14, changed state to upshow version
+Switch#show version
 Cisco IOS XE Software, Version 17.12.04
 Cisco IOS Software [Dublin], Catalyst L3 Switch Software (CAT9K_LITE_IOSXE), Version 17.12.4, RELEASE SOFTWARE (fc3)
 Technical Support: http://www.cisco.com/techsupport
@@ -507,889 +467,24 @@ Configuration register is 0x102
 Switch#
 ################################################################################
 ### FIN PRUEBA 4
-### Hora: 17:36:45
+### Hora: 19:47:17
 ################################################################################
 
 
 ################################################################################
-### INICIO PRUEBA 5: show inventory, show interfaces
-### Hora: 17:36:45
+### INICIO PRUEBA 5: show inventory, show interfaces [OMITIDO POR CONFIGURACIÓN]
+### Hora: 19:47:17
 ################################################################################
 
-
-Switch#
-Switch#show inventory
-NAME: "c92xxL Stack", DESCR: "c92xxL Stack"
-PID: C9200L-24T-4G     , VID: V05  , SN: FVH29142DLM
-
-NAME: "Switch 1", DESCR: "C9200L-24T-4G"
-PID: C9200L-24T-4G     , VID: V05  , SN: FVH29142DLM
-
-NAME: "Switch 1 - Power Supply A", DESCR: "Switch 1 - Power Supply A"
-PID: PWR-C5-125WAC     , VID: V01  , SN: ART2909D296
-
-
-Switch#
-*Nov 27 20:36:21.639: %SMART_LIC-6-REPORTING_REQUIRED: A Usage report acknowledgement will be required in 13 days.
-Switch#
-Switch#show interfaces
-Vlan1 is up, line protocol is up , Autostate Enabled
-  Hardware is Ethernet SVI, address is 9ca9.b85c.37c7 (bia 9ca9.b85c.37c7)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive not supported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/375/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     0 packets input, 0 bytes, 0 no buffer
-     Received 0 broadcasts (0 IP multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 packets output, 0 bytes, 0 underruns
-     Output 0 broadcasts (0 IP multicasts)
-     0 output errors, 2 interface resets
-     0 unknown protocol drops
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet0/0 is administratively down, line protocol is down 
-  Hardware is RP management port, address is 9ca9.b85c.3780 (bia 9ca9.b85c.3780)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Full Duplex, 1000Mbps, link type is auto, media type is RJ45
-  output flow-control is unsupported, input flow-control is unsupported
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/75/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     0 packets input, 0 bytes, 0 no buffer
-     Received 0 broadcasts (0 IP multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     24 packets output, 2080 bytes, 0 underruns
-     Output 0 broadcasts (0 IP multicasts)
-     0 output errors, 0 collisions, 0 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/1 is up, line protocol is up (connected) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3781 (bia 9ca9.b85c.3781)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input 00:00:01, output 00:00:03, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 1000 bits/sec, 1 packets/sec
-  5 minute output rate 1000 bits/sec, 1 packets/sec
-     25 packets input, 5328 bytes, 0 no buffer
-     Received 21 broadcasts (21 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 21 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     16 packets output, 4376 bytes, 0 underruns
-     Output 13 broadcasts (13 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/2 is up, line protocol is up (connected) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3782ut rate 1000 bits/sec, 1 packets/sec
-     24 packets input, 5264 bytes, 0 no buffer
-     Received 20 broadcasts (20 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 20 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     14 packets output, 4248 bytes, 0 underruns
-     Output 11 broadcasts (11 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/3 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3783 (bia 9ca9.b85c.3783)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/4 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3784 (bia 9ca9.b85c.3784)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/5 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3785 (bia 9ca9.b85c.3785)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/6 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3786 (bia 9ca9.b85c.3786)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/7 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3787 (bia 9ca9.b85c.3787)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/8 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3788 (bia 9ca9.b85c.3788)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/9 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3789 (bia 9ca9.b85c.3789)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/10 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378a (bia 9ca9.b85c.378a)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/11 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378b (bia 9ca9.b85c.378b)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/12 is up, line protocol is up (connected) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378c (bia 9ca9.b85c.378c)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Full-duplex, 1000Mb/s, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input 00:00:00, output 00:00:05, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     30 packets input, 5658 bytes, 0 no buffer
-     Received 25 broadcasts (25 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 25 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     16 packets output, 4385 bytes, 0 underruns
-     Output 12 broadcasts (12 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/13 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378d (bia 9ca9.b85c.378d)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/14 is up, line protocol is up (connected) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378e (bia 9ca9.b85c.378e)
-  MTU 1500 bytes, BW 100000 Kbit/sec, DLY 100 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Full-duplex, 100Mb/s, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output 00:00:00, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     24 packets input, 3880 bytes, 0 no buffer
-     Received 22 broadcasts (10 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 10 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     34 packets output, 5537 bytes, 0 underruns
-     Output 30 broadcasts (30 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/15 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.378f (bia 9ca9.b85c.378f)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/16 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3790 (bia 9ca9.b85c.3790)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/17 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3791 (bia 9ca9.b85c.3791)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/18 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3792 (bia 9ca9.b85c.3792)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/19 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3793 (bia 9ca9.b85c.3793)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/20 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3794 (bia 9ca9.b85c.3794)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/21 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3795 (bia 9ca9.b85c.3795)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/22 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3796 (bia 9ca9.b85c.3796)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/23 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3797 (bia 9ca9.b85c.3797)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/0/24 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3798 (bia 9ca9.b85c.3798)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive set (10 sec)
-  Auto-duplex, Auto-speed, media type is 10/100/1000BaseTX
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     2 packets input, 136 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     1 packets output, 68 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/1/1 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.3799 (bia 9ca9.b85c.3799)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive not set
-  Auto-duplex, Auto-speed, link type is auto, media type is unknown
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     1 packets input, 68 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     0 packets output, 0 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/1/2 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.379a (bia 9ca9.b85c.379a)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive not set
-  Auto-duplex, Auto-speed, link type is auto, media type is unknown
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     1 packets input, 68 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     0 packets output, 0 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/1/3 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.379b (bia 9ca9.b85c.379b)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive not set
-  Auto-duplex, Auto-speed, link type is auto, media type is unknown
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     1 packets input, 68 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     0 packets output, 0 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-GigabitEthernet1/1/4 is down, line protocol is down (notconnect) 
-  Hardware is Gigabit Ethernet, address is 9ca9.b85c.379c (bia 9ca9.b85c.379c)
-  MTU 1500 bytes, BW 1000000 Kbit/sec, DLY 10 usec, 
-     reliability 255/255, txload 1/255, rxload 1/255
-  Encapsulation ARPA, loopback not set
-  Keepalive not set
-  Auto-duplex, Auto-speed, link type is auto, media type is unknown
-  input flow-control is on, output flow-control is unsupported 
-  ARP type: ARPA, ARP Timeout 04:00:00
-  Last input never, output never, output hang never
-  Last clearing of "show interface" counters never
-  Input queue: 0/2000/0/0 (size/max/drops/flushes); Total output drops: 0
-  Queueing strategy: fifo
-  Output queue: 0/40 (size/max)
-  5 minute input rate 0 bits/sec, 0 packets/sec
-  5 minute output rate 0 bits/sec, 0 packets/sec
-     1 packets input, 68 bytes, 0 no buffer
-     Received 0 broadcasts (0 multicasts)
-     0 runts, 0 giants, 0 throttles 
-     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
-     0 watchdog, 0 multicast, 0 pause input
-     0 input packets with dribble condition detected
-     0 packets output, 0 bytes, 0 underruns
-     Output 0 broadcasts (0 multicasts)
-     0 output errors, 0 collisions, 2 interface resets
-     0 unknown protocol drops
-     0 babbles, 0 late collision, 0 deferred
-     0 lost carrier, 0 no carrier, 0 pause output
-     0 output buffer failures, 0 output buffers swapped out
-Switch#
-*Nov 27 20:37:11.760: %SMART_LIC-3-COMM_FAILED: Communications failure with the Cisco Smart License Utility (CSLU) : Unable to resolve server hostname/domain name 
+
+*** PRUEBA 5 NO EJECUTADA ***
+
 ################################################################################
 ### FIN PRUEBA 5
-### Hora: 17:37:38
+### Hora: 19:47:17
 ################################################################################
 
 
 ================================================================================
-PRUEBAS FINALIZADAS: 2025-11-27 17:37:38
+PRUEBAS FINALIZADAS: 2025-11-27 19:47:17
 ================================================================================

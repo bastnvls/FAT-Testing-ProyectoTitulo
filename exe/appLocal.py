@@ -866,6 +866,7 @@ class TestThread(QThread):
         # ==============================
         # Paso 3  SHOW VERSION POST RELOAD
         # ==============================
+        time.sleep(3)
         self.escribir_en_archivo("\n=== EJECUTANDO SHOW VERSION (POST RELOAD) ===\n")
         self.log("Ejecutando  show version (post reload)", "command")
         resultado_version = ejecutar_comando_completo_con_prompt(conexion, "show version", espera=3)
