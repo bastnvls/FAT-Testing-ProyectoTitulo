@@ -6,6 +6,8 @@ import re
 from flask import url_for, render_template_string
 from datetime import datetime, timezone
 from models import db 
+from flask_mail import Message
+from flask import current_app
 
 def suscripcion_vigente(user):
     """
@@ -491,4 +493,228 @@ def send_support_email(nombre, email, asunto, mensaje_texto, mail):
 
     except Exception as e:
         print(f"Error al enviar ticket de soporte: {str(e)}")
+        return False
+    
+def send_registration_confirmation_email(user, mail):
+    """
+    Envía correo de confirmación de registro exitoso
+    
+    Args:
+        user: Objeto User recién creado
+        mail: Objeto Flask-Mail
+    
+    Returns:
+        bool: True si se envió exitosamente, False si hubo error
+    """
+    try:
+        
+        
+        # Obtener nombre para mostrar
+        display_name = (
+            f"{(user.nombre or '').strip()} {(user.apellido or '').strip()}".strip()
+            or user.email.split('@')[0]  # Usar parte antes del @ si no hay nombre
+        )
+        
+        # Template del correo
+        html_body = f"""
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8" />
+            <style>
+                body {{
+                    font-family: 'Inter', Arial, sans-serif;
+                    background-color: #e5e7eb;
+                    margin: 0;
+                    padding: 20px;
+                }}
+                .container {{
+                    width: 100%;
+                    background: #e5e7eb;
+                    padding: 24px 0;
+                }}
+                .wrapper {{
+                    max-width: 640px;
+                    margin: 0 auto;
+                    background-color: white;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+                }}
+                .hero {{
+                    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+                    color: #fff;
+                    padding: 28px 32px 36px;
+                    text-align: center;
+                }}
+                .hero h1 {{
+                    margin: 0;
+                    font-size: 26px;
+                    font-weight: 700;
+                }}
+                .hero p {{
+                    margin: 6px 0 0;
+                    font-size: 13px;
+                    opacity: 0.9;
+                }}
+                .content {{
+                    padding: 32px 36px 36px;
+                    font-size: 15px;
+                    line-height: 1.6;
+                }}
+                .content h2 {{
+                    color: #1e293b;
+                    font-size: 24px;
+                    margin-bottom: 16px;
+                }}
+                .content p {{
+                    color: #1f2937;
+                    font-size: 15px;
+                    line-height: 1.6;
+                    margin-bottom: 16px;
+                }}
+                .button {{
+                    display: inline-block;
+                    margin: 22px 0;
+                    padding: 14px 26px;
+                    background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+                    color: #fff !important;
+                    text-decoration: none;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    font-size: 15px;
+                    box-shadow: 0 10px 22px rgba(67, 56, 202, 0.25);
+                }}
+                .footer {{
+                    text-align: center;
+                    color: #6b7280;
+                    font-size: 12px;
+                    padding: 18px;
+                    background: #f9fafb;
+                }}
+                .success-box {{
+                    margin: 20px 0;
+                    padding: 16px 20px;
+                    border-left: 4px solid #10b981;
+                    background: #ecfdf5;
+                    color: #065f46;
+                    border-radius: 10px;
+                    font-size: 14px;
+                }}
+                .success-box p {{
+                    margin: 0;
+                    color: #065f46;
+                }}
+                .feature-list {{
+                    background: #f9fafb;
+                    border-radius: 10px;
+                    padding: 20px 24px;
+                    margin: 20px 0;
+                }}
+                .feature-item {{
+                    display: flex;
+                    align-items: start;
+                    margin-bottom: 12px;
+                    color: #374151;
+                }}
+                .feature-item:last-child {{
+                    margin-bottom: 0;
+                }}
+                .feature-icon {{
+                    color: #4338ca;
+                    margin-right: 10px;
+                    font-size: 18px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="wrapper">
+                    <div class="hero">
+                        <h1>🎉 ¡Bienvenido a FAT Testing!</h1>
+                        <p>Tu cuenta ha sido creada exitosamente</p>
+                    </div>
+                    <div class="content">
+                        <p>Hola <strong>{display_name}</strong>,</p>
+                        <div class="success-box">
+                            <p><strong>✓ ¡Registro completado!</strong> Tu cuenta ha sido creada correctamente.</p>
+                        </div>
+                        <p>Estamos emocionados de tenerte en nuestra plataforma. Ya puedes acceder a todas las funcionalidades de FAT Testing.</p>
+                        
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-icon">📊</span>
+                                <span>Gestión completa de reportes de pruebas</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">💾</span>
+                                <span>Descarga del ejecutable de escritorio</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔒</span>
+                                <span>Recuperación de cuenta segura</span>
+                            </div>
+                        </div>
+                        
+                        <p>Para comenzar a usar FAT Testing, simplemente inicia sesión con tu correo y contraseña:</p>
+                        <div style="text-align: center;">
+                            <a href="{url_for('login', _external=True)}" class="button">Iniciar Sesión</a>
+                        </div>
+                        
+                        <p style="color: #6b7280; font-size: 14px; margin-top: 32px;">
+                            <strong>Datos de tu cuenta:</strong><br>
+                            Email: {user.email}
+                        </p>
+                        
+                        <p style="color: #6b7280; font-size: 14px;">
+                            Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos a través de nuestro formulario de soporte.
+                        </p>
+                    </div>
+                    <div class="footer">
+                        © 2025 FAT Testing. Todos los derechos reservados.<br/>
+                        Este es un correo automático, por favor no respondas a este mensaje.
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        # Versión texto plano
+        text_body = f"""
+        ¡Bienvenido a FAT Testing!
+        
+        Hola {display_name},
+        
+        Tu cuenta ha sido creada exitosamente.
+        
+        Ya puedes acceder a todas las funcionalidades de FAT Testing:
+        - Gestión completa de reportes de pruebas
+        - Descarga del ejecutable de escritorio
+        - Recuperación de cuenta segura
+        
+        Para comenzar, inicia sesión en: {url_for('login', _external=True)}
+        
+        Datos de tu cuenta:
+        Email: {user.email}
+        
+        Si tienes alguna pregunta, no dudes en contactarnos.
+        
+        Saludos,
+        Equipo de FAT Testing
+        """
+        
+        msg = Message(
+            subject="¡Bienvenido a FAT Testing! - Cuenta creada exitosamente",
+            sender=current_app.config["MAIL_DEFAULT_SENDER"],
+            recipients=[user.email],
+            body=text_body,
+            html=html_body
+        )
+        
+        mail.send(msg)
+        return True
+        
+    except Exception as e:
+        print(f"Error al enviar correo de confirmación: {str(e)}")
         return False

@@ -34,6 +34,7 @@ from utils import (
     send_password_reset_email,
     send_support_email,
     suscripcion_vigente,
+    send_registration_confirmation_email,
 )
 from functools import wraps
 import hmac
@@ -1392,6 +1393,7 @@ def register():
     Propósito:
         Registrar nuevos usuarios en la aplicación usando un email único y
         almacenando la contraseña de forma segura (hasheada desde el modelo User).
+        Además, envía un correo de confirmación al usuario tras el registro exitoso.
 
     Entradas:
         - Método GET:
@@ -1413,9 +1415,11 @@ def register():
     Dependencias:
         - validate_email_format para validar y normalizar el correo.
         - validate_password_strength para comprobar la fortaleza de la contraseña.
+        - send_registration_confirmation_email para enviar correo de bienvenida.
         - Modelo User para crear el registro en la base de datos.
         - db.session para guardar el nuevo usuario.
         - current_user para saber si ya hay alguien autenticado.
+        - mail para enviar el correo de confirmación.
     """
 
     # Comprobamos si ya hay un usuario autenticado en la sesión actual.
@@ -1507,8 +1511,35 @@ def register():
         # Confirmamos los cambios guardando el nuevo registro en la base.
         db.session.commit()
 
-        # Mostramos un mensaje indicando que el registro fue exitoso.
-        flash("Registro exitoso. Inicia sesión.", "success")
+        # ================================================================
+        # ENVÍO DE CORREO DE CONFIRMACIÓN DE REGISTRO
+        # ================================================================
+        # Intentamos enviar un correo de bienvenida al usuario recién registrado.
+        # Importamos la función que maneja el envío del correo de confirmación.
+        from utils import send_registration_confirmation_email
+        
+        # Llamamos a la función de envío pasando el usuario creado y el objeto mail.
+        # Esta función devuelve True si el correo se envió exitosamente, False si falló.
+        email_enviado = send_registration_confirmation_email(new_user, mail)
+        
+        # Verificamos si el correo se envió correctamente.
+        if email_enviado:
+            # Si el correo se envió, mostramos un mensaje de éxito completo.
+            # Informamos al usuario que revise su correo para la confirmación.
+            flash(
+                "¡Registro exitoso! Revisa tu correo para confirmar tu cuenta.", 
+                "success"
+            )
+        else:
+            # Si falló el envío del correo, igual permitimos que el registro sea válido.
+            # Mostramos un mensaje de advertencia indicando el problema con el correo.
+            # Esto evita bloquear el registro por un fallo en el servicio de email.
+            flash(
+                "Registro exitoso, pero hubo un problema al enviar el correo de confirmación.", 
+                "warning"
+            )
+        # ================================================================
+
         # Redirigimos al usuario a la página de login para que pueda iniciar sesión.
         return redirect(url_for("login"))
 
