@@ -50,13 +50,10 @@
 
 <body class="antialiased bg-white">
 
-    <!-- NAVBAR A ANCHO COMPLETO -->
     <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
-        <!-- OJO: aquí ya NO hay max-w-7xl mx-auto, solo padding -->
         <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
 
-                <!-- BLOQUE 1: LOGO -->
                 <div class="flex-none flex items-center space-x-2">
                     <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
                         <div
@@ -67,26 +64,31 @@
                     </a>
                 </div>
 
-                <!-- BLOQUE 2: LINKS CENTRALES -->
                 <div class="hidden md:flex flex-1 items-center justify-center">
                     <div class="flex items-center justify-center space-x-8">
-                        <a href="/#features" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('landing') }}#features" class="text-gray-600 hover:text-gray-900 transition">
                             Características
                         </a>
-                        <a href="/#benefits" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('landing') }}#benefits" class="text-gray-600 hover:text-gray-900 transition">
                             Beneficios
                         </a>
-                        <a href="/#pricing" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('landing') }}#pricing" class="text-gray-600 hover:text-gray-900 transition">
                             Precios
                         </a>
-                        <a href="/sobre-nosotros" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('sobre_nosotros') }}" class="text-gray-600 hover:text-gray-900 transition">
                             Sobre Nosotros
                         </a>
-                    </div>
 
+                        {% if current_user.is_authenticated %}
+                            <div class="h-5 w-px bg-gray-300"></div>
+
+                            <a href="{{ url_for('upload_files') }}" class="text-blue-600 font-semibold hover:text-blue-800 transition flex items-center">
+                                <i class="fas fa-bolt mr-2 text-sm"></i> Generar Informes
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
 
-                <!-- BLOQUE 3: USUARIO / APP / ESTADO / LOGOUT -->
                 <div class="hidden md:flex flex-none items-center space-x-5">
 
                     {% if current_user.is_authenticated %}
@@ -166,7 +168,6 @@
         </div>
     </nav>
 
-    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="fixed top-20 right-4 z-40 space-y-3 max-w-md">
@@ -216,7 +217,6 @@
 
     {% block content %}{% endblock %}
 
-    <!-- Footer global -->
     <footer class="bg-gray-900 text-gray-400 py-12 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
