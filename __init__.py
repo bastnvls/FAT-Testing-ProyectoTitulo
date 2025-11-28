@@ -1805,111 +1805,109 @@ def suscripcion_retorno():
 def mp_webhook():
     """
     Propósito:
-        Recibir notificaciones (webhooks) de Mercado Pago.
-        Procesa cambios de estado y PAGOS RECURRENTES para renovar suscripciones.
-
-    Entradas:
-        request: Objeto global de Flask con JSON y argumentos URL.
-
-    Salidas:
-        HTTP 200 OK (siempre, para confirmar recepción a MP).
-
-    Dependencias:
-        - extraer_evento_mp, Config, User
-        - actualizar_estado_desde_preapproval
+        Recibir notificaciones de Mercado Pago.
+        Es un 'Detective' que busca a quién pertenece el pago, incluso si MP esconde el ID.
+    
+    Entradas: request (JSON de MP)
+    Salidas: 200 OK
+    Dependencias: extraer_evento_mp, Config, User, actualizar_estado_desde_preapproval
     """
-    # Si es GET, MP solo está verificando que el servidor responda
     if request.method == "GET":
         print("=== WEBHOOK GET (Healthcheck) ===")
         return "", 200
-
-    # Validar seguridad (opcional, según tu configuración de DEBUG)
+    
+    # Validación básica (deshabilitada en debug para facilitar pruebas)
     if not validar_webhook_mp(request):
         print("[MP SECURITY] Webhook rechazado por firma inválida")
-        # return "", 403 # Descomentar en producción estricta
+        # return "", 403 
 
     try:
-        # Obtener cuerpo JSON y Query Params
         body = request.get_json(silent=True) or {}
         query = request.args.to_dict()
-
-        # Extraer el tópico (tipo de evento) y el ID del recurso
         topic, resource_id = extraer_evento_mp(body, query)
-
-        # Si no hay datos suficientes, responder OK para evitar reintentos de MP
+        
         if not topic or not resource_id:
-            print("[MP] Webhook recibido sin topic o resource_id válido.")
+            print("[MP] Webhook recibido sin datos clave.")
             return "", 200
 
-        # Instanciar SDK
         sdk = Config.sdk_mp
 
-        # CASO 1: Cambio directo en la suscripción (Pausas, cancelaciones, alta)
+        # CASO 1: Novedades de la Suscripción (Pausas, Cancelaciones, Alta)
         if topic in ["subscription_preapproval", "subscription_preapproval_plan"]:
-            print(f"\n[MP] Evento de Suscripción detectado. ID: {resource_id}")
-
-            # Consultar API de Preapproval para obtener datos actualizados
+            print(f"\n[MP] Novedad en Suscripción. ID: {resource_id}")
             resp = sdk.preapproval().get(resource_id)
             datos = resp.get("response", {})
-
-            # Buscar usuario en BD usando referencia externa o ID de preapproval
+            
             usuario = obtener_usuario_desde_preapproval(datos)
-
             if usuario:
                 print(f"[MP] Usuario encontrado: {usuario.email}. Actualizando...")
                 actualizar_estado_desde_preapproval(usuario, datos)
             else:
-                print("[MP] No se encontró usuario para este ID de suscripción.")
+                print("[MP] ID de suscripción no encontrado en nuestra BD (puede ser antiguo).")
 
-        # CASO 2: PAGO RECURRENTE APROBADO (Clave para renovaciones)
+        # CASO 2: PAGO CONFIRMADO (Aquí está la mejora "Detective")
         elif topic == "subscription_authorized_payment":
-            print(f"\n[MP] PAGO RECURRENTE DETECTADO. ID Pago: {resource_id}")
-
-            # 1. Consultar el detalle del pago a la API
-            # Usamos payment().get() ya que a veces el ID viene cruzado
+            print(f"\n[MP] PAGO RECIBIDO. ID Pago: {resource_id}")
+            
+            # Consultamos el detalle del pago
             payment_resp = sdk.payment().get(resource_id)
             payment_data = payment_resp.get("response", {})
-
-            # 2. Buscar el ID de la suscripción dentro de los datos del pago
-            # Normalmente MP lo envía en el campo 'preapproval_id'
+            
+            # --- INICIO MODO DETECTIVE ---
+            # Buscamos el ID de la suscripción en 3 lugares distintos
+            
+            # Lugar 1: Donde debería estar siempre
             preapproval_id = payment_data.get("preapproval_id")
+            
+            # Lugar 2: A veces MP lo guarda en 'metadata'
+            if not preapproval_id:
+                preapproval_id = payment_data.get("metadata", {}).get("preapproval_id")
+                
+            # Lugar 3: A veces viene en el JSON original del webhook
+            if not preapproval_id:
+                preapproval_id = body.get("data", {}).get("preapproval_id")
+
+            # -----------------------------
+            
+            usuario = None
 
             if preapproval_id:
-                print(f"[MP] El pago pertenece a la suscripción ID: {preapproval_id}")
-
-                # 3. Buscar al usuario en la BD que tenga ese ID de suscripción
+                print(f"[MP] ID Suscripción encontrado: {preapproval_id}")
+                # Buscamos al usuario que tenga ese ID guardado
                 usuario = User.query.filter_by(mp_preapproval_id=preapproval_id).first()
-
-                if usuario:
-                    print(f"[MP] Usuario identificado: {usuario.email}")
-                    print("[MP] Consultando estado actualizado de la suscripción...")
-
-                    # 4. Consultar la suscripción para ver la nueva 'next_payment_date'
-                    # El pago por sí solo no trae la nueva fecha, la suscripción sí.
-                    sub_resp = sdk.preapproval().get(preapproval_id)
-                    sub_data = sub_resp.get("response", {})
-
-                    # 5. Forzar actualización de fechas
-                    actualizar_estado_desde_preapproval(usuario, sub_data)
-                    print("[MP] Renovación procesada correctamente.")
-                else:
-                    print(
-                        f"[MP] ERROR: Se recibió pago de suscripción {preapproval_id} pero no existe usuario en BD."
-                    )
             else:
-                print(
-                    "[MP] El pago no tiene 'preapproval_id'. Puede ser un pago único, se ignora."
-                )
+                # ESTRATEGIA DE EMERGENCIA: Buscar por "external_reference"
+                # (Recuerda que nosotros le pusimos "user:EL_UUID" al crear la suscripción)
+                ext_ref = payment_data.get("external_reference")
+                if ext_ref and ext_ref.startswith("user:"):
+                    print(f"[MP] Buscando por etiqueta externa: {ext_ref}")
+                    user_id = ext_ref.split(":", 1)[1]
+                    usuario = db.session.get(User, user_id)
+                    # Si lo encontramos, recuperamos su ID de suscripción para consultar a MP
+                    if usuario:
+                        preapproval_id = usuario.mp_preapproval_id
 
+            # Si después de todo eso encontramos al usuario...
+            if usuario and preapproval_id:
+                print(f"[MP] ¡Usuario identificado!: {usuario.email}")
+                print("[MP] Consultando fecha de vencimiento actualizada...")
+                
+                # Vamos a preguntar a la API de suscripciones cuándo vence ahora
+                sub_resp = sdk.preapproval().get(preapproval_id)
+                sub_data = sub_resp.get("response", {})
+                
+                # Actualizamos la base de datos
+                actualizar_estado_desde_preapproval(usuario, sub_data)
+                print("[MP] Renovación procesada con éxito.")
+            else:
+                print(f"[MP] No se pudo vincular este pago a ningún usuario. Se ignora.")
+        
         else:
-            # Otros eventos (como merchant_order) que no nos interesan por ahora
-            print(f"[MP] Tópico no procesado: {topic}")
+            print(f"[MP] Evento ignorado: {topic}")
 
     except Exception as e:
-        # Captura cualquier error para no tumbar el servidor
-        print(f"[MP] EXCEPCIÓN GENERAL en Webhook: {e}")
-
-    # Siempre responder 200 OK a Mercado Pago
+        print(f"[MP] ERROR en Webhook: {e}")
+    
     return "", 200
 
 
