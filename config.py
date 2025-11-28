@@ -39,4 +39,8 @@ class Config:
     PASSWORD_REQUIRE_DIGITS = True
     PASSWORD_REQUIRE_SPECIAL = True
 
+    # Configuración de MercadoPago
     sdk_mp = mercadopago.SDK(os.environ["MP_ACCESS_TOKEN"])
+
+    # Webhook secret de MercadoPago
+    MP_WEBHOOK_SECRET = os.environ.get('MP_WEBHOOK_SECRET')

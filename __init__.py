@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, timezone
 from flask import (
     Flask,
     request,
@@ -32,6 +32,8 @@ from utils import (
     send_password_reset_email,
 )
 from functools import wraps
+import hmac
+import hashlib
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -840,6 +842,9 @@ def suscripcion_requerida(vista):
     @login_required
     def vista_protegida(*args, **kwargs):
 
+        # Primero, refrescamos el estado de suscripción del usuario actual
+        refrescar_estado_suscripcion(current_user)
+
         # Si el usuario actual NO tiene una suscripción vigente...
         if not suscripcion_vigente(current_user):
             # Mostramos un mensaje de advertencia en la interfaz (con Flash).
@@ -949,62 +954,240 @@ def obtener_usuario_desde_preapproval(preapproval):
     # Devolvemos el usuario encontrado o None si no hubo coincidencias.
     return user
 
-def actualizar_estado_suscripcion_desde_mp(user):
+
+def actualizar_estado_desde_preapproval(user, preapproval):
     """
-    Si el usuario está en PENDIENTE_MP y tiene mp_preapproval_id,
-    consulta la API de Mercado Pago y actualiza estado_suscripcion / fecha_fin_suscripcion.
+    Propósito:
+        Actualiza el estado de suscripción del usuario según lo que dice Mercado Pago.
+    
+    Entradas:
+        user: El usuario a actualizar
+        preapproval: Los datos de la suscripción desde Mercado Pago
+    
+    Salidas:
+        None (modifica el usuario y guarda en BD)
+    
+    Dependencias:
+        datetime, timedelta, db.session
     """
-    if not user or not user.mp_preapproval_id:
-        return
-
-    # Solo tiene sentido llamar a MP si está pendiente
-    if user.estado_suscripcion != "PENDIENTE_MP":
-        return
-
-    try:
-        sdk = Config.sdk_mp
-        resp = sdk.preapproval().get(user.mp_preapproval_id)
-        preapproval = resp.get("response", {}) or {}
-
-        status = preapproval.get("status")
-        hoy = datetime.utcnow().date()
-        preapproval_id_real = preapproval.get("id")
-
-        if status == "authorized":
-            user.estado_suscripcion = "ACTIVA"
-
-        # Si no tiene fecha de fin o ya venció, le damos 30 días nuevos
-        if user.fecha_fin_suscripcion is None or user.fecha_fin_suscripcion < hoy:
-            nueva_fecha_fin = hoy + timedelta(days=30)
-            user.fecha_fin_suscripcion = nueva_fecha_fin
+    # Obtener datos básicos
+    status_mp = preapproval.get('status')
+    hoy = datetime.utcnow().date()
+    id_suscripcion = preapproval.get('id')
+    estado_anterior = user.estado_suscripcion
+    
+    # Mostrar en consola para saber qué está pasando
+    print(f"[MP] Actualizando usuario {user.email}")
+    print(f"[MP] Estado en MP: {status_mp}")
+    print(f"[MP] Estado anterior: {estado_anterior}")
+    
+    # Guardar el ID de la suscripción si cambió
+    if id_suscripcion and user.mp_preapproval_id != id_suscripcion:
+        user.mp_preapproval_id = id_suscripcion
+        print(f"[MP] ID guardado: {id_suscripcion}")
+    
+    # Procesar según el estado de Mercado Pago
+    if status_mp == 'authorized':
+        # Suscripción autorizada (pagó)
+        
+        # Solo actualizar fecha si es primera vez que se activa
+        if estado_anterior != 'ACTIVA':
+            print("[MP] Primera activación")
+            user.estado_suscripcion = 'ACTIVA'
+            
+            # Calcular nueva fecha de fin
+            if not user.fecha_fin_suscripcion or user.fecha_fin_suscripcion < hoy:
+                # No tiene fecha o ya venció: dar 30 días desde hoy
+                user.fecha_fin_suscripcion = hoy + timedelta(days=30)
+            # Si ya tiene fecha futura, dejarla así
+            
+            # Actualizar hora de fin de licencia
+            user.licencia_valida_hasta = datetime.combine(
+                user.fecha_fin_suscripcion,
+                time(23, 59, 59)
+            )
+            
+            print(f"[MP] Nueva fecha: {user.fecha_fin_suscripcion}")
         else:
-            nueva_fecha_fin = user.fecha_fin_suscripcion
+            # Ya estaba activa, es webhook duplicado
+            print("[MP] Ya estaba activa, no cambiar fecha")
+    
+    elif status_mp == 'pending':
+        # Esperando pago
+        user.estado_suscripcion = 'PENDIENTE_MP'
+        print("[MP] Esperando pago")
+    
+    elif status_mp == 'paused':
+        # Usuario la pausó
+        user.estado_suscripcion = 'PAUSADA'
+        print("[MP] Pausada")
+    
+    elif status_mp == 'cancelled':
+        # Cancelada
+        user.estado_suscripcion = 'CANCELADA'
+        print("[MP] Cancelada")
+    
+    else:
+        # Estado desconocido, no hacer nada
+        print(f"[MP] Estado '{status_mp}' no reconocido")
+        return
+    
+    # Guardar cambios en la base de datos
+    try:
+        db.session.commit()
+        print(f"[MP] Guardado OK: {user.estado_suscripcion}")
+    except Exception as error:
+        print(f"[MP] Error al guardar: {error}")
+        db.session.rollback()
+        raise
 
-        # Ajustamos licencia_valida_hasta al final del día de fecha_fin_suscripcion
-        user.licencia_valida_hasta = datetime.combine(
-            nueva_fecha_fin,
-            time(23, 59, 59)
-        )
 
-        # Guardamos el id real de la suscripción de MP
-        if preapproval_id_real:
-            user.mp_preapproval_id = preapproval_id_real
-
-
-        elif status == "paused":
-            user.estado_suscripcion = "PAUSADA"
-
-        elif status == "cancelled":
-            user.estado_suscripcion = "CANCELADA"
-
-        # Puedes loguear otros estados si quieres
-
+def refrescar_estado_suscripcion(user):
+    """
+    Propósito:
+        Verifica si la suscripción ya venció y la marca como VENCIDA.
+    
+    Entradas:
+        user: El usuario a verificar
+    
+    Salidas:
+        None (modifica el usuario si está vencida)
+    
+    Dependencias:
+        datetime, db.session
+    """
+    if not user:
+        return
+    
+    hoy = datetime.utcnow().date()
+    
+    # Si está activa pero la fecha ya pasó, marcarla como vencida
+    esta_activa = (user.estado_suscripcion == 'ACTIVA')
+    tiene_fecha = (user.fecha_fin_suscripcion is not None)
+    fecha_paso = tiene_fecha and (user.fecha_fin_suscripcion < hoy)
+    
+    if esta_activa and fecha_paso:
+        print(f"[LOCAL] Suscripción venció el {user.fecha_fin_suscripcion}")
+        user.estado_suscripcion = 'VENCIDA'
         db.session.commit()
 
-    except Exception as e:
-        print(f"[MP] Error al actualizar estado de suscripción desde MP: {e}")
 
+def validar_webhook_mp(request):
+    """
+    Propósito:
+        Verifica que el webhook realmente viene de Mercado Pago.
+    
+    Entradas:
+        request: La petición HTTP recibida
+    
+    Salidas:
+        bool: True si es válido, False si no
+    
+    Dependencias:
+        hmac, hashlib, Config.MP_WEBHOOK_SECRET
+    """
+    # En modo desarrollo, aceptar sin validar
+    if app.debug:
+        print("[MP SECURITY] Modo DEBUG, aceptado")
+        return True
+    
+    try:
+        # Obtener headers de seguridad
+        x_signature = request.headers.get('x-signature')
+        x_request_id = request.headers.get('x-request-id')
+        
+        # Verificar que existan
+        if not x_signature or not x_request_id:
+            print("[MP SECURITY] Faltan headers")
+            return False
+        
+        # Extraer timestamp y hash del header
+        partes = {}
+        for fragmento in x_signature.split(','):
+            if '=' in fragmento:
+                clave, valor = fragmento.split('=', 1)
+                partes[clave.strip()] = valor.strip()
+        
+        timestamp = partes.get('ts')
+        hash_recibido = partes.get('v1')
+        
+        if not timestamp or not hash_recibido:
+            print("[MP SECURITY] Formato inválido")
+            return False
+        
+        # Crear el texto a hashear
+        texto = f"id={x_request_id};request-id={x_request_id};ts={timestamp};"
+        
+        # Obtener el secret
+        secret = Config.MP_WEBHOOK_SECRET
+        if not secret:
+            print("[MP SECURITY] Sin secret configurado")
+            return True  # Permitir en desarrollo
+        
+        # Calcular hash esperado
+        hash_esperado = hmac.new(
+            secret.encode(),
+            texto.encode(),
+            hashlib.sha256
+        ).hexdigest()
+        
+        # Comparar hashes
+        es_valido = hmac.compare_digest(hash_esperado, hash_recibido)
+        
+        if not es_valido:
+            print("[MP SECURITY] Hash no coincide")
+        
+        return es_valido
+        
+    except Exception as error:
+        print(f"[MP SECURITY] Error: {error}")
+        return False
 
+def actualizar_estado_suscripcion_desde_mp(user):
+    """
+    Propósito:
+        Consulta Mercado Pago para actualizar el estado de la suscripción.
+    
+    Entradas:
+        user: El usuario a actualizar
+    
+    Salidas:
+        bool: True si funcionó, False si hubo error
+    
+    Dependencias:
+        Config.sdk_mp, actualizar_estado_desde_preapproval
+    """
+    # Verificar que el usuario tenga ID de suscripción
+    if not user or not user.mp_preapproval_id:
+        print("[MP] Usuario sin ID de suscripción")
+        return False
+    
+    try:
+        # Obtener SDK de Mercado Pago
+        sdk = Config.sdk_mp
+        
+        print(f"[MP] Consultando suscripción {user.mp_preapproval_id}")
+        
+        # Consultar la API de MP
+        respuesta = sdk.preapproval().get(user.mp_preapproval_id)
+        datos_suscripcion = respuesta.get('response', {})
+        
+        # Verificar que llegaron datos
+        if not datos_suscripcion or not datos_suscripcion.get('id'):
+            print("[MP] No se recibieron datos")
+            return False
+        
+        print(f"[MP] Estado recibido: {datos_suscripcion.get('status')}")
+        
+        # Actualizar usando la función principal
+        actualizar_estado_desde_preapproval(user, datos_suscripcion)
+        
+        return True
+        
+    except Exception as error:
+        print(f"[MP] Error al consultar: {error}")
+        return False
+    
 # ====== RUTAS ======
 
 
@@ -1194,6 +1377,9 @@ def login():
 
     # Verificamos si ya hay un usuario autenticado en la sesión actual.
     if current_user.is_authenticated:
+        # Si ya está logueado, actualizamos su estado de suscripción.
+        refrescar_estado_suscripcion(current_user)
+
         # Revisamos si su suscripción NO está vigente y además requiere pago.
         if not suscripcion_vigente(current_user) and necesita_pago(current_user):
             # Si debe pagar, lo redirigimos a la página de suscripción.
@@ -1236,6 +1422,9 @@ def login():
             # Guardamos los cambios en la base de datos.
             db.session.commit()
 
+            # Actualiza estado según fecha
+            refrescar_estado_suscripcion(user)
+
             # Revisamos si la suscripción NO está vigente y además requiere pago.
             if not suscripcion_vigente(user) and necesita_pago(user):
                 # Si debe pagar, lo redirigimos a la página de suscripción.
@@ -1273,6 +1462,9 @@ def suscripcion_checkout():
     #   - current_user de Flask-Login (para validar acceso).
     #   - Template 'suscripcion.html'.
 
+    # Primero, refrescamos el estado de suscripción del usuario actual
+    refrescar_estado_suscripcion(current_user)
+
     # Si está pendiente, intentamos refrescar el estado desde MP
     if current_user.estado_suscripcion == "PENDIENTE_MP":
         actualizar_estado_suscripcion_desde_mp(current_user)
@@ -1307,245 +1499,166 @@ def suscripcion_checkout():
 @app.route("/suscripcion/iniciar")
 @login_required
 def iniciar_suscripcion_mp():
-    # Obtenemos el SDK de Mercado Pago desde la configuración global.
+    """
+    Crea la suscripción en Mercado Pago y redirige al usuario.
+    """
+    print(f"[MP] Iniciando para {current_user.email}")
+    
+    # Preparar datos
     sdk = Config.sdk_mp
-
-    # Construimos el external_reference con el id del usuario actual.
-    external_reference = f"user:{current_user.get_id()}"
-
-    # Obtenemos el correo del payer.
-    # En sandbox: usamos MP_TEST_PAYER_EMAIL si existe.
-    # Si no está definido, usamos el correo del usuario.
-    payer_email = os.environ.get("MP_TEST_PAYER_EMAIL", current_user.email)
-
-    # Preparamos los datos del preapproval usando el esquema de Checkout MP.
-    preapproval_data = {
+    referencia = f"user:{current_user.get_id()}"
+    email_pagador = os.environ.get('MP_TEST_PAYER_EMAIL', current_user.email)
+    
+    datos_suscripcion = {
         "auto_recurring": {
             "currency_id": "CLP",
             "transaction_amount": 150000,
             "frequency": 1,
             "frequency_type": "months",
         },
-        "back_url": url_for("suscripcion_retorno", _external=True),
-        "external_reference": external_reference,
-        "payer_email": payer_email,
+        "back_url": url_for('suscripcion_retorno', _external=True),
+        "external_reference": referencia,
+        "payer_email": email_pagador,
         "reason": "Plan Standard FAT Testing",
     }
-
-    # Inicializamos variables para usar después de llamar a la API.
-    preapproval_id = None
-    init_point = None
-
-    # Intentamos crear la suscripción en Mercado Pago dentro de un bloque try/except.
+    
     try:
-        # Llamamos a la API de Mercado Pago para crear la suscripción.
-        response = sdk.preapproval().create(preapproval_data)
-
-        # Mostramos la respuesta cruda de Mercado Pago para depurar en caso de error.
-        print("[MP] Respuesta completa al crear preapproval:", response)
-
-        # Obtenemos el diccionario de respuesta principal.
-        preapproval = response.get("response", {})
-
-        # Extraemos el id de la suscripción creada.
-        preapproval_id = preapproval.get("id")
-
-        # Extraemos la URL donde se debe redirigir al usuario para completar la suscripción.
-        init_point = preapproval.get("init_point") or preapproval.get(
-            "sandbox_init_point"
-        )
-
-        # Mostramos en consola algo de información para depuración.
-        print(f"[MP] preapproval creado: id={preapproval_id}, init_point={init_point}")
-
-    except Exception as e:
-        # Si ocurre un error al hablar con Mercado Pago, lo mostramos en consola.
-        print(f"[MP] Error al crear preapproval: {e}")
-        # Mostramos un mensaje de error al usuario.
-        flash(
-            "Ocurrió un problema al iniciar la suscripción. Intenta de nuevo.", "danger"
-        )
-        # Redirigimos de vuelta a la página de suscripción.
-        return redirect(url_for("suscripcion_checkout"))
-
-    # Verificamos si realmente obtuvimos un id de suscripción.
-    if preapproval_id:
-        # Guardamos el id de Mercado Pago en el usuario actual para futuras referencias.
-        current_user.mp_preapproval_id = preapproval_id
-        # Marcamos el estado de la suscripción como pendiente de confirmación en Mercado Pago.
-        current_user.estado_suscripcion = "PENDIENTE_MP"
-        # Guardamos los cambios en la base de datos.
+        # Crear suscripción en MP
+        respuesta = sdk.preapproval().create(datos_suscripcion)
+        datos = respuesta.get('response', {})
+        
+        id_suscripcion = datos.get('id')
+        url_pago = datos.get('init_point') or datos.get('sandbox_init_point')
+        
+        print(f"[MP] ID: {id_suscripcion}")
+        print(f"[MP] URL: {url_pago}")
+        
+        if not id_suscripcion:
+            flash("No se pudo crear la suscripción", "danger")
+            return redirect(url_for('suscripcion_checkout'))
+        
+        if not url_pago:
+            flash("No se pudo obtener URL de pago", "danger")
+            return redirect(url_for('suscripcion_checkout'))
+        
+        # Guardar ID y marcar como pendiente
+        current_user.mp_preapproval_id = id_suscripcion
+        current_user.estado_suscripcion = 'PENDIENTE_MP'
         db.session.commit()
-    else:
-        # Si no hay id en la respuesta, registramos esto en la consola para depuración.
-        print("[MP] La respuesta de preapproval no contiene 'id'.")
-        # Mostramos un mensaje al usuario indicando que hubo un problema.
-        flash("No se pudo crear la suscripción en Mercado Pago.", "danger")
-        # Redirigimos nuevamente a la página de suscripción.
-        return redirect(url_for("suscripcion_checkout"))
-
-    # Si no se obtuvo una URL de checkout, no podemos continuar con el flujo normal.
-    if not init_point:
-        # Informamos por consola que falta la URL de redirección.
-        print("[MP] La respuesta de preapproval no trae init_point.")
-        # Informamos al usuario con un mensaje amigable.
-        flash("No se pudo obtener la URL de pago de Mercado Pago.", "danger")
-        # Redirigimos a la página de suscripción.
-        return redirect(url_for("suscripcion_checkout"))
-
-    # Si todo salió bien, redirigimos al usuario al checkout de Mercado Pago.
-    return redirect(init_point)
-
-@app.route('/suscripcion/retorno')
-@login_required
-def suscripcion_retorno():
-    # Intentamos sincronizar el estado con MP si está pendiente
-    if current_user.estado_suscripcion == "PENDIENTE_MP":
-        actualizar_estado_suscripcion_desde_mp(current_user)
-
-    # Si después de sincronizar ya está vigente, lo mandamos a la app
-    if suscripcion_vigente(current_user):
-        flash("Tu suscripción ha sido activada correctamente", "success")
-        return redirect(url_for('upload_files'))
-
-    # Si sigue sin estar vigente, mostramos un mensaje más amable
-    if current_user.estado_suscripcion == "PENDIENTE_MP":
-        flash(
-            "Estamos esperando la confirmación de tu pago desde Mercado Pago. "
-            "Si ya pagaste, espera unos segundos y vuelve a intentar.",
-            "info"
-        )
+        
+        print("[MP] Redirigiendo a MP")
+        return redirect(url_pago)
+        
+    except Exception as error:
+        print(f"[MP] Error: {error}")
+        flash("Error al crear suscripción", "danger")
         return redirect(url_for('suscripcion_checkout'))
 
-    # Para otros estados (cancelada, etc.) lo mandas a la página de suscripción
+@app.route("/suscripcion/retorno")
+@login_required
+def suscripcion_retorno():
+    """
+    Página donde vuelve el usuario después de pagar.
+    """
+    print(f"[RETORNO] {current_user.email} volvió")
+    print(f"[RETORNO] Estado: {current_user.estado_suscripcion}")
+    
+    # Si está pendiente, consultar MP
+    if current_user.estado_suscripcion == 'PENDIENTE_MP':
+        print("[RETORNO] Consultando MP...")
+        actualizar_estado_suscripcion_desde_mp(current_user)
+    
+    # Verificar fecha local
+    refrescar_estado_suscripcion(current_user)
+    
+    # Revisar resultado
+    if suscripcion_vigente(current_user):
+        print("[RETORNO] Suscripción OK")
+        flash("¡Suscripción activada!", "success")
+        return redirect(url_for('upload_files'))
+    
+    if current_user.estado_suscripcion == 'PENDIENTE_MP':
+        print("[RETORNO] Sigue pendiente")
+        flash("Procesando pago. Espera unos minutos.", "info")
+        return redirect(url_for('suscripcion_checkout'))
+    
+    print(f"[RETORNO] Estado final: {current_user.estado_suscripcion}")
+    flash("Problema con suscripción", "warning")
     return redirect(url_for('suscripcion_checkout'))
 
 
 @app.route("/mp/webhook", methods=["GET", "POST"])
 def mp_webhook():
-    # Propósito:
-    #   Recibir las notificaciones (webhooks) de Mercado Pago tanto reales como
-    #   las de prueba del simulador, imprimir lo que llega y, si es un evento
-    #   de suscripción, consultar la API para actualizar el estado del usuario.
-    #
-    # Entradas:
-    #   - Método GET: usado por algunas pruebas / healthchecks → solo log y 200.
-    #   - Método POST: notificaciones reales de Mercado Pago con body JSON.
-    #
-    # Salidas:
-    #   - Siempre devuelve 200 OK para que Mercado Pago considere el webhook
-    #     como recibido, aunque internamente algo falle.
-    #
-    # Dependencias:
-    #   - request, json (de Flask).
-    #   - extraer_evento_mp, obtener_usuario_desde_preapproval.
-    #   - Config.sdk_mp, User, db, datetime, timedelta.
-
-    # --- 1) Si llega un GET (simulador / prueba simple) ---
-    # Si el método HTTP es GET, solo registramos la llamada y devolvemos 200.
+    """
+    Recibe notificaciones de Mercado Pago.
+    """
+    # GET es healthcheck
     if request.method == "GET":
-        # Imprimimos el método y los parámetros de la query para depurar.
-        print("=== WEBHOOK MP (GET) ===")
-        print("Query:", request.args.to_dict())
-        print("========================")
-        # Respondemos con 200 OK sin procesar nada más.
+        print("=== WEBHOOK GET ===")
         return "", 200
-
-    # --- 2) Aquí manejamos solo los POST (notificaciones reales) ---
+    
     try:
-        # Obtenemos el body del webhook como diccionario (puede venir vacío).
+        # Validar seguridad
+        if not validar_webhook_mp(request):
+            print("[MP] Webhook rechazado")
+            return "", 403
+        
+        # Obtener datos
         body = request.get_json(silent=True) or {}
-        # Obtenemos los parámetros de la query string (?type=..., data.id=..., etc.).
         query = request.args.to_dict()
-
-        # Imprimimos todo el contenido del webhook para depuración.
-        print("=== WEBHOOK MP (POST) ===")
-        print("Query:", query)
-        print("Body:", json.dumps(body, indent=2, ensure_ascii=False))
-        print("=========================")
-
-        # Obtenemos el tipo de evento (topic) y el id del recurso (resource_id).
+        
+        print("\n=== WEBHOOK MP ===")
+        print(f"Query: {query}")
+        print(f"Body: {json.dumps(body, indent=2)}")
+        print("==================\n")
+        
+        # Extraer tipo e ID
         topic, resource_id = extraer_evento_mp(body, query)
-
-        # Mostramos qué tipo de evento y cuál es el id asociado.
-        print(f"[MP] topic={topic}, resource_id={resource_id}")
-
-        # Obtenemos el SDK de Mercado Pago desde la configuración global.
-        sdk = Config.sdk_mp
-
-        # Si el evento corresponde a una suscripción (preapproval).
-        if topic == "subscription_preapproval" and resource_id:
+        
+        if not topic or not resource_id:
+            print("[MP] Evento sin datos")
+            return "", 200
+        
+        print(f"[MP] Evento: {topic}, ID: {resource_id}")
+        
+        # Procesar eventos de suscripción
+        if topic in ['subscription_preapproval', 'subscription_preapproval_plan']:
             try:
-                # Consultamos la API de MP para obtener la suscripción completa.
-                response = sdk.preapproval().get(resource_id)
-                preapproval = response.get("response", {})
-
-                # Mostramos en consola el preapproval recibido.
-                print(f"[MP] preapproval recibido en webhook: {preapproval}")
-
-                # Usamos el helper para encontrar al usuario en nuestra base.
-                user = obtener_usuario_desde_preapproval(preapproval)
-
-                # Si no encontramos usuario, lo registramos y terminamos.
-                if user is None:
-                    print(
-                        f"[MP] No se encontró usuario para preapproval {resource_id}."
-                    )
-                else:
-                    # Obtenemos el estado de la suscripción en MP.
-                    status = preapproval.get("status")
-                    # Obtenemos la fecha actual en UTC (solo fecha).
-                    hoy = datetime.utcnow().date()
-                    # Obtenemos el id real de la suscripción.
-                    preapproval_id_real = preapproval.get("id")
-
-                    # Mostramos un resumen en consola.
-                    print(
-                        f"[MP] status={status}, preapproval_id={preapproval_id_real}, user_id={user.get_id()}"
-                    )
-
-                    # Si la suscripción está autorizada, la marcamos como ACTIVA.
-                    if status == "authorized":
-                        user.estado_suscripcion = "ACTIVA"
-                        if (
-                            user.fecha_fin_suscripcion is None
-                            or user.fecha_fin_suscripcion < hoy
-                        ):
-                            user.fecha_fin_suscripcion = hoy + timedelta(days=30)
-                        if preapproval_id_real:
-                            user.mp_preapproval_id = preapproval_id_real
-
-                    # Si está pausada, la marcamos como PAUSADA.
-                    elif status == "paused":
-                        user.estado_suscripcion = "PAUSADA"
-
-                    # Si está cancelada, la marcamos como CANCELADA.
-                    elif status == "cancelled":
-                        user.estado_suscripcion = "CANCELADA"
-
-                    # Para otros estados, solo los registramos.
-                    else:
-                        print(f"[MP] Status de preapproval no manejado aún: {status}")
-
-                    # Guardamos los cambios en la base de datos.
-                    db.session.commit()
-                    print("[MP] Suscripción de usuario actualizada correctamente.")
-
-            except Exception as e:
-                # Mostramos el error en consola para poder depurarlo luego.
-                print(f"[MP] Error procesando subscription_preapproval: {e}")
-
-        # Si el tipo de evento no es de suscripción, por ahora solo lo registramos.
+                # Obtener datos de MP
+                sdk = Config.sdk_mp
+                respuesta = sdk.preapproval().get(resource_id)
+                datos = respuesta.get('response', {})
+                
+                if not datos:
+                    print("[MP] Sin datos de suscripción")
+                    return "", 200
+                
+                # Buscar usuario
+                usuario = obtener_usuario_desde_preapproval(datos)
+                
+                if not usuario:
+                    print("[MP] Usuario no encontrado")
+                    return "", 200
+                
+                print(f"[MP] Usuario: {usuario.email}")
+                
+                # Actualizar estado
+                actualizar_estado_desde_preapproval(usuario, datos)
+                
+                print("[MP] Procesado OK")
+                
+            except Exception as error:
+                print(f"[MP] Error: {error}")
+        
+        elif topic == 'payment':
+            print(f"[MP] Pago recibido: {resource_id}")
+        
         else:
-            print(
-                f"[MP] Topic no manejado todavía o resource_id vacío: topic={topic}, resource_id={resource_id}"
-            )
-
-    except Exception as e:
-        # Cualquier error inesperado lo capturamos para que igual devolvamos 200.
-        print(f"[MP] Error general en mp_webhook: {e}")
-
-    # Siempre respondemos con 200 OK para que Mercado Pago considere el webhook como recibido.
+            print(f"[MP] Topic no procesado: {topic}")
+        
+    except Exception as error:
+        print(f"[MP] Error general: {error}")
+    
     return "", 200
 
 
