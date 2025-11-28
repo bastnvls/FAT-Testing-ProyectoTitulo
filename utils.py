@@ -4,7 +4,44 @@ Utilidades de validación y envío de correos
 
 import re
 from flask import url_for, render_template_string
+from datetime import datetime, timezone
+from models import db 
 
+def suscripcion_vigente(user):
+    """
+    Propósito:
+        Determinar si la suscripción del usuario está actualmente vigente.
+
+    Entradas:
+        - user: instancia del modelo User.
+
+    Salidas:
+        - bool: True si la suscripción está activa y no vencida.
+
+    Dependencias:
+        - datetime.now(timezone.utc).date()
+    """
+
+    # Si no hay usuario (None o similar), no puede tener suscripción vigente.
+    if not user:
+        return False
+
+    # Verificamos si el estado de suscripción del usuario es exactamente 'ACTIVA'.
+    esta_activa = user.estado_suscripcion == "ACTIVA"
+
+    # Verificamos que exista una fecha de fin de suscripción (no sea None).
+    tiene_fecha_fin = bool(user.fecha_fin_suscripcion)
+
+    # Obtenemos la fecha actual en UTC y la convertimos SOLO a fecha (date) con .date()
+    hoy_utc = datetime.now(timezone.utc).date()
+    # -----------------------
+
+    # Comprobamos que la fecha de fin sea hoy o una fecha futura.
+    # Ahora ambos lados de la comparación son objetos 'date'.
+    no_esta_vencida = tiene_fecha_fin and user.fecha_fin_suscripcion >= hoy_utc
+
+    # Devolvemos True solo si está activa y no ha vencido.
+    return esta_activa and no_esta_vencida
 
 def validate_email_format(email):
     """

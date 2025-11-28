@@ -18,7 +18,8 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from copy import deepcopy
 from PIL import Image
 from io import BytesIO
-from flask_wtf.csrf import CSRFProtect, CSRFError 
+from flask_wtf.csrf import CSRFProtect, CSRFError
+from api import api_bp 
 import os
 import re
 from docx.shared import Inches
@@ -32,6 +33,7 @@ from utils import (
     validate_email_format,
     send_password_reset_email,
     send_support_email,
+    suscripcion_vigente,
 )
 from functools import wraps
 import hmac
@@ -46,11 +48,17 @@ bcrypt.init_app(app)
 mail = Mail(app)
 csrf = CSRFProtect(app)
 
+#Evita pedir csrf token en la ruta /api/validar-acceso
+csrf.exempt(api_bp)
+
 # Configurar Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 login_manager.login_message = "Por favor inicia sesión para acceder a esta página."
+
+# Registro de blueprint para que la ruta '/api/validar-acceso' funcione
+app.register_blueprint(api_bp, url_prefix='/api')
 
 
 @login_manager.user_loader
@@ -904,43 +912,6 @@ def procesar_archivo(
     buffer.seek(0)
     nombre = f"{modelo} {serial}.docx"
     return buffer, nombre
-
-
-def suscripcion_vigente(user):
-    """
-    Propósito:
-        Determinar si la suscripción del usuario está actualmente vigente.
-
-    Entradas:
-        - user: instancia del modelo User.
-
-    Salidas:
-        - bool: True si la suscripción está activa y no vencida.
-
-    Dependencias:
-        - datetime.now(timezone.utc).date()
-    """
-
-    # Si no hay usuario (None o similar), no puede tener suscripción vigente.
-    if not user:
-        return False
-
-    # Verificamos si el estado de suscripción del usuario es exactamente 'ACTIVA'.
-    esta_activa = user.estado_suscripcion == "ACTIVA"
-
-    # Verificamos que exista una fecha de fin de suscripción (no sea None).
-    tiene_fecha_fin = bool(user.fecha_fin_suscripcion)
-
-    # Obtenemos la fecha actual en UTC y la convertimos SOLO a fecha (date) con .date()
-    hoy_utc = datetime.now(timezone.utc).date()
-    # -----------------------
-
-    # Comprobamos que la fecha de fin sea hoy o una fecha futura.
-    # Ahora ambos lados de la comparación son objetos 'date'.
-    no_esta_vencida = tiene_fecha_fin and user.fecha_fin_suscripcion >= hoy_utc
-
-    # Devolvemos True solo si está activa y no ha vencido.
-    return esta_activa and no_esta_vencida
 
 
 def necesita_pago(user):
