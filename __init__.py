@@ -18,6 +18,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from copy import deepcopy
 from PIL import Image
 from io import BytesIO
+from flask_wtf.csrf import CSRFProtect, CSRFError 
 import os
 import re
 from docx.shared import Inches
@@ -42,6 +43,7 @@ app.config.from_object(Config)
 db.init_app(app)
 bcrypt.init_app(app)
 mail = Mail(app)
+csrf = CSRFProtect(app)
 
 # Configurar Flask-Login
 login_manager = LoginManager()
@@ -1593,8 +1595,6 @@ def login():
         email = request.form.get("email", "").strip()
         # Obtenemos la contraseña desde el formulario tal como viene.
         password = request.form.get("password")
-        # Obtenemos el valor del checkbox "remember" (puede venir como 'on' o no venir).
-        remember = request.form.get("remember", False)
 
         # Verificamos que el correo y la contraseña no estén vacíos.
         if not email or not password:
@@ -1616,7 +1616,9 @@ def login():
                 return render_template("login.html")
 
             # Llamamos a login_user para guardar al usuario en la sesión.
-            login_user(user, remember=remember)
+            # CAMBIO SEGURIDAD: Force remember=False para que la cookie expire al cerrar el navegador.
+            login_user(user, remember=False)
+            
             # Actualizamos el campo ultimo_acceso con la fecha y hora actual en UTC.
             user.ultimo_acceso = datetime.now(timezone.utc)
             # Guardamos los cambios en la base de datos.
@@ -1802,6 +1804,7 @@ def suscripcion_retorno():
 
 
 @app.route("/mp/webhook", methods=["GET", "POST"])
+@csrf.exempt
 def mp_webhook():
     """
     Propósito:
@@ -2191,6 +2194,24 @@ def upload_files():
         )
 
     return render_template("informes.html", opciones=opciones)
+
+# MANEJO DE ERROR CSRF
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    """
+    Atrapa los errores de token faltante o expirado.
+    Redirige al usuario a la página anterior con un mensaje amigable.
+    """
+    # Mensaje para el usuario
+    flash("Tu sesión ha expirado o el formulario no es válido. Por favor, intenta de nuevo.", "warning")
+    
+    # Redirección 
+    # request.referrer contiene la URL desde donde vino el usuario (el formulario)
+    if request.referrer:
+        return redirect(request.referrer)
+    
+    # Si no sabemos de dónde vino, lo mandamos al login o al inicio
+    return redirect(url_for('landing'))
 
 
 # ====== COMANDOS CLI ======

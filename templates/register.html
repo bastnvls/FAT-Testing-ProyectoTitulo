@@ -62,6 +62,7 @@ Crear Cuenta - FAT Testing
                 <!-- Panel derecho (form) -->
                 <div class="p-10 bg-white">
                     <form method="POST" action="{{ url_for('register') }}" id="registerForm" class="space-y-5">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <!-- Nombre -->
                         <div>
                             <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">
