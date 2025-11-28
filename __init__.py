@@ -24,13 +24,14 @@ import re
 from docx.shared import Inches
 from funcionalidades.resaltado import subrayar_texto
 from flask_login import LoginManager, login_required, current_user, login_user
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from models import db, bcrypt, User, PasswordResetToken
 from config import Config
 from utils import (
     validate_password_strength,
     validate_email_format,
     send_password_reset_email,
+    send_support_email,
 )
 from functools import wraps
 import hmac
@@ -2040,6 +2041,38 @@ def reset_password(token):
     return render_template(
         "reset_password.html", token=token
     )  # Muestra formulario en GET
+
+@app.route("/soporte", methods=["GET", "POST"])
+def soporte():
+    """
+    Propósito:
+        Mostrar formulario de soporte y procesar el envío usando utils.
+    """
+    if request.method == "POST":
+        nombre = request.form.get("nombre")
+        email = request.form.get("email")
+        asunto = request.form.get("asunto")
+        mensaje_texto = request.form.get("mensaje")
+        
+        # Validación básica
+        if not nombre or not email or not mensaje_texto:
+            flash("Por favor completa todos los campos", "danger")
+            return render_template("soporte.html")
+
+        # Llamamos a la función en utils.py que maneja toda la lógica del correo
+        enviado = send_support_email(nombre, email, asunto, mensaje_texto, mail)
+
+        if enviado:
+            flash("¡Ticket enviado! Nuestro equipo te responderá pronto.", "success")
+            # Redirigir para limpiar el formulario (PRG Pattern)
+            return redirect(url_for('soporte'))
+        else:
+            flash("Error al enviar el mensaje. Por favor intenta más tarde.", "danger")
+            # No redirigimos para que el usuario no pierda lo que escribió (opcional)
+            return render_template("soporte.html")
+
+    # Si es GET
+    return render_template("soporte.html")
 
 
 @app.route("/dashboard")

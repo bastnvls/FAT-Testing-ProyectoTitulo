@@ -66,10 +66,12 @@
 
                 <div class="hidden md:flex flex-1 items-center justify-center">
                     <div class="flex items-center justify-center space-x-8">
-                        <a href="{{ url_for('landing') }}#features" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('landing') }}#features"
+                            class="text-gray-600 hover:text-gray-900 transition">
                             Características
                         </a>
-                        <a href="{{ url_for('landing') }}#benefits" class="text-gray-600 hover:text-gray-900 transition">
+                        <a href="{{ url_for('landing') }}#benefits"
+                            class="text-gray-600 hover:text-gray-900 transition">
                             Beneficios
                         </a>
                         <a href="{{ url_for('landing') }}#pricing" class="text-gray-600 hover:text-gray-900 transition">
@@ -80,11 +82,12 @@
                         </a>
 
                         {% if current_user.is_authenticated %}
-                            <div class="h-5 w-px bg-gray-300"></div>
+                        <div class="h-5 w-px bg-gray-300"></div>
 
-                            <a href="{{ url_for('upload_files') }}" class="text-blue-600 font-semibold hover:text-blue-800 transition flex items-center">
-                                <i class="fas fa-bolt mr-2 text-sm"></i> Generar Informes
-                            </a>
+                        <a href="{{ url_for('upload_files') }}"
+                            class="text-blue-600 font-semibold hover:text-blue-800 transition flex items-center">
+                            <i class="fas fa-bolt mr-2 text-sm"></i> Generar Informes
+                        </a>
                         {% endif %}
                     </div>
                 </div>
@@ -258,7 +261,12 @@
                 <div>
                     <h3 class="text-white font-semibold mb-4">Soporte</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="mailto:soporte@fattesting.cl" class="hover:text-white transition">Contacto</a></li>
+                        <li>
+                            <a href="{{ url_for('soporte') }}"
+                                class="hover:text-white transition focus:outline-none focus:text-white focus:underline">
+                                Contacto
+                            </a>
+                        </li>
                         <li class="text-sm">Lunes a Viernes<br>9:00 - 18:00 hrs</li>
                     </ul>
                 </div>
