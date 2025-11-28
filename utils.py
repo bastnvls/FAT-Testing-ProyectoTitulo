@@ -231,7 +231,7 @@ def send_password_reset_email(user, token, mail):
             <div class="container">
                 <div class="wrapper">
                     <div class="hero">
-                        <h1>🔐 Recuperación de Contraseña</h1>
+                        <h1>Recuperación de Contraseña</h1>
                         <p>FAT Testing</p>
                     </div>
                     <div class="content">
@@ -242,7 +242,7 @@ def send_password_reset_email(user, token, mail):
                             <a href="{reset_url}" class="button">Restablecer Contraseña</a>
                         </div>
                         <div class="warning">
-                            <p><strong>⏰ Importante:</strong> Este enlace expirará en 1 hora por razones de seguridad.</p>
+                            <p><strong>Importante:</strong> Este enlace expirará en 1 hora por razones de seguridad.</p>
                         </div>
                         <p>Si no solicitaste este cambio, puedes ignorar este correo de forma segura. Tu contraseña actual permanecerá sin cambios.</p>
                         <p style="color: #6b7280; font-size: 14px; margin-top: 32px;">
@@ -426,7 +426,7 @@ def send_support_email(nombre, email, asunto, mensaje_texto, mail):
             <div class="container">
                 <div class="wrapper">
                     <div class="hero">
-                        <h1>📩 Nuevo Ticket de Soporte</h1>
+                        <h1>Nuevo Ticket de Soporte</h1>
                         <p>Sistema FAT Testing Web</p>
                     </div>
                     <div class="content">
@@ -623,7 +623,9 @@ def send_registration_confirmation_email(user, mail):
                 .feature-icon {{
                     color: #4338ca;
                     margin-right: 10px;
-                    font-size: 18px;
+                    font-size: 14px;
+                    font-weight: 700;
+                    min-width: 20px;
                 }}
             </style>
         </head>
@@ -631,27 +633,27 @@ def send_registration_confirmation_email(user, mail):
             <div class="container">
                 <div class="wrapper">
                     <div class="hero">
-                        <h1>🎉 ¡Bienvenido a FAT Testing!</h1>
+                        <h1>Bienvenido a FAT Testing</h1>
                         <p>Tu cuenta ha sido creada exitosamente</p>
                     </div>
                     <div class="content">
                         <p>Hola <strong>{display_name}</strong>,</p>
                         <div class="success-box">
-                            <p><strong>✓ ¡Registro completado!</strong> Tu cuenta ha sido creada correctamente.</p>
+                            <p><strong>Registro completado:</strong> Tu cuenta ha sido creada correctamente.</p>
                         </div>
                         <p>Estamos emocionados de tenerte en nuestra plataforma. Ya puedes acceder a todas las funcionalidades de FAT Testing.</p>
                         
                         <div class="feature-list">
                             <div class="feature-item">
-                                <span class="feature-icon">📊</span>
+                                <span class="feature-icon">•</span>
                                 <span>Gestión completa de reportes de pruebas</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">💾</span>
+                                <span class="feature-icon">•</span>
                                 <span>Descarga del ejecutable de escritorio</span>
                             </div>
                             <div class="feature-item">
-                                <span class="feature-icon">🔒</span>
+                                <span class="feature-icon">•</span>
                                 <span>Recuperación de cuenta segura</span>
                             </div>
                         </div>
@@ -682,7 +684,7 @@ def send_registration_confirmation_email(user, mail):
         
         # Versión texto plano
         text_body = f"""
-        ¡Bienvenido a FAT Testing!
+        Bienvenido a FAT Testing
         
         Hola {display_name},
         
