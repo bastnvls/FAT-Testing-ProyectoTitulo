@@ -11,16 +11,11 @@ def prueba_1_9200():
     pt_unicas = [
         'Inicio Prueba 1',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'Version',
         'uptime is',
         'Model Number',
         'System Serial Number',
         'show inventory',
-        'show inv',
-        'sh inventory',
         'sh inv',
         'Fin Prueba 1',
     ]
@@ -92,9 +87,6 @@ def prueba_2_9200():
     pt_unicas = [
         'INICIO PRUEBA 2',
         'show environment power',
-        'sh environment power',        
-        'show env power',
-        'sh env power',
         'FIN PRUEBA 2',
     ]
     pt_linea = [
@@ -148,9 +140,6 @@ def prueba_3_9200():
     pt_unicas = [
         'INICIO PRUEBA 3',
         'show environment fan',
-        'show env fan',
-        'sh environment fan',
-        'sh env fan',
         'System fan 1 failed',
         'System fan 1 recovered to normal status',
         'System fan 2 failed',
@@ -203,19 +192,12 @@ def prueba_4_9200():
     pt_todas = []
     pt_unicas = [
         'INICIO PRUEBA 4',
-        'reload',
+        '#reload',
+        '>reload',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'uptime is',
         'Initializing Hardware',
         '>enable',
-        '>ena',
-        '>en',
-        '> en',
-        '> enable',
-        '> ena',
         'Cisco IOS XE Software, ',
         'FIN PRUEBA 4',
     ]
@@ -267,26 +249,15 @@ def prueba_5_9200():
     ]
     pt_unicas = [
         'INICIO PRUEBA 5',
-        'show inventory all',
-        'show inv all',
-        'sh inventory all',
-        'sh inv all',
-        'show interface ethernet',
-        'sh int eth',
-        'sh int ethernet',
-        'show int eth',
-        'show int ethernet',
+        'show inventory',
+        'show interfaces',
         'FIN PRUEBA 5',
     ]
     pt_linea = [
         'PID: SFP',
     ]
     pt_to_end = [
-        'show interface ethernet',
-        'sh int eth',
-        'sh int ethernet',
-        'show int eth',
-        'show int ethernet',
+        'show interfaces',
     ]
     pt_until_comma = [
         'Name: Ethernet',
