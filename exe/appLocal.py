@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                                QLabel, QLineEdit, QPushButton, QMessageBox, QFrame, QTextEdit,
                                QSpinBox, QCheckBox, QScrollArea, QGroupBox, QComboBox, QFileDialog)
 from PySide6.QtCore import Qt, QThread, Signal
-from PySide6.QtGui import QFont, QTextCursor
+from PySide6.QtGui import QFont, QTextCursor, QIcon
 
 # Importar módulos para conexión serial
 import serial
@@ -19,15 +19,14 @@ import re
 # Agregar el directorio padre al path para importar módulos
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Importar módulos del proyecto
-from models import db, User
-from config import Config
-from flask import Flask
+# Importar módulos del proyecto (solo si necesitas otros módulos del proyecto)
+# OJO: ya no usamos db ni User aquí
+import requests
 
-# Configurar Flask para acceso a BD
-app = Flask(__name__)
-app.config.from_object(Config)
-db.init_app(app)
+# URL de la API que expone tu backend Flask
+# Ajusta esto según dónde tengas levantado el backend
+API_VALIDAR_ACCESO_URL = "http://localhost:80/api/validar-acceso"
+
 
 # =============================================================================
 # CONFIGURACIÓN DE LOGGING
@@ -293,6 +292,43 @@ ESTADOS_QUE_NECESITAN_PAGO = {
     "VENCIDA",          # Fecha de término ya pasó
     "EN_GRACIA",        # Periodo de gracia, pero queremos forzar pago
 }
+
+class DesktopUser:
+    """
+    Representa al usuario dentro del ejecutable, sin depender del modelo SQLAlchemy.
+    """
+
+    # Propósito:
+    #   - Mantener la información mínima del usuario (email, nombre, apellido)
+    #     para mostrarla en la interfaz de la app de escritorio.
+    #
+    # Entradas:
+    #   - email (str): correo del usuario.
+    #   - nombre_completo (str | None): nombre y apellido tal como vienen desde la API (opcional).
+    #
+    # Salidas:
+    #   - Instancia con los atributos:
+    #       - self.email (str)
+    #       - self.nombre (str)
+    #       - self.apellido (str)
+    #
+    # Dependencias:
+    #   - No depende de la base de datos ni de modelos de SQLAlchemy.
+    #   - Se usa en LoginWindow (al autenticar) y MainWindow (para mostrar el nombre).
+
+    def __init__(self, email: str, nombre_completo: str | None = None):
+        self.email = (email or "").strip()
+
+        nombre_completo = (nombre_completo or "").strip()
+        self.nombre = ""
+        self.apellido = ""
+
+        if nombre_completo:
+            partes = nombre_completo.split()
+            if len(partes) >= 1:
+                self.nombre = partes[0]
+            if len(partes) >= 2:
+                self.apellido = " ".join(partes[1:])
 
 # =============================================================================
 # FUNCIONES DEL SCRIPT CISCO 9200 - ADAPTADAS PARA LA INTERFAZ
@@ -2648,68 +2684,127 @@ class LoginWindow(QMainWindow):
             self.toggle_password_btn.setAccessibleDescription("Password is hidden, click to show")
 
     def login(self):
-        """Procesar login"""
+        """
+        Propósito:
+            - Enviar las credenciales a la API de backend y, según la respuesta,
+              abrir la ventana principal o mostrar errores/advertencias.
+
+        Entradas:
+            - No recibe parámetros directos.
+            - Usa:
+                - self.email_input: QLineEdit con el correo.
+                - self.password_input: QLineEdit con la contraseña.
+                - self.email_valid: booleano que indica si el email pasó validación.
+
+        Salidas:
+            - No retorna valor.
+            - Efectos:
+                - Abre MainWindow si el acceso es autorizado.
+                - Muestra diálogos de mensaje (show_message) en caso de error.
+                - Habilita/deshabilita el botón de login y limpia el campo password.
+
+        Dependencias:
+            - Constante API_VALIDAR_ACCESO_URL (URL de la API).
+            - Clase DesktopUser (para representar al usuario autenticado).
+            - Función show_message (para mostrar mensajes).
+            - Clase MainWindow (para abrir la ventana principal).
+            - Librería requests (para realizar la petición HTTP).
+        """
+
         email = self.email_input.text().strip()
         password = self.password_input.text()
 
         # Validación de campos obligatorios
         if not email or not password:
-            show_message(self, "Campos Incompletos", "Complete todos los campos para continuar", "warning")
+            show_message(self, "Campos Incompletos",
+                         "Complete todos los campos para continuar",
+                         "warning")
             return
 
         if not self.email_valid:
-            show_message(self, "Email Inválido", "Ingrese un correo electrónico válido", "warning")
+            show_message(self, "Email Inválido",
+                         "Ingrese un correo electrónico válido",
+                         "warning")
             self.email_input.setFocus()
             return
 
+        # Deshabilitar botón mientras se procesa el login
         self.login_button.setEnabled(False)
         self.login_button.setText("Authenticating...")
 
+        # ---------------------------
+        # 1) Llamar a la API de backend
+        # ---------------------------
         try:
-            with app.app_context():
-                user = User.query.filter_by(email=email).first()
+            payload = {
+                "email": email,
+                "password": password,
+            }
 
-                # Primero validar credenciales
-                if not user or not user.check_password(password):
-                    show_message(self, "Authentication Failed", "Invalid email or password", "error")
-                    self.login_button.setEnabled(True)
-                    self.login_button.setText("Sign In")
-                    self.password_input.clear()
-                    self.password_input.setFocus()
-                    return
+            response = requests.post(
+                API_VALIDAR_ACCESO_URL,
+                json=payload,
+                timeout=10
+            )
 
-                # Segundo validar estado de suscripción
-                estado = (user.estado_suscripcion or "").upper()
-
-                if estado in ESTADOS_QUE_NECESITAN_PAGO or estado != "ACTIVA":
-                    # Texto más legible del estado, por si quieres mostrarlo
-                    estado_legible = estado.replace("_", " ").title() if estado else "Desconocido"
-
-                    mensaje = (
-                        "Su usuario se autenticó correctamente, pero su suscripción no se encuentra activa.\n\n"
-                        f"Estado actual de su suscripción: {estado_legible}.\n\n"
-                        "Para utilizar el ejecutable de FAT Testing debe contar con una suscripción ACTIVA.\n"
-                        "Por favor ingrese a la página oficial de FAT Testing y complete el proceso de suscripción "
-                        "o reactivación de su plan. Una vez que su suscripción esté activa podrá iniciar sesión en el aplicativo de escritorio."
-                    )
-
-                    show_message(self, "Suscripción no activa", mensaje, "warning")
-
-                    self.login_button.setEnabled(True)
-                    self.login_button.setText("Sign In")
-                    self.password_input.clear()
-                    self.password_input.setFocus()
-                    return
-
-                # Si llegó aquí, credenciales correctas y suscripción ACTIVA
-                self.main_window = MainWindow(user)
-                self.main_window.show()
-                self.close()
-
-        except Exception as e:
-            show_message(self, "Connection Error", f"Database connection failed:\n{str(e)}", "error")
+        except requests.exceptions.RequestException as e:
+            # Error de red / servidor caído / timeout
+            show_message(
+                self,
+                "Error de conexión",
+                f"No se pudo conectar con el servidor de FAT Testing.\n\nDetalle: {e}",
+                "error"
+            )
             self.login_button.setEnabled(True)
             self.login_button.setText("Sign In")
+            return
+
+        # ---------------------------
+        # 2) Procesar respuesta de la API
+        # ---------------------------
+        try:
+            data = response.json()
+        except ValueError:
+            data = {}
+
+        permitir_acceso = data.get("permitir_acceso", False)
+        motivo = data.get("motivo")
+        mensaje = data.get(
+            "mensaje",
+            "No se pudo validar el acceso. Intente nuevamente."
+        )
+
+        # CASO ÉXITO: acceso autorizado por la API
+        if response.status_code == 200 and permitir_acceso:
+            nombre_completo = data.get("usuario") or email.split("@")[0]
+            user = DesktopUser(email=email, nombre_completo=nombre_completo)
+
+            self.main_window = MainWindow(user)
+            self.main_window.show()
+            self.close()
+            return
+
+        # ---------------------------
+        # 3) Manejo de casos de error / bloqueo
+        # ---------------------------
+        titulo = "Error al iniciar sesión"
+        tipo = "error"
+
+        if motivo == "CREDENCIALES_INVALIDAS":
+            titulo = "Autenticación fallida"
+            tipo = "error"
+        elif motivo == "SIN_SUSCRIPCION":
+            titulo = "Suscripción no activa"
+            tipo = "warning"
+
+        show_message(self, titulo, mensaje, tipo)
+
+        # Restaurar estado del botón y limpiar password
+        self.login_button.setEnabled(True)
+        self.login_button.setText("Sign In")
+        self.password_input.clear()
+        self.password_input.setFocus()
+
 
 
 
@@ -2800,7 +2895,7 @@ class MainWindow(QMainWindow):
         user_section = QHBoxLayout()
         user_section.setSpacing(12)
 
-                # User info (nombre + correo juntos)
+        # User info (nombre + correo juntos)
         full_name = self.get_full_name()
 
         user_info = QLabel()
@@ -3270,19 +3365,14 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 show_message(self, "Error al Guardar", f"No se pudo guardar el archivo:\n{str(e)}", "error")
 
+
     def logout(self):
         """Cerrar sesión y volver al login"""
-        reply = show_message(
-            self,
-            "Cerrar Sesión",
-            f"¿Estás seguro que deseas cerrar sesión, {self.user_display_name.title()}?",
-            "warning"
-        )
-
-        # Si el usuario confirma, cerrar ventana y mostrar login
         self.login_window = LoginWindow()
         self.login_window.show()
         self.close()
+
+
 
     def apply_styles(self):
         """Aplicar estilos modernos y limpios"""
