@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Optional, Tuple, List
 import logging
 from pathlib import Path
+import requests
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QLineEdit, QPushButton, QMessageBox, QFrame, QTextEdit,
                                QSpinBox, QCheckBox, QScrollArea, QGroupBox, QComboBox, QFileDialog)
@@ -19,13 +20,20 @@ import re
 # Agregar el directorio padre al path para importar módulos
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Importar módulos del proyecto (solo si necesitas otros módulos del proyecto)
-# OJO: ya no usamos db ni User aquí
-import requests
 
-# URL de la API que expone tu backend Flask
-# Ajusta esto según dónde tengas levantado el backend
+# URL de la API que expone el backend Flask
 API_VALIDAR_ACCESO_URL = "http://localhost:80/api/validar-acceso"
+
+# BASE_DIR:
+#   - Si el programa está compilado con PyInstaller, usa la carpeta temporal _MEIPASS
+#   - Si está ejecutando appLocal.py, usa la carpeta donde está este archivo
+BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+
+# ICON_PATH:
+#   - Construye la ruta completa al archivo de icono
+#   - "icono.ico" debe existir en esa carpeta (y se empaqueta con --add-data)
+ICON_PATH = BASE_DIR / "icono.ico"
+
 
 
 # =============================================================================
@@ -2813,6 +2821,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self, user):
         super().__init__()
+        self.setWindowIcon(QIcon(str(ICON_PATH)))
         self.user = user
         # Usar nombre si existe, sino usar email
         self.user_display_name = user.nombre if user.nombre else user.email.split('@')[0]
@@ -3687,13 +3696,35 @@ class MainWindow(QMainWindow):
 
 def main():
     """Función principal"""
+    # Crear la aplicación Qt 
     app_qt = QApplication(sys.argv)
+
+    # Definir la fuente por defecto de toda la aplicación
     app_qt.setFont(QFont("Inter", 10))
 
+    # Crear el icono de la aplicación usando la ruta calculada arriba
+    app_icon = QIcon(str(ICON_PATH))
+
+    # Establecer el icono global de la aplicación (afecta a todas las ventanas)
+    app_qt.setWindowIcon(app_icon)
+
+    # Crear la ventana de login
     window = LoginWindow()
+
+    # Aplicar el mismo icono a la ventana principal
+    window.setWindowIcon(app_icon)
+
+    # Mostrar la ventana en pantalla
     window.show()
 
+    # Iniciar el loop de eventos de Qt hasta que el usuario cierre la app
     sys.exit(app_qt.exec())
+
+
+if __name__ == '__main__':
+    main()
+
+
 
 
 if __name__ == '__main__':

@@ -43,7 +43,7 @@ def build():
         '--noconfirm',
 
         # Icono
-        '--icon=fat_testing_icon.ico' if has_icon else '',
+        '--icon=icono.ico' if has_icon else '',
 
         # Incluir dependencias
         '--hidden-import=PySide6',
