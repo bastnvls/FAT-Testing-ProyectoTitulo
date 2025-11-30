@@ -38,9 +38,10 @@ $(document).on('change', '.custom-file-input', function () {
 
 // 4) Progress bar
 function showLoading() {
-  $("#loading").show();
+  $("#loading").css("display", "flex");
   startProgressBar();
 }
+
 function startProgressBar() {
   const progressBar = $(".progress-bar");
   let width = 0;
@@ -49,7 +50,7 @@ function startProgressBar() {
     progressBar.css("width", width + "%").attr("aria-valuenow", width);
     if (width >= 100) {
       clearInterval(interval);
-      $("#loading").hide();
+      $("#loading").css("display", "none");
     }
   }, 120);
 }
