@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Términos y Condiciones - FAT Testing
+Términos y Condiciones - FAT Testing
 {% endblock %}
 
 {# CSS extra solo para esta página (de momento no hace falta) #}
 {% block extra_head %}{% endblock %}
 
 {% block content %}
-<div class="pt-28 pb-16 px-4 bg-gray-50">
+<main id="main-content" role="main" class="pt-28 pb-16 px-4 bg-gray-50">
     <div class="max-w-4xl mx-auto">
-        <!-- Header -->
+        <!-- Encabezado -->
         <div class="text-center mb-12">
             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
                 Términos y Condiciones
@@ -18,58 +18,158 @@
             <p class="text-lg text-gray-600">Última actualización: Noviembre 2025</p>
         </div>
 
-        <!-- Content -->
+        <!-- Índice de secciones (navegación interna) -->
+        <nav class="mb-8 bg-white rounded-xl shadow-sm p-4 text-sm" aria-label="Índice de secciones de los términos">
+            <p class="font-semibold text-gray-800 mb-2">
+                Ir directamente a una sección:
+            </p>
+            <ul class="grid gap-2 sm:grid-cols-2 text-left">
+                <li>
+                    <a href="#terminos-sec-1"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        1. Aceptación de los Términos
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-2"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        2. Descripción del Servicio
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-3"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        3. Cuentas y Suscripciones
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-4"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        4. Precio y Forma de Pago
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-5"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        5. Derecho a Retracto
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-6"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        6. Cancelación y Suspensión
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-7"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        7. Política de Reembolsos
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-8"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        8. Protección de Datos Personales
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-9"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        9. Propiedad Intelectual
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-10"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        10. Limitación de Responsabilidad
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-11"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        11. Resolución de Controversias y Ley Aplicable
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-12"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        12. Modificaciones a los Términos
+                    </a>
+                </li>
+                <li>
+                    <a href="#terminos-sec-13"
+                       class="text-blue-700 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        13. Información de Contacto
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
         <div class="bg-white rounded-2xl shadow-lg p-8 lg:p-12 space-y-8">
 
-            <!-- Section 1 -->
-            <section>
+            <!-- Sección 1 -->
+            <section id="terminos-sec-1">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">1. Aceptación de los Términos</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    Al registrarse y utilizar los servicios de FAT Testing (en adelante, "el Servicio"), usted acepta estar legalmente obligado por estos Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, no debe utilizar nuestro servicio.
+                    Al registrarse y utilizar los servicios de FAT Testing (en adelante, "el Servicio"), usted acepta
+                    estar legalmente obligado por estos Términos y Condiciones. Si no está de acuerdo con alguna parte
+                    de estos términos, no debe utilizar nuestro servicio.
                 </p>
                 <p class="text-gray-700 leading-relaxed mt-3">
-                    Este servicio está dirigido a empresas y profesionales en Chile que realizan pruebas de aceptación en fábrica (FAT) para equipos de red Cisco Catalyst.
+                    Este servicio está dirigido a empresas y profesionales en Chile que realizan pruebas de aceptación
+                    en fábrica (FAT) para equipos de red Cisco Catalyst.
                 </p>
             </section>
 
-            <!-- Section 2 - Descripción del Servicio -->
-            <section>
+            <!-- Sección 2 - Descripción del Servicio -->
+            <section id="terminos-sec-2">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">2. Descripción del Servicio</h2>
                 <p class="text-gray-700 leading-relaxed mb-3">
                     FAT Testing proporciona una plataforma de automatización de pruebas FAT que incluye:
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                    <li>Software ejecutable para Windows que automatiza la ejecución de comandos CLI en equipos Cisco Catalyst 9200, 9300 y 9500</li>
+                    <li>Software ejecutable para Windows que automatiza la ejecución de comandos CLI en equipos Cisco
+                        Catalyst 9200, 9300 y 9500</li>
                     <li>Plataforma web para la generación de informes profesionales en formato Word</li>
                     <li>Acceso a comandos predefinidos optimizados por modelo de dispositivo</li>
                 </ul>
                 <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
                     <p class="text-sm text-gray-700">
-                        <strong>Importante:</strong> El servicio requiere intervención manual del usuario para tareas como la desconexión de ventiladores (fans) y fuentes de poder durante las pruebas físicas del equipo.
+                        <strong>Importante:</strong> El servicio requiere intervención manual del usuario para tareas
+                        como la desconexión de ventiladores (fans) y fuentes de poder durante las pruebas físicas del
+                        equipo.
                     </p>
                 </div>
             </section>
 
-            <!-- Section 3 - Cuentas y Suscripciones -->
-            <section>
+            <!-- Sección 3 - Cuentas y Suscripciones -->
+            <section id="terminos-sec-3">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">3. Cuentas y Suscripciones</h2>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">3.1 Una Cuenta por Suscripción</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Cada suscripción incluye <strong>una (1) cuenta de usuario</strong>. La cuenta puede ser utilizada para realizar un número ilimitado de pruebas FAT durante el período de suscripción activa. Si requiere múltiples usuarios, deberá adquirir suscripciones adicionales.
+                    Cada suscripción incluye <strong>una (1) cuenta de usuario</strong>. La cuenta puede ser utilizada
+                    para realizar un número ilimitado de pruebas FAT durante el período de suscripción activa. Si
+                    requiere múltiples usuarios, deberá adquirir suscripciones adicionales.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">3.2 Prohibición de Compartir Cuentas</h3>
                 <div class="bg-red-50 border-2 border-red-300 rounded-lg p-6 my-4">
                     <div class="flex items-start space-x-3">
-                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl mt-1"></i>
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl mt-1" aria-hidden="true"></i>
                         <div>
                             <h4 class="font-bold text-red-900 mb-2">IMPORTANTE - PROHIBICIÓN ESTRICTA</h4>
                             <p class="text-gray-800 leading-relaxed mb-3">
-                                Está <strong>estrictamente prohibido</strong> compartir, transferir, ceder o permitir el uso de su cuenta a terceros. Cada cuenta es personal, intransferible y de uso exclusivo para el titular de la suscripción.
+                                Está <strong>estrictamente prohibido</strong> compartir, transferir, ceder o permitir el
+                                uso de su cuenta a terceros. Cada cuenta es personal, intransferible y de uso exclusivo
+                                para el titular de la suscripción.
                             </p>
                             <p class="text-gray-800 leading-relaxed">
-                                <strong>Sanción:</strong> En caso de detectarse el incumplimiento de esta prohibición, se procederá a la <strong>suspensión inmediata y permanente del acceso</strong> al servicio, sin derecho a reembolso de los montos pagados, conforme a lo establecido en la cláusula 7.3 de estos términos.
+                                <strong>Sanción:</strong> En caso de detectarse el incumplimiento de esta prohibición,
+                                se procederá a la <strong>suspensión inmediata y permanente del acceso</strong> al
+                                servicio, sin derecho a reembolso de los montos pagados, conforme a lo establecido en la
+                                cláusula 7.3 de estos términos.
                             </p>
                         </div>
                     </div>
@@ -77,65 +177,84 @@
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">3.3 Responsabilidad de la Cuenta</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Usted es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que ocurran bajo su cuenta. Debe notificar inmediatamente a FAT Testing sobre cualquier uso no autorizado de su cuenta.
+                    Usted es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las
+                    actividades que ocurran bajo su cuenta. Debe notificar inmediatamente a FAT Testing sobre cualquier
+                    uso no autorizado de su cuenta.
                 </p>
             </section>
 
-            <!-- Section 4 - Precio y Pago -->
-            <section>
+            <!-- Sección 4 - Precio y Pago -->
+            <section id="terminos-sec-4">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">4. Precio y Forma de Pago</h2>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">4.1 Precio del Servicio</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    El precio de la suscripción mensual del plan Professional es de <strong>$150.000 CLP (pesos chilenos)</strong> por mes. Este precio puede estar sujeto a cambios con un aviso previo de 30 días.
+                    El precio de la suscripción mensual del plan Professional es de <strong>$150.000 CLP (pesos
+                        chilenos)</strong> por mes. Este precio puede estar sujeto a cambios con un aviso previo de 30
+                    días.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">4.2 Procesamiento de Pagos</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Los pagos se procesan a través de <strong>MercadoPago</strong>, un procesador de pagos de terceros. Al suscribirse, usted acepta los términos y condiciones de MercadoPago. FAT Testing no almacena información de tarjetas de crédito o débito.
+                    Los pagos se procesan a través de <strong>MercadoPago</strong>, un procesador de pagos de terceros.
+                    Al suscribirse, usted acepta los términos y condiciones de MercadoPago. FAT Testing no almacena
+                    información de tarjetas de crédito o débito.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">4.3 Facturación</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    La facturación se realiza mensualmente de forma anticipada. El cargo se efectuará automáticamente cada mes en la fecha correspondiente a su suscripción inicial, conforme a la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores.
+                    La facturación se realiza mensualmente de forma anticipada. El cargo se efectuará automáticamente
+                    cada mes en la fecha correspondiente a su suscripción inicial, conforme a la Ley N° 19.496 sobre
+                    Protección de los Derechos de los Consumidores.
                 </p>
             </section>
 
-            <!-- Section 5 - Derecho a Retracto (Ley del Consumidor) -->
-            <section>
+            <!-- Sección 5 - Derecho a Retracto -->
+            <section id="terminos-sec-5">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Derecho a Retracto (Ley N° 19.496)</h2>
                 <p class="text-gray-700 leading-relaxed mb-3">
-                    De conformidad con el artículo 3° bis de la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores, usted tiene derecho a retractarse de su compra dentro de los <strong>10 días corridos</strong> desde la contratación del servicio.
+                    De conformidad con el artículo 3° bis de la Ley N° 19.496 sobre Protección de los Derechos de los
+                    Consumidores, usted tiene derecho a retractarse de su compra dentro de los <strong>10 días
+                        corridos</strong> desde la contratación del servicio.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">5.1 Ejercicio del Derecho</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Para ejercer este derecho, debe enviar una comunicación escrita a nuestro correo electrónico de soporte, indicando claramente su intención de retractarse. Se procederá a la devolución del monto pagado dentro de los 10 días hábiles siguientes a la recepción de su solicitud.
+                    Para ejercer este derecho, debe enviar una comunicación escrita a nuestro correo electrónico de
+                    soporte, indicando claramente su intención de retractarse. Se procederá a la devolución del monto
+                    pagado dentro de los 10 días hábiles siguientes a la recepción de su solicitud.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">5.2 Excepción al Derecho de Retracto</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    El derecho a retracto no aplicará si el servicio ha sido utilizado de manera significativa durante el período de retracto (ej: generación de más de 5 informes FAT), conforme al artículo 3° ter de la Ley N° 19.496.
+                    El derecho a retracto no aplicará si el servicio ha sido utilizado de manera significativa durante
+                    el período de retracto (ej: generación de más de 5 informes FAT), conforme al artículo 3° ter de la
+                    Ley N° 19.496.
                 </p>
             </section>
 
-            <!-- Section 6 - Cancelación y Suspensión -->
-            <section>
+            <!-- Sección 6 - Cancelación y Suspensión -->
+            <section id="terminos-sec-6">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Cancelación y Suspensión del Servicio</h2>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">6.1 Cancelación por el Usuario</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Usted puede cancelar su suscripción en cualquier momento desde su panel de usuario. La cancelación será efectiva al final del período de facturación actual. No se realizarán reembolsos por períodos parciales no utilizados, salvo lo establecido en la cláusula 5.
+                    Usted puede cancelar su suscripción en cualquier momento desde su panel de usuario. La cancelación
+                    será efectiva al final del período de facturación actual. No se realizarán reembolsos por períodos
+                    parciales no utilizados, salvo lo establecido en la cláusula 5.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">6.2 Suspensión por Falta de Pago</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    En caso de falta de pago, el servicio será suspendido automáticamente. Se otorgará un período de gracia de 7 días corridos para regularizar el pago antes de proceder a la suspensión definitiva y eliminación de la cuenta.
+                    En caso de falta de pago, el servicio será suspendido automáticamente. Se otorgará un período de
+                    gracia de 7 días corridos para regularizar el pago antes de proceder a la suspensión definitiva y
+                    eliminación de la cuenta.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">6.3 Suspensión por Incumplimiento</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    FAT Testing se reserva el derecho de suspender o terminar su cuenta de forma inmediata y sin previo aviso en caso de:
+                    FAT Testing se reserva el derecho de suspender o terminar su cuenta de forma inmediata y sin previo
+                    aviso en caso de:
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4 mt-2">
                     <li>Compartir credenciales de acceso con terceros</li>
@@ -144,37 +263,43 @@
                     <li>Uso del servicio para fines ilegales</li>
                 </ul>
                 <p class="text-gray-700 leading-relaxed mt-3 font-semibold">
-                    En caso de suspensión por incumplimiento, <strong>no se realizará reembolso</strong> de los montos pagados.
+                    En caso de suspensión por incumplimiento, <strong>no se realizará reembolso</strong> de los montos
+                    pagados.
                 </p>
             </section>
 
-            <!-- Section 7 - Política de Reembolsos -->
-            <section>
+            <!-- Sección 7 - Política de Reembolsos -->
+            <section id="terminos-sec-7">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">7. Política de Reembolsos</h2>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">7.1 Reembolsos por Derecho a Retracto</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    Se otorgarán reembolsos completos dentro de los 10 días corridos desde la contratación, conforme a la cláusula 5 de estos términos y a la Ley N° 19.496.
+                    Se otorgarán reembolsos completos dentro de los 10 días corridos desde la contratación, conforme a
+                    la cláusula 5 de estos términos y a la Ley N° 19.496.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">7.2 Fallas del Servicio</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    En caso de fallas técnicas prolongadas (superiores a 72 horas continuas) que impidan el uso del servicio, podrá solicitar un reembolso proporcional o una extensión del período de suscripción.
+                    En caso de fallas técnicas prolongadas (superiores a 72 horas continuas) que impidan el uso del
+                    servicio, podrá solicitar un reembolso proporcional o una extensión del período de suscripción.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">7.3 Sin Reembolso por Incumplimiento</h3>
                 <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
                     <p class="text-gray-800 leading-relaxed">
-                        <strong>No se realizarán reembolsos</strong> en casos de suspensión por incumplimiento de estos términos, incluyendo pero no limitado a: compartir cuentas, uso fraudulento, o violación de las políticas de uso.
+                        <strong>No se realizarán reembolsos</strong> en casos de suspensión por incumplimiento de estos
+                        términos, incluyendo pero no limitado a: compartir cuentas, uso fraudulento, o violación de las
+                        políticas de uso.
                     </p>
                 </div>
             </section>
 
-            <!-- Section 8 - Protección de Datos -->
-            <section>
+            <!-- Sección 8 - Protección de Datos -->
+            <section id="terminos-sec-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">8. Protección de Datos Personales</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    El tratamiento de sus datos personales se rige por la Ley N° 19.628 sobre Protección de la Vida Privada y Protección de Datos de Carácter Personal. Sus datos serán utilizados exclusivamente para:
+                    El tratamiento de sus datos personales se rige por la Ley N° 19.628 sobre Protección de la Vida
+                    Privada y Protección de Datos de Carácter Personal. Sus datos serán utilizados exclusivamente para:
                 </p>
                 <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4 mt-2">
                     <li>Prestación y administración del servicio</li>
@@ -183,86 +308,111 @@
                     <li>Cumplimiento de obligaciones legales</li>
                 </ul>
                 <p class="text-gray-700 leading-relaxed mt-3">
-                    Usted tiene derecho a acceder, rectificar, cancelar y oponerse al tratamiento de sus datos personales enviando una solicitud a nuestro correo de contacto.
+                    Usted tiene derecho a acceder, rectificar, cancelar y oponerse al tratamiento de sus datos
+                    personales enviando una solicitud a nuestro correo de contacto.
                 </p>
             </section>
 
-            <!-- Section 9 - Propiedad Intelectual -->
-            <section>
+            <!-- Sección 9 - Propiedad Intelectual -->
+            <section id="terminos-sec-9">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">9. Propiedad Intelectual</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    Todo el contenido del servicio, incluyendo el software, código fuente, diseño, logotipos, textos e imágenes, es propiedad de FAT Testing y está protegido por las leyes de propiedad intelectual de Chile.
+                    Todo el contenido del servicio, incluyendo el software, código fuente, diseño, logotipos, textos e
+                    imágenes, es propiedad de FAT Testing y está protegido por las leyes de propiedad intelectual de
+                    Chile.
                 </p>
                 <p class="text-gray-700 leading-relaxed mt-3">
-                    Se le otorga una licencia limitada, no exclusiva y no transferible para usar el servicio conforme a estos términos. No se permite la ingeniería inversa, descompilación o modificación del software.
+                    Se le otorga una licencia limitada, no exclusiva y no transferible para usar el servicio conforme a
+                    estos términos. No se permite la ingeniería inversa, descompilación o modificación del software.
                 </p>
             </section>
 
-            <!-- Section 10 - Limitación de Responsabilidad -->
-            <section>
+            <!-- Sección 10 - Limitación de Responsabilidad -->
+            <section id="terminos-sec-10">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">10. Limitación de Responsabilidad</h2>
                 <p class="text-gray-700 leading-relaxed mb-3">
-                    El servicio se proporciona "tal cual" y "según disponibilidad". FAT Testing no garantiza que el servicio será ininterrumpido o libre de errores.
+                    El servicio se proporciona "tal cual" y "según disponibilidad". FAT Testing no garantiza que el
+                    servicio será ininterrumpido o libre de errores.
                 </p>
                 <p class="text-gray-700 leading-relaxed">
-                    FAT Testing no será responsable por daños indirectos, incidentales o consecuentes derivados del uso o la imposibilidad de usar el servicio, salvo lo establecido por la normativa vigente del SERNAC.
+                    FAT Testing no será responsable por daños indirectos, incidentales o consecuentes derivados del uso
+                    o la imposibilidad de usar el servicio, salvo lo establecido por la normativa vigente del SERNAC.
                 </p>
                 <div class="mt-4 p-4 bg-gray-100 rounded">
                     <p class="text-sm text-gray-700">
-                        <strong>Nota:</strong> Esta limitación no afecta los derechos irrenunciables establecidos en la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores.
+                        <strong>Nota:</strong> Esta limitación no afecta los derechos irrenunciables establecidos en la
+                        Ley N° 19.496 sobre Protección de los Derechos de los Consumidores.
                     </p>
                 </div>
             </section>
 
-            <!-- Section 11 - Resolución de Controversias -->
-            <section>
+            <!-- Sección 11 - Resolución de Controversias -->
+            <section id="terminos-sec-11">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">11. Resolución de Controversias y Ley Aplicable</h2>
                 <p class="text-gray-700 leading-relaxed mb-3">
-                    Estos Términos y Condiciones se rigen por las leyes de la República de Chile. Cualquier controversia que surja de o esté relacionada con estos términos será resuelta conforme a la legislación chilena.
+                    Estos Términos y Condiciones se rigen por las leyes de la República de Chile. Cualquier controversia
+                    que surja de o esté relacionada con estos términos será resuelta conforme a la legislación chilena.
                 </p>
 
                 <h3 class="text-xl font-semibold text-gray-900 mb-3 mt-4">11.1 SERNAC</h3>
                 <p class="text-gray-700 leading-relaxed">
-                    De conformidad con la Ley N° 19.496, los consumidores tienen derecho a presentar reclamos ante el Servicio Nacional del Consumidor (SERNAC) en caso de controversias no resueltas. Puede contactar al SERNAC a través de:
+                    De conformidad con la Ley N° 19.496, los consumidores tienen derecho a presentar reclamos ante el
+                    Servicio Nacional del Consumidor (SERNAC) en caso de controversias no resueltas. Puede contactar al
+                    SERNAC a través de:
                 </p>
                 <ul class="list-none space-y-2 text-gray-700 ml-4 mt-2">
-                    <li>• Sitio web: <a href="https://www.sernac.cl" class="text-blue-600 hover:underline" target="_blank">www.sernac.cl</a></li>
+                    <li>
+                        • Sitio web:
+                        <a href="https://www.sernac.cl" class="text-blue-600 hover:underline" target="_blank"
+                           rel="noopener noreferrer">
+                            www.sernac.cl
+                        </a>
+                        <span class="text-sm text-gray-500"> (se abre en una nueva pestaña)</span>
+                    </li>
                     <li>• Teléfono: 800 700 100</li>
                 </ul>
             </section>
 
-            <!-- Section 12 - Modificaciones -->
-            <section>
+            <!-- Sección 12 - Modificaciones -->
+            <section id="terminos-sec-12">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">12. Modificaciones a los Términos</h2>
                 <p class="text-gray-700 leading-relaxed">
-                    FAT Testing se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las modificaciones entrarán en vigencia inmediatamente después de su publicación en el sitio web. Se notificará a los usuarios por correo electrónico sobre cambios sustanciales con al menos 15 días de anticipación.
+                    FAT Testing se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento.
+                    Las modificaciones entrarán en vigencia inmediatamente después de su publicación en el sitio web. Se
+                    notificará a los usuarios por correo electrónico sobre cambios sustanciales con al menos 15 días de
+                    anticipación.
                 </p>
                 <p class="text-gray-700 leading-relaxed mt-3">
-                    El uso continuado del servicio después de la publicación de cambios constituye su aceptación de los nuevos términos.
+                    El uso continuado del servicio después de la publicación de cambios constituye su aceptación de los
+                    nuevos términos.
                 </p>
             </section>
 
-            <!-- Section 13 - Contacto -->
-            <section>
+            <!-- Sección 13 - Contacto -->
+            <section id="terminos-sec-13">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">13. Información de Contacto</h2>
                 <p class="text-gray-700 leading-relaxed mb-3">
-                    Para preguntas, consultas o reclamos sobre estos Términos y Condiciones o el servicio, puede contactarnos a través de:
+                    Para preguntas, consultas o reclamos sobre estos Términos y Condiciones o el servicio, puede
+                    contactarnos a través de:
                 </p>
                 <div class="bg-blue-50 rounded-lg p-6 space-y-2">
                     <p class="text-gray-800"><strong>Email:</strong> soporte@fattesting.cl</p>
-                    <p class="text-gray-800"><strong>Horario de atención:</strong> Lunes a Viernes, 9:00 - 18:00 hrs (Chile Continental)</p>
+                    <p class="text-gray-800"><strong>Horario de atención:</strong> Lunes a Viernes, 9:00 - 18:00 hrs
+                        (Chile Continental)</p>
                 </div>
             </section>
 
-            <!-- Acceptance Notice -->
+            <!-- Aviso de aceptación -->
             <div class="mt-12 pt-8 border-t-2 border-gray-200">
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
                     <div class="flex items-start space-x-4">
-                        <i class="fas fa-info-circle text-blue-600 text-2xl mt-1"></i>
+                        <i class="fas fa-info-circle text-blue-600 text-2xl mt-1" aria-hidden="true"></i>
                         <div>
                             <h3 class="font-bold text-gray-900 mb-2">Aceptación de Términos</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Al crear una cuenta y utilizar FAT Testing, usted declara haber leído, entendido y aceptado estos Términos y Condiciones en su totalidad, así como la Política de Privacidad asociada.
+                                Al crear una cuenta y utilizar FAT Testing, usted declara haber leído, entendido y
+                                aceptado estos Términos y Condiciones en su totalidad, así como la Política de
+                                Privacidad asociada.
                             </p>
                         </div>
                     </div>
@@ -271,5 +421,5 @@
 
         </div>
     </div>
-</div>
+</main>
 {% endblock %}

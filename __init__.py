@@ -309,124 +309,164 @@ def iter_paragraphs(doc):
                     yield p
 
 
-# EMu_PER_INCH define cuántas EMUs (English Metric Units) hay en una pulgada.
-# Un EMU es la unidad mínima de medida interna que Word usa para posicionar y dimensionar objetos.
-# A 914400 EMUs por pulgada, se logra precisión subpíxel en el tamaño de imágenes y elementos gráficos.
+# EMu_PER_INCH:
+#   Número de EMUs (English Metric Units) que hay en una pulgada.
+#   Es la unidad interna que usa Word para tamaños.
 EMu_PER_INCH = 914400
 
+# DEFAULT_DPI:
+#   DPI "fijo" que vamos a usar para convertir píxeles a pulgadas.
+#   Muchos archivos traen 300/600 DPI y eso hace que Word las vea "muy pequeñas".
+DEFAULT_DPI = 96
 
-def _get_image_emu_size(image_bytes):
+
+def _get_image_emu_size(image_bytes, max_width_cm=None):
     """
     Propósito:
-        Convertir el tamaño de una imagen de píxeles a EMUs (English Metric Units)
-        para que Word pueda insertarla con dimensiones exactas.
+        Calcular el tamaño de una imagen en EMUs (unidades que usa Word),
+        partiendo de sus dimensiones en píxeles. Opcionalmente limita el
+        ancho máximo para que la imagen no sea gigantesca en la página.
 
     Entradas:
-        image_bytes (bytes): Bytes crudos de la imagen (cabeceras + datos).
+        image_bytes (bytes):
+            Bytes crudos de la imagen (tal como los devuelve .read()).
+        max_width_cm (float | None):
+            - None: no limita el ancho, se respeta el tamaño según píxeles.
+            - Número en centímetros: si la imagen es más ancha, se escala
+              proporcionalmente para que no supere ese ancho.
 
     Salidas:
-        (int, int): Tupla (cx, cy) con ancho y alto en EMUs.
+        (cx, cy) (tuple[int, int]):
+            Tupla con ancho (cx) y alto (cy) de la imagen en EMUs.
 
     Dependencias:
-        - PIL.Image: abre el contenido en memoria y obtiene tamaño y DPI.
-        - io.BytesIO: envuelve los bytes para simular un archivo.
-        - EMu_PER_INCH: factor de conversión de pulgadas a EMUs.
+        - PIL.Image (from PIL import Image)
+        - io.BytesIO (from io import BytesIO)
+        - EMu_PER_INCH (constante de este módulo)
+        - DEFAULT_DPI (constante de este módulo)
     """
-    # 1) Crear un buffer en memoria para que PIL lo reconozca como archivo
+
+    # Abrimos la imagen desde los bytes usando un buffer en memoria
     img = Image.open(BytesIO(image_bytes))
 
-    # 2) Obtener anchura y altura en píxeles
+    # Obtenemos el tamaño de la imagen en píxeles (ancho y alto)
     px_w, px_h = img.size
 
-    # 3) Obtener DPI horizontal y vertical desde metadatos; si faltan, usar 96 DPI
-    dpi_x, dpi_y = img.info.get("dpi", (96, 96))
-    dpi_x = dpi_x or 96  # evitar división por cero
-    dpi_y = dpi_y or 96
+    # Convertimos píxeles a pulgadas usando un DPI fijo (DEFAULT_DPI)
+    #   width_inch  = ancho_en_pixeles  / DPI
+    #   height_inch = alto_en_pixeles   / DPI
+    width_inch = px_w / DEFAULT_DPI
+    height_inch = px_h / DEFAULT_DPI
 
-    # 4) Calcular ancho (cx) y alto (cy) en EMUs:
-    #    EMUs = (píxeles / DPI) * EMUs_por_pulgada
-    cx = int(px_w / dpi_x * EMu_PER_INCH)
-    cy = int(px_h / dpi_y * EMu_PER_INCH)
+    # Si se especificó un ancho máximo en centímetros, lo aplicamos.
+    if max_width_cm is not None:
+        # Pasamos de cm a pulgadas: 1 pulgada = 2.54 cm
+        max_width_inch = max_width_cm / 2.54
 
-    # 5) Devolver dimensiones convertidas
+        # Si la imagen es más ancha que el máximo permitido...
+        if width_inch > max_width_inch:
+            # Calculamos un factor de escala (target / actual)
+            scale = max_width_inch / width_inch
+
+            # Escalamos tanto ancho como alto para mantener la proporción
+            width_inch *= scale
+            height_inch *= scale
+
+    # Ahora convertimos pulgadas a EMUs:
+    #   EMUs = pulgadas * EMu_PER_INCH
+    cx = int(width_inch * EMu_PER_INCH)
+    cy = int(height_inch * EMu_PER_INCH)
+
+    # Devolvemos ancho y alto en EMUs
     return cx, cy
-
 
 def reemplazar_imagen_flotante(doc, marker, image_file):
     """
     Propósito:
-        Localizar en el XML interno del documento (.docx) el primer
-        <w:drawing> cuyo <pic:cNvPr descr> coincide con `marker`, y reemplazar
-        esa imagen por la subida, ajustando la referencia interna (rId) y tamaño.
+        Reemplazar en el documento Word la imagen de un placeholder
+        identificado por el atributo descr == marker, usando la imagen
+        subida por el usuario y ajustando su tamaño.
 
     Entradas:
-        doc (docx.Document): Documento abierto con python-docx.
-        marker (str): Valor de atributo descr en <pic:cNvPr> que marca el placeholder.
-        image_file (FileStorage): Imagen subida desde Flask, con método read().
-
+        doc (docx.Document):
+            Documento Word cargado con python-docx.
+        marker (str):
+            Valor del atributo 'descr' en <pic:cNvPr>, por ejemplo "IMG1".
+        image_file (FileStorage):
+            Archivo de imagen recibido por Flask (request.files[...]).
+    
     Salidas:
-        None: Modifica `doc` en memoria.
+        None. Modifica el documento `doc` en memoria.
 
     Dependencias:
-        - doc.part.get_or_add_image: agrega la imagen al ZIP interno y devuelve rId.
-        - _get_image_emu_size: calcula cx, cy para <wp:extent>.
-        - doc.element.xpath: navegación por el XML WML con lxml.
-        - qn: función de python-docx para nombres de espacio XML.
+        - doc.part.get_or_add_image
+        - _get_image_emu_size
+        - doc.element.xpath
+        - qn (docx.oxml.ns.qn)
     """
-    # 1) Leer bytes crudos de la imagen
+
+    # Leer todos los bytes del archivo de imagen subido.
     image_bytes = image_file.read()
 
-    # 2) Agregar la imagen al paquete y obtener un nuevo rId (Relationship ID)
-    #    - En esta línea **se asigna** `new_rId`:
-    #         new_rId, _ = doc.part.get_or_add_image(BytesIO(image_bytes))
-    #      * `get_or_add_image` calcula un hash de los bytes,
-    #        copia el archivo a `word/media/` (si no existía) y crea/modifica
-    #        la entrada correspondiente en `document.xml.rels`:
-    #          <Relationship Id="rIdX" Type=".../image" Target="media/imageX.ext"/>
-    #      * Devuelve:
-    #          - `new_rId`: cadena única para referenciar este recurso en el XML (p.ej. "rId7").
-    #          - `ImagePart`: objeto interno que representa el recurso agregado.
+    # Registrar la imagen dentro del paquete .docx y obtener el nuevo rId.
+    # new_rId: ID de relación para referenciar la imagen desde el XML.
+    # _: objeto ImagePart que no necesitamos guardar aquí.
     new_rId, _ = doc.part.get_or_add_image(BytesIO(image_bytes))
 
-    # 3) Calcular dimensiones en EMU para la imagen
-    #    - Usa los bytes leídos para determinar tamaño en unidades EMU (ancho, alto)
-    #    - Estas dimensiones se asignarán luego a <wp:extent>
-    cx, cy = _get_image_emu_size(image_bytes)
+    # Calcular el tamaño de la imagen en EMUs.
+    # max_width_cm=16 limita el ancho máximo a ~16 cm, manteniendo proporción.
+    cx, cy = _get_image_emu_size(image_bytes, max_width_cm=16)
 
-    # 4) Recorrer cada nodo <w:drawing> en el documento
-    #    Python‑docx no expone directamente elementos de dibujo, así que trabajamos con el XML:
-    #    - <w:drawing> es el contenedor genérico para gráficos (imágenes, formas, etc.).
-    #    - Debemos buscar dentro de estos nodos cuál corresponde al placeholder que queremos actualizar.
+    # Recorrer todos los nodos <w:drawing> del documento.
+    # Ahí es donde se guardan las imágenes e ilustraciones.
     for drawing in doc.element.xpath(".//w:drawing"):
-        # 4.1) Dentro de ese contenedor, <pic:pic> engloba la definición de la imagen:
-        #      - Metadatos (cNvPr), estilos y referencia al binario.
+
+        # Dentro de cada <w:drawing> buscamos el nodo <pic:pic> (la imagen en sí).
         pics = drawing.xpath(".//pic:pic")
         if not pics:
-            # No hay imagen en este drawing, saltar al siguiente nodo
+            # Si no hay imagen en este drawing, pasamos al siguiente.
             continue
 
-        # 4.2) <pic:cNvPr> son las propiedades no visuales de la imagen:
-        #      - Atributo 'descr' lo usamos como marcador para identificar placeholders.
-        cNvPr = pics[0].xpath(".//pic:cNvPr")[0]
+        # Buscar el nodo <pic:cNvPr> que tiene atributos como name y descr.
+        cNvPr_list = pics[0].xpath(".//pic:cNvPr")
+        if not cNvPr_list:
+            # Si no existe, no podemos comprobar el descr, así que seguimos.
+            continue
+
+        cNvPr = cNvPr_list[0]
+
+        # Solo queremos modificar el dibujo cuyo descr coincide con nuestro marcador.
+        # Ej: descr="IMG1", descr="IMG2", etc.
         if cNvPr.get("descr") != marker:
-            # Si no coincide el descriptor, no es nuestro placeholder
+            # Si no coincide, seguimos con el siguiente <w:drawing>.
             continue
 
-        # 5) <a:blip> es el nodo DrawingML que apunta al recurso binario:
-        #    <a:blip r:embed="rIdX"/> define qué imagen cargar
-        blip = pics[0].xpath(".//a:blip")[0]
-        # 5.1) Al actualizar r:embed con new_rId, le decimos a Word que use
-        #      la imagen recién insertada en word/media/
+        # Si llegamos aquí, encontramos el placeholder correcto.
+
+        # Dentro de <pic:pic> buscamos <a:blip>, que tiene el atributo r:embed
+        # apuntando al rId de la imagen actual.
+        blip_list = pics[0].xpath(".//a:blip")
+        if not blip_list:
+            # Si no hay blip, algo raro pasa, salimos del bucle.
+            break
+
+        blip = blip_list[0]
+
+        # Actualizamos r:embed para que apunte al nuevo rId (la imagen subida).
         blip.set(qn("r:embed"), new_rId)
 
-        # 6) <wp:extent> especifica el ancho (cx) y alto (cy) en EMU
-        extent = drawing.xpath(".//wp:extent")[0]
-        extent.set("cx", str(cx))  # ancho en EMU
-        extent.set("cy", str(cy))  # alto en EMU
+        # Buscar <wp:extent>, que define ancho y alto de la imagen en EMUs.
+        extent_list = drawing.xpath(".//wp:extent")
+        if extent_list:
+            extent = extent_list[0]
+            # Actualizar ancho (cx) y alto (cy) en EMUs.
+            extent.set("cx", str(cx))
+            extent.set("cy", str(cy))
 
-        # 7) Salir después de la primera coincidencia
-        #    Solo queremos reemplazar un placeholder por llamada.
+        # Rompemos el bucle porque ya reemplazamos el placeholder que nos interesaba.
         break
+
+
 
 
 def insertar_imagenes(doc, image_files, marker):
@@ -527,9 +567,8 @@ def replace_marker_with_text(doc, marker, text):
                 run.font.size = Pt(11)
                 run.bold = False
                 p.alignment = (
-                    WD_PARAGRAPH_ALIGNMENT.LEFT
-                )  # opcional, por defecto ya es izquierda
-
+                    WD_PARAGRAPH_ALIGNMENT.CENTER
+                )  
             return
 
 
@@ -1812,7 +1851,6 @@ def mp_webhook():
     """
     Propósito:
         Recibir notificaciones de Mercado Pago.
-        Es un 'Detective' que busca a quién pertenece el pago, incluso si MP esconde el ID.
     
     Entradas: request (JSON de MP)
     Salidas: 200 OK

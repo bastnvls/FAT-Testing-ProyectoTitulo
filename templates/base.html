@@ -94,8 +94,8 @@
             display: block;
         }
 
-        /* Mantener el dropdown abierto cuando el mouse está sobre el botón o el menú */
-        .dropdown:hover::after {
+        /* Accesible con teclado: mostrar menú cuando el foco esté dentro del dropdown */
+        .dropdown:focus-within .dropdown-menu {
             display: block;
         }
     </style>
@@ -105,269 +105,295 @@
 
 <body class="antialiased bg-white">
 
-    <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+    <!-- Enlace para saltar el menú, accesible con teclado -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4
+              bg-blue-600 text-white px-4 py-2 rounded-lg z-[60] shadow-lg">
+        Saltar al contenido principal
+    </a>
 
-                <!-- LOGO -->
-                <div class="flex-none flex items-center space-x-2">
-                    <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
-                        <div
-                            class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-network-wired text-white text-sm"></i>
-                        </div>
-                        <span class="text-xl font-bold text-gray-900">FAT Testing</span>
-                    </a>
-                </div>
+    <header role="banner">
+        <nav class="fixed w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200" role="navigation"
+            aria-label="Navegación principal">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
 
-                <!-- MENU ESCRITORIO (CENTRO) -->
-                {% if current_user.is_authenticated %}
-                <!-- Usuario autenticado: usa dropdown para ahorrar espacio -->
-                <div class="hidden xl:flex flex-1 items-center justify-center">
-                    <div class="flex items-center justify-center space-x-3">
-                        <!-- Dropdown para Información -->
-                        <div class="dropdown">
-                            <button class="text-gray-600 hover:text-gray-900 transition text-base font-semibold flex items-center">
-                                Información
-                                <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a href="{{ url_for('landing') }}#features"
-                                    class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition first:rounded-t-lg">
-                                    <i class="fas fa-list-check mr-2 text-gray-400"></i>Características
-                                </a>
-                                <a href="{{ url_for('landing') }}#benefits"
-                                    class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
-                                    <i class="fas fa-thumbs-up mr-2 text-gray-400"></i>Beneficios
-                                </a>
-                                <a href="{{ url_for('landing') }}#pricing"
-                                    class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
-                                    <i class="fas fa-tag mr-2 text-gray-400"></i>Precios
-                                </a>
-                                <a href="{{ url_for('sobre_nosotros') }}"
-                                    class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition last:rounded-b-lg">
-                                    <i class="fas fa-users mr-2 text-gray-400"></i>Sobre Nosotros
-                                </a>
+                    <!-- LOGO -->
+                    <div class="flex-none flex items-center space-x-2">
+                        <a href="{{ url_for('landing') }}" class="flex items-center space-x-2">
+                            <div
+                                class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-network-wired text-white text-sm" aria-hidden="true"></i>
                             </div>
-                        </div>
-
-                        <div class="h-5 w-px bg-gray-300 ml-4"></div>
-
-                        <a href="{{ url_for('upload_files') }}"
-                            class="text-blue-600 font-bold hover:text-blue-800 transition flex items-center text-base">
-                            <i class="fas fa-bolt mr-2"></i> Generar Informes
+                            <span class="text-xl font-bold text-gray-900">FAT Testing</span>
                         </a>
                     </div>
-                </div>
-                {% else %}
-                <!-- Usuario NO autenticado: links expandidos -->
-                <div class="hidden nav:flex flex-1 items-center justify-center">
-                    <div class="flex items-center justify-center space-x-3">
-                        <a href="{{ url_for('landing') }}#features"
+
+                    <!-- MENU ESCRITORIO (CENTRO) -->
+                    {% if current_user.is_authenticated %}
+                    <!-- Usuario autenticado: usa dropdown para ahorrar espacio -->
+                    <div class="hidden xl:flex flex-1 items-center justify-center">
+                        <div class="flex items-center justify-center space-x-3">
+                            <!-- Dropdown para Información -->
+                            <div class="dropdown">
+                                <button type="button"
+                                    class="text-gray-600 hover:text-gray-900 transition text-base font-semibold flex items-center"
+                                    aria-haspopup="true">
+                                    Información
+                                    <i class="fas fa-chevron-down ml-1 text-xs" aria-hidden="true"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a href="{{ url_for('landing') }}#features"
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition first:rounded-t-lg">
+                                        <i class="fas fa-list-check mr-2 text-gray-400" aria-hidden="true"></i>
+                                        Características
+                                    </a>
+                                    <a href="{{ url_for('landing') }}#benefits"
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
+                                        <i class="fas fa-thumbs-up mr-2 text-gray-400" aria-hidden="true"></i>
+                                        Beneficios
+                                    </a>
+                                    <a href="{{ url_for('landing') }}#pricing"
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition">
+                                        <i class="fas fa-tag mr-2 text-gray-400" aria-hidden="true"></i>
+                                        Precios
+                                    </a>
+                                    <a href="{{ url_for('sobre_nosotros') }}"
+                                        class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition last:rounded-b-lg">
+                                        <i class="fas fa-users mr-2 text-gray-400" aria-hidden="true"></i>
+                                        Sobre Nosotros
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="h-5 w-px bg-gray-300 ml-4"></div>
+
+                            <a href="{{ url_for('upload_files') }}"
+                                class="text-blue-600 font-bold hover:text-blue-800 transition flex items-center text-base">
+                                <i class="fas fa-bolt mr-2" aria-hidden="true"></i>
+                                Generar Informes
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Usuario NO autenticado: links expandidos -->
+                    <div class="hidden nav:flex flex-1 items-center justify-center">
+                        <div class="flex items-center justify-center space-x-3">
+                            <a href="{{ url_for('landing') }}#features"
+                                class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                                Características
+                            </a>
+                            <a href="{{ url_for('landing') }}#benefits"
+                                class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                                Beneficios
+                            </a>
+                            <a href="{{ url_for('landing') }}#pricing"
+                                class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                                Precios
+                            </a>
+                            <a href="{{ url_for('sobre_nosotros') }}"
+                                class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                                Sobre Nosotros
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- MENU ESCRITORIO (DERECHA / AUTH) -->
+                    {% if current_user.is_authenticated %}
+                    <!-- Usuario autenticado: visible en xl (1280px+) -->
+                    <div class="hidden xl:flex flex-none items-center space-x-2">
+
+                        {% if current_user.is_authenticated %}
+                        {% set nombre = current_user.nombre or '' %}
+                        {% set apellido = current_user.apellido or '' %}
+                        {% set email_name = current_user.email.split('@')[0] %}
+
+                        {% if nombre or apellido %}
+                        {% set full_name = (nombre ~ ' ' ~ apellido)|trim %}
+                        {% else %}
+                        {% set full_name = email_name %}
+                        {% endif %}
+
+                        {% if nombre and apellido %}
+                        {% set initials = (nombre[0] ~ apellido[0])|upper %}
+                        {% elif nombre %}
+                        {% set initials = nombre[0]|upper %}
+                        {% else %}
+                        {% if email_name|length >= 2 %}
+                        {% set initials = email_name[0:2]|upper %}
+                        {% else %}
+                        {% set initials = email_name[0]|upper %}
+                        {% endif %}
+                        {% endif %}
+
+                        <div class="text-right leading-tight mr-2">
+                            <p class="text-sm font-bold text-gray-900">
+                                {{ full_name }}
+                            </p>
+                            <p class="text-xs text-gray-500 font-medium">
+                                {{ current_user.email }}
+                            </p>
+                        </div>
+
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600
+                                        flex items-center justify-center text-xs font-bold text-white shadow-md"
+                            aria-hidden="true">
+                            {{ initials }}
+                        </div>
+
+                        <a href="{{ url_for('download_desktop_app') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 whitespace-nowrap ml-2">
+                            <i class="fas fa-desktop mr-2" aria-hidden="true"></i>
+                            App escritorio
+                        </a>
+
+                        {% if current_user.estado_suscripcion == 'ACTIVA' %}
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 text-xs font-bold whitespace-nowrap">
+                            <i class="fas fa-check-circle mr-1.5" aria-hidden="true"></i>
+                            Activa
+                        </span>
+                        {% else %}
+                        <a href="{{ url_for('suscripcion_checkout') }}"
+                            class="inline-flex items-center px-3 py-1 rounded-full border border-amber-300 bg-amber-50 text-amber-700 text-xs font-bold hover:bg-amber-100 transition whitespace-nowrap">
+                            <i class="fas fa-exclamation-circle mr-1.5" aria-hidden="true"></i>
+                            Suscribirse
+                        </a>
+                        {% endif %}
+
+                        <a href="{{ url_for('logout') }}"
+                            class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 transition whitespace-nowrap">
+                            <i class="fas fa-sign-out-alt mr-1.5" aria-hidden="true"></i>
+                            Salir
+                        </a>
+
+                        {% else %}
+                        <a href="{{ url_for('login') }}"
                             class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                            Iniciar Sesión
+                        </a>
+                        <a href="{{ url_for('register') }}"
+                            class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-base">
+                            Suscribirme
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <!-- Usuario NO autenticado: visible en nav (1400px+) -->
+                    <div class="hidden nav:flex flex-none items-center space-x-2">
+                        <a href="{{ url_for('login') }}"
+                            class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                            Iniciar Sesión
+                        </a>
+                        <a href="{{ url_for('register') }}"
+                            class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-base">
+                            Suscribirme
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <!-- BOTÓN DE MENÚ MÓVIL -->
+                    {% if current_user.is_authenticated %}
+                    <!-- Usuario autenticado: visible en menos de xl (1280px) -->
+                    <div class="flex items-center xl:hidden">
+                        <button id="mobile-menu-button" type="button"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                            aria-expanded="false" aria-controls="mobile-menu">
+                            <span class="sr-only">Abrir menú principal</span>
+                            <i class="fas fa-bars text-xl" id="mobile-menu-icon" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    {% else %}
+                    <!-- Usuario NO autenticado: visible en menos de nav (1400px) -->
+                    <div class="flex items-center nav:hidden">
+                        <button id="mobile-menu-button" type="button"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                            aria-expanded="false" aria-controls="mobile-menu">
+                            <span class="sr-only">Abrir menú principal</span>
+                            <i class="fas fa-bars text-xl" id="mobile-menu-icon" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- MENÚ MÓVIL DESPLEGABLE -->
+            {% if current_user.is_authenticated %}
+            <!-- Usuario autenticado: visible en menos de xl (1280px) -->
+            <div class="hidden xl:hidden bg-white border-t border-gray-200" id="mobile-menu">
+                {% else %}
+                <!-- Usuario NO autenticado: visible en menos de nav (1400px) -->
+                <div class="hidden nav:hidden bg-white border-t border-gray-200" id="mobile-menu">
+                    {% endif %}
+                    <div class="px-4 pt-2 pb-6 space-y-1 shadow-lg">
+                        <!-- Enlaces Generales -->
+                        <a href="{{ url_for('landing') }}#features"
+                            class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             Características
                         </a>
                         <a href="{{ url_for('landing') }}#benefits"
-                            class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                            class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             Beneficios
                         </a>
-                        <a href="{{ url_for('landing') }}#pricing" 
-                           class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                        <a href="{{ url_for('landing') }}#pricing"
+                            class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             Precios
                         </a>
-                        <a href="{{ url_for('sobre_nosotros') }}" 
-                           class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
+                        <a href="{{ url_for('sobre_nosotros') }}"
+                            class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
                             Sobre Nosotros
                         </a>
+
+                        {% if current_user.is_authenticated %}
+                        <div class="border-t border-gray-200 my-2 pt-2">
+                            <div class="px-3 py-2">
+                                <p class="text-sm font-bold text-gray-900">Hola, {{ current_user.nombre or 'Usuario' }}
+                                </p>
+                                <p class="text-xs text-gray-500">{{ current_user.email }}</p>
+                            </div>
+
+                            <a href="{{ url_for('upload_files') }}"
+                                class="block px-3 py-2 rounded-md text-base font-bold text-blue-600 bg-blue-50 mb-2">
+                                <i class="fas fa-bolt mr-2" aria-hidden="true"></i>
+                                Generar Informes
+                            </a>
+
+                            <a href="{{ url_for('download_desktop_app') }}"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
+                                <i class="fas fa-desktop mr-2 text-gray-400" aria-hidden="true"></i>
+                                Descargar App Escritorio
+                            </a>
+
+                            {% if current_user.estado_suscripcion != 'ACTIVA' %}
+                            <a href="{{ url_for('suscripcion_checkout') }}"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-amber-600 hover:bg-amber-50">
+                                <i class="fas fa-exclamation-circle mr-2" aria-hidden="true"></i>
+                                Activar suscripción
+                            </a>
+                            {% endif %}
+
+                            <a href="{{ url_for('logout') }}"
+                                class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 mt-1">
+                                <i class="fas fa-sign-out-alt mr-2" aria-hidden="true"></i>
+                                Cerrar sesión
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="border-t border-gray-200 my-2 pt-4 flex flex-col space-y-3 px-2">
+                            <a href="{{ url_for('login') }}"
+                                class="block w-full text-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
+                                Iniciar Sesión
+                            </a>
+                            <a href="{{ url_for('register') }}"
+                                class="block w-full text-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow-md">
+                                Suscribirme
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                {% endif %}
-
-                <!-- MENU ESCRITORIO (DERECHA / AUTH) -->
-                {% if current_user.is_authenticated %}
-                <!-- Usuario autenticado: visible en xl (1280px+) -->
-                <div class="hidden xl:flex flex-none items-center space-x-2">
-
-                    {% if current_user.is_authenticated %}
-                    {% set nombre = current_user.nombre or '' %}
-                    {% set apellido = current_user.apellido or '' %}
-                    {% set email_name = current_user.email.split('@')[0] %}
-
-                    {% if nombre or apellido %}
-                    {% set full_name = (nombre ~ ' ' ~ apellido)|trim %}
-                    {% else %}
-                    {% set full_name = email_name %}
-                    {% endif %}
-
-                    {% if nombre and apellido %}
-                    {% set initials = (nombre[0] ~ apellido[0])|upper %}
-                    {% elif nombre %}
-                    {% set initials = nombre[0]|upper %}
-                    {% else %}
-                    {% if email_name|length >= 2 %}
-                    {% set initials = email_name[0:2]|upper %}
-                    {% else %}
-                    {% set initials = email_name[0]|upper %}
-                    {% endif %}
-                    {% endif %}
-
-                    <div class="text-right leading-tight mr-2">
-                        <p class="text-sm font-bold text-gray-900">
-                            {{ full_name }}
-                        </p>
-                        <p class="text-xs text-gray-500 font-medium">
-                            {{ current_user.email }}
-                        </p>
-                    </div>
-
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600
-                                    flex items-center justify-center text-xs font-bold text-white shadow-md">
-                        {{ initials }}
-                    </div>
-
-                    <a href="{{ url_for('download_desktop_app') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 whitespace-nowrap ml-2">
-                        <i class="fas fa-desktop mr-2"></i>
-                        App escritorio
-                    </a>
-
-                    {% if current_user.estado_suscripcion == 'ACTIVA' %}
-                    <span
-                        class="inline-flex items-center px-3 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 text-xs font-bold whitespace-nowrap">
-                        <i class="fas fa-check-circle mr-1.5"></i>
-                        Activa
-                    </span>
-                    {% else %}
-                    <a href="{{ url_for('suscripcion_checkout') }}"
-                        class="inline-flex items-center px-3 py-1 rounded-full border border-amber-300 bg-amber-50 text-amber-700 text-xs font-bold hover:bg-amber-100 transition whitespace-nowrap">
-                        <i class="fas fa-exclamation-circle mr-1.5"></i>
-                        Suscribirse
-                    </a>
-                    {% endif %}
-
-                    <a href="{{ url_for('logout') }}"
-                        class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 transition whitespace-nowrap">
-                        <i class="fas fa-sign-out-alt mr-1.5"></i>
-                        Salir
-                    </a>
-
-                    {% else %}
-                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
-                        Iniciar Sesión
-                    </a>
-                    <a href="{{ url_for('register') }}"
-                        class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-base">
-                        Suscribirme
-                    </a>
-                    {% endif %}
-                </div>
-                {% else %}
-                <!-- Usuario NO autenticado: visible en nav (1400px+) -->
-                <div class="hidden nav:flex flex-none items-center space-x-2">
-                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-gray-900 transition text-base font-semibold">
-                        Iniciar Sesión
-                    </a>
-                    <a href="{{ url_for('register') }}"
-                        class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 text-base">
-                        Suscribirme
-                    </a>
-                </div>
-                {% endif %}
-
-                <!-- BOTÓN DE MENÚ MÓVIL -->
-                {% if current_user.is_authenticated %}
-                <!-- Usuario autenticado: visible en menos de xl (1280px) -->
-                <div class="flex items-center xl:hidden">
-                    <button id="mobile-menu-button" type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                        <span class="sr-only">Abrir menú principal</span>
-                        <i class="fas fa-bars text-xl" id="mobile-menu-icon"></i>
-                    </button>
-                </div>
-                {% else %}
-                <!-- Usuario NO autenticado: visible en menos de nav (1400px) -->
-                <div class="flex items-center nav:hidden">
-                    <button id="mobile-menu-button" type="button"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
-                        <span class="sr-only">Abrir menú principal</span>
-                        <i class="fas fa-bars text-xl" id="mobile-menu-icon"></i>
-                    </button>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- MENÚ MÓVIL DESPLEGABLE -->
-        {% if current_user.is_authenticated %}
-        <!-- Usuario autenticado: visible en menos de xl (1280px) -->
-        <div class="hidden xl:hidden bg-white border-t border-gray-200" id="mobile-menu">
-        {% else %}
-        <!-- Usuario NO autenticado: visible en menos de nav (1400px) -->
-        <div class="hidden nav:hidden bg-white border-t border-gray-200" id="mobile-menu">
-        {% endif %}
-            <div class="px-4 pt-2 pb-6 space-y-1 shadow-lg">
-                <!-- Enlaces Generales -->
-                <a href="{{ url_for('landing') }}#features"
-                    class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                    Características
-                </a>
-                <a href="{{ url_for('landing') }}#benefits"
-                    class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                    Beneficios
-                </a>
-                <a href="{{ url_for('landing') }}#pricing"
-                    class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                    Precios
-                </a>
-                <a href="{{ url_for('sobre_nosotros') }}"
-                    class="block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                    Sobre Nosotros
-                </a>
-
-                {% if current_user.is_authenticated %}
-                <div class="border-t border-gray-200 my-2 pt-2">
-                    <div class="px-3 py-2">
-                        <p class="text-sm font-bold text-gray-900">Hola, {{ current_user.nombre or 'Usuario' }}</p>
-                        <p class="text-xs text-gray-500">{{ current_user.email }}</p>
-                    </div>
-
-                    <a href="{{ url_for('upload_files') }}"
-                        class="block px-3 py-2 rounded-md text-base font-bold text-blue-600 bg-blue-50 mb-2">
-                        <i class="fas fa-bolt mr-2"></i> Generar Informes
-                    </a>
-
-                    <a href="{{ url_for('download_desktop_app') }}"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">
-                        <i class="fas fa-desktop mr-2 text-gray-400"></i> Descargar App Escritorio
-                    </a>
-
-                    {% if current_user.estado_suscripcion != 'ACTIVA' %}
-                    <a href="{{ url_for('suscripcion_checkout') }}"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-amber-600 hover:bg-amber-50">
-                        <i class="fas fa-exclamation-circle mr-2"></i> Activar suscripción
-                    </a>
-                    {% endif %}
-
-                    <a href="{{ url_for('logout') }}"
-                        class="block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 mt-1">
-                        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
-                    </a>
-                </div>
-                {% else %}
-                <div class="border-t border-gray-200 my-2 pt-4 flex flex-col space-y-3 px-2">
-                    <a href="{{ url_for('login') }}"
-                        class="block w-full text-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">
-                        Iniciar Sesión
-                    </a>
-                    <a href="{{ url_for('register') }}"
-                        class="block w-full text-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium shadow-md">
-                        Suscribirme
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <!-- MENSAJES FLASH -->
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -379,19 +405,19 @@
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     {% if category == 'success' %}
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <i class="fas fa-check-circle text-green-500 text-xl" aria-hidden="true"></i>
                     {% elif category == 'info' %}
-                    <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                    <i class="fas fa-info-circle text-blue-500 text-xl" aria-hidden="true"></i>
                     {% else %}
-                    <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+                    <i class="fas fa-exclamation-circle text-red-500 text-xl" aria-hidden="true"></i>
                     {% endif %}
                 </div>
                 <div class="ml-3 flex-1">
                     <p class="font-medium">{{ message }}</p>
                 </div>
                 <button type="button" class="ml-3 inline-flex text-gray-400 hover:text-gray-600"
-                    onclick="this.parentElement.parentElement.style.display='none'">
-                    <i class="fas fa-times"></i>
+                    aria-label="Cerrar notificación" onclick="this.parentElement.parentElement.style.display='none'">
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -420,14 +446,14 @@
     {% block content %}{% endblock %}
 
     <!-- FOOTER -->
-    <footer class="bg-gray-900 text-gray-400 py-12 px-4">
+    <footer class="bg-gray-900 text-gray-400 py-12 px-4" role="contentinfo">
         <div class="max-w-7xl mx-auto">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-1">
                     <div class="flex items-center space-x-2 mb-4">
                         <div
                             class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-network-wired text-white text-sm"></i>
+                            <i class="fas fa-network-wired text-white text-sm" aria-hidden="true"></i>
                         </div>
                         <span class="text-xl font-bold text-white">FAT Testing</span>
                     </div>
@@ -489,15 +515,18 @@
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('mobile-menu-icon');
 
-            if (btn && menu) {
+            if (btn && menu && icon) {
                 btn.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
-                    if (menu.classList.contains('hidden')) {
+                    const isHidden = menu.classList.toggle('hidden');
+
+                    if (isHidden) {
                         icon.classList.remove('fa-times');
                         icon.classList.add('fa-bars');
+                        btn.setAttribute('aria-expanded', 'false');
                     } else {
                         icon.classList.remove('fa-bars');
                         icon.classList.add('fa-times');
+                        btn.setAttribute('aria-expanded', 'true');
                     }
                 });
             }

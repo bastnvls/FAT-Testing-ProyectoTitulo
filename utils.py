@@ -295,7 +295,7 @@ def send_password_reset_email(user, token, mail):
     
 def send_support_email(nombre, email, asunto, mensaje_texto, mail):
     """
-    Envía el ticket de soporte al administrador con el HTML incrustado en el código.
+    Envía el ticket de soporte al administrador con el HTML del correo en el código.
 
     Args:
         nombre (str): Nombre del usuario.

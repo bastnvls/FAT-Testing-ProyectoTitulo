@@ -6,643 +6,696 @@ FAT Testing - Automatización de Pruebas FAT para Equipos Cisco Catalyst
 
 {% block content %}
 
-<!-- Hero Section -->
-<section class="pt-32 pb-20 px-4 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-    <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
-                    <i class="fas fa-bolt text-sm"></i>
-                    <span class="text-sm font-medium">Ahorra hasta 30 minutos por dispositivo</span>
+<main id="main-content" role="main">
+
+    <!-- Sección principal (Hero) -->
+    <section class="pt-32 pb-20 px-4 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div
+                        class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
+                        <i class="fas fa-bolt text-sm" aria-hidden="true"></i>
+                        <span class="text-sm font-medium">Ahorra hasta 30 minutos por dispositivo</span>
+                    </div>
+
+                    <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        Automatiza tus pruebas
+                        <span
+                            class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT</span>
+                        en minutos
+                    </h1>
+
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        Reduce el proceso completo de prueba FAT de
+                        <strong>35-45 minutos a menos de 10 minutos</strong> por dispositivo.
+                        Automatiza tanto las pruebas CLI como la generación del informe Word profesional,
+                        liberando a tu equipo para tareas de mayor valor.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ url_for('register') }}"
+                            class="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 text-center">
+                            Suscribirme Ahora
+                            <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"
+                                aria-hidden="true"></i>
+                        </a>
+                        <a href="#pricing"
+                            class="bg-white text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl border-2 border-gray-200 transition-all duration-300 text-center">
+                            Ver Planes
+                            <i class="fas fa-dollar-sign ml-2" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
+                    <!-- Indicadores de resumen / métricas -->
+                    <div class="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">~75%</div>
+                            <div class="text-sm text-gray-600">Reducción de tiempo</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">&lt;10 min</div>
+                            <div class="text-sm text-gray-600">vs 35-45 min manual</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-gray-900">Cisco</div>
+                            <div class="text-sm text-gray-600">9200/9300/9500</div>
+                        </div>
+                    </div>
                 </div>
 
-                <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                    Automatiza tus pruebas <span
-                        class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT</span> en
-                    minutos
-                </h1>
-
-                <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-                    Reduce el proceso completo de prueba FAT de <strong>35-45 minutos a menos de 10 minutos</strong> por
-                    dispositivo.
-                    Automatiza tanto las pruebas CLI como la generación del informe Word profesional, liberando a tu
-                    equipo para tareas de mayor valor.
-                </p>
-
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ url_for('register') }}"
-                        class="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 text-center">
-                        Suscribirme Ahora
-                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-                    <a href="#pricing"
-                        class="bg-white text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl border-2 border-gray-200 transition-all duration-300 text-center">
-                        Ver Planes
-                        <i class="fas fa-dollar-sign ml-2"></i>
-                    </a>
-                </div>
-
-                <!-- Stats -->
-                <div class="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200">
-                    <div>
-                        <div class="text-3xl font-bold text-gray-900">~75%</div>
-                        <div class="text-sm text-gray-600">Reducción de tiempo</div>
-                    </div>
-                    <div>
-                        <div class="text-3xl font-bold text-gray-900">&lt;10 min</div>
-                        <div class="text-sm text-gray-600">vs 35-45 min manual</div>
-                    </div>
-                    <div>
-                        <div class="text-3xl font-bold text-gray-900">Cisco</div>
-                        <div class="text-sm text-gray-600">9200/9300/9500</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative">
-                <!-- Animated Process Flow -->
-                <div
-                    class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 p-8 shadow-2xl">
-                    <div class="space-y-6">
-                        <!-- Step 1: CLI Automation -->
-                        <div
-                            class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                            <div class="flex items-center space-x-4">
-                                <div
-                                    class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-terminal text-white text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-white font-semibold mb-1">Ejecución CLI Automática</div>
-                                    <div class="text-blue-100 text-sm">Comandos predefinidos por modelo</div>
-                                </div>
-                                <div class="text-emerald-400 font-bold text-2xl">✓</div>
-                            </div>
-                        </div>
-
-                        <!-- Step 2: Data Capture -->
-                        <div
-                            class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                            <div class="flex items-center space-x-4">
-                                <div
-                                    class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-database text-white text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-white font-semibold mb-1">Captura de Datos</div>
-                                    <div class="text-blue-100 text-sm">Extracción inteligente de información</div>
-                                </div>
-                                <div class="text-emerald-400 font-bold text-2xl">✓</div>
-                            </div>
-                        </div>
-
-                        <!-- Step 3: Report Generation -->
-                        <div
-                            class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                            <div class="flex items-center space-x-4">
-                                <div
-                                    class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i class="fas fa-file-word text-white text-xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-white font-semibold mb-1">Informe Profesional</div>
-                                    <div class="text-blue-100 text-sm">Documento Word con datos subrayados</div>
-                                </div>
-                                <div class="text-emerald-400 font-bold text-2xl">✓</div>
-                            </div>
-                        </div>
-
-                        <!-- Devices Supported -->
-                        <div class="mt-6 pt-6 border-t border-white/20">
-                            <div class="text-center">
-                                <div class="text-white font-semibold mb-3">Dispositivos Soportados</div>
-                                <div class="flex justify-center space-x-4">
-                                    <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
-                                        <div class="text-white font-bold">C9200</div>
+                <div class="relative">
+                    <!-- Tarjeta: flujo del proceso -->
+                    <div
+                        class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 p-8 shadow-2xl">
+                        <div class="space-y-6">
+                            <!-- Paso 1: Automatización CLI -->
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-terminal text-white text-xl" aria-hidden="true"></i>
                                     </div>
-                                    <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
-                                        <div class="text-white font-bold">C9300</div>
+                                    <div class="flex-1">
+                                        <div class="text-white font-semibold mb-1">Ejecución CLI Automática</div>
+                                        <div class="text-blue-100 text-sm">Comandos predefinidos por modelo</div>
                                     </div>
-                                    <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
-                                        <div class="text-white font-bold">C9500</div>
+                                    <div class="text-emerald-400 font-bold text-2xl">✓</div>
+                                </div>
+                            </div>
+
+                            <!-- Paso 2: Captura de datos -->
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-database text-white text-xl" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-white font-semibold mb-1">Captura de Datos</div>
+                                        <div class="text-blue-100 text-sm">Extracción inteligente de información</div>
+                                    </div>
+                                    <div class="text-emerald-400 font-bold text-2xl">✓</div>
+                                </div>
+                            </div>
+
+                            <!-- Paso 3: Generación de informe -->
+                            <div
+                                class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-file-word text-white text-xl" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-white font-semibold mb-1">Informe Profesional</div>
+                                        <div class="text-blue-100 text-sm">Documento Word con datos subrayados</div>
+                                    </div>
+                                    <div class="text-emerald-400 font-bold text-2xl">✓</div>
+                                </div>
+                            </div>
+
+                            <!-- Dispositivos soportados -->
+                            <div class="mt-6 pt-6 border-t border-white/20">
+                                <div class="text-center">
+                                    <div class="text-white font-semibold mb-3">Dispositivos Soportados</div>
+                                    <div class="flex justify-center space-x-4">
+                                        <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
+                                            <div class="text-white font-bold">C9200</div>
+                                        </div>
+                                        <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
+                                            <div class="text-white font-bold">C9300</div>
+                                        </div>
+                                        <div class="bg-white/10 px-4 py-2 rounded-lg border border-white/20">
+                                            <div class="text-white font-bold">C9500</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div
-                    class="absolute -z-10 top-8 left-8 w-full h-full bg-gradient-to-br from-blue-400 to-indigo-400 rounded-2xl opacity-30 blur-xl">
+                    <!-- Fondo decorativo -->
+                    <div
+                        class="absolute -z-10 top-8 left-8 w-full h-full bg-gradient-to-br from-blue-400 to-indigo-400 rounded-2xl opacity-30 blur-xl">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- What is FAT Section -->
-<section class="py-20 px-4 bg-gradient-to-b from-white to-gray-50 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                    ¿Qué son las Pruebas FAT?
-                </h2>
-            </div>
+    <!-- Sección: ¿Qué son las pruebas FAT? -->
+    <section class="py-20 px-4 bg-gradient-to-b from-white to-gray-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                        ¿Qué son las Pruebas FAT?
+                    </h2>
+                </div>
 
-            <div
-                class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 mb-8 border-2 border-blue-200 shadow-lg">
-                <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                    Las <strong>Pruebas de Aceptación en Fábrica (FAT - Factory Acceptance Test)</strong> son
-                    procedimientos de verificación que se realizan a equipos de red antes de su entrega al cliente.
-                    Estas pruebas garantizan que cada dispositivo cumple con las especificaciones técnicas y está listo
-                    para su implementación en producción.
-                </p>
-                <p class="text-lg text-gray-700 leading-relaxed">
-                    Durante una prueba FAT, se ejecutan múltiples comandos CLI en el equipo, se verifica su
-                    funcionamiento, se documenta el estado del hardware y software, y se genera un informe profesional
-                    que certifica que el dispositivo pasó todas las verificaciones requeridas.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Beneficios Destacados -->
                 <div
-                    class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl p-8 shadow-2xl border-2 border-emerald-400 transform hover:scale-105 transition-all duration-300">
-                    <div class="flex items-start space-x-4">
-                        <div
-                            class="flex-shrink-0 w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-lg">
-                            <i class="fas fa-building text-emerald-600 text-2xl"></i>
+                    class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 mb-8 border-2 border-blue-200 shadow-lg">
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        Las <strong>Pruebas de Aceptación en Fábrica (FAT - Factory Acceptance Test)</strong> son
+                        procedimientos de verificación que se realizan a equipos de red antes de su entrega al cliente.
+                        Estas pruebas garantizan que cada dispositivo cumple con las especificaciones técnicas y está
+                        listo
+                        para su implementación en producción.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Durante una prueba FAT, se ejecutan múltiples comandos CLI en el equipo, se verifica su
+                        funcionamiento, se documenta el estado del hardware y software, y se genera un informe
+                        profesional
+                        que certifica que el dispositivo pasó todas las verificaciones requeridas.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Tarjeta: beneficios para la empresa -->
+                    <div
+                        class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl p-8 shadow-2xl border-2 border-emerald-400 transform hover:scale-105 transition-all duration-300">
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="flex-shrink-0 w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-lg">
+                                <i class="fas fa-building text-emerald-600 text-2xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white mb-4 drop-shadow-lg">
+                                    Beneficios para tu Empresa
+                                </h3>
+                                <ul class="space-y-3 text-white">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"
+                                            aria-hidden="true"></i>
+                                        <span class="font-medium">
+                                            Reduce costos operativos liberando tiempo de ingenieros
+                                        </span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"
+                                            aria-hidden="true"></i>
+                                        <span class="font-medium">
+                                            Mejora la calidad y consistencia de la documentación
+                                        </span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"
+                                            aria-hidden="true"></i>
+                                        <span class="font-medium">
+                                            Acelera la entrega de proyectos al cliente
+                                        </span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"
+                                            aria-hidden="true"></i>
+                                        <span class="font-medium">
+                                            Elimina errores humanos en la documentación
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-white mb-4 drop-shadow-lg">Beneficios para tu Empresa
+                    </div>
+
+                    <!-- Tarjeta: proceso tradicional vs automatizado -->
+                    <div class="bg-white rounded-xl p-6 border-2 border-gray-200">
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-blue-600 text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                    Proceso Tradicional vs Automatizado
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="text-sm font-semibold text-gray-700 mb-1">Proceso Manual:</div>
+                                        <div class="text-sm text-gray-600">
+                                            15-25 min de pruebas + 20 min de informe =
+                                            <strong class="text-red-600">35-45 minutos</strong>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-gray-200 pt-3">
+                                        <div class="text-sm font-semibold text-gray-700 mb-1">Con FAT Testing:</div>
+                                        <div class="text-sm text-gray-600">
+                                            Proceso completo =
+                                            <strong class="text-emerald-600">&lt;10 minutos</strong>
+                                        </div>
+                                    </div>
+                                    <div class="bg-emerald-50 rounded-lg p-3 mt-3">
+                                        <div class="text-sm font-bold text-emerald-700">
+                                            Ahorro: ~30 minutos por dispositivo
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de características (Features) -->
+    <section id="features" class="py-20 px-4 bg-white border-b border-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Todo lo que necesitas en un solo lugar
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Sistema profesional de automatización FAT diseñado para ingenieros de redes
+                    que ejecutan pruebas de aceptación en equipos Cisco
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Característica 1 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl transition-all duration-300 border border-blue-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-robot text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Automatización Inteligente</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ejecuta comandos CLI automáticamente, captura datos y genera informes Word con información clave
+                        subrayada. Requiere mínima intervención para desconexión de fans y fuentes.
+                    </p>
+                </div>
+
+                <!-- Característica 2 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-xl transition-all duración-300 border border-purple-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-layer-group text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Catalyst 9200/9300/9500</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Soporte especializado para la familia Cisco Catalyst 9200, 9300 y 9500 con comandos CLI
+                        predefinidos y optimizados específicamente para cada modelo.
+                    </p>
+                </div>
+
+                <!-- Característica 3 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-xl transition-all duración-300 border border-emerald-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-file-word text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Informes Profesionales</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Documentos Word con formato corporativo, imágenes integradas y datos técnicos perfectamente
+                        organizados.
+                    </p>
+                </div>
+
+                <!-- Característica 4 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-orange-50 to-red-50 hover:shadow-xl transition-all duración-300 border border-orange-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-shield-alt text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Seguridad Empresarial</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Autenticación robusta, roles de usuario y protección de datos sensibles del proyecto.
+                    </p>
+                </div>
+
+                <!-- Característica 5 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 hover:shadow-xl transition-all duración-300 border border-cyan-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-images text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Gestión de Evidencias</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Carga múltiple de imágenes, organización automática e inserción inteligente en el documento.
+                    </p>
+                </div>
+
+                <!-- Característica 6 -->
+                <div
+                    class="group p-8 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 hover:shadow-xl transition-all duración-300 border border-yellow-100">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-bolt text-2xl text-white" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Velocidad Extrema</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Reduce el proceso completo de 35-45 minutos a menos de 10 minutos por dispositivo.
+                        Automatiza pruebas CLI e informes simultáneamente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección: Cómo funciona -->
+    <section class="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Cómo Funciona FAT Testing
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Proceso simple en 3 pasos para automatizar tus pruebas FAT
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Paso 1 -->
+                <div class="relative">
+                    <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                        <div
+                            class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            1
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                                <i class="fas fa-download text-3xl text-blue-600" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">
+                                Descarga el Software CLI
                             </h3>
-                            <ul class="space-y-3 text-white">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                                    <span class="font-medium">Reduce costos operativos liberando tiempo de
-                                        ingenieros</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                                    <span class="font-medium">Mejora la calidad y consistencia de la
-                                        documentación</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                                    <span class="font-medium">Acelera la entrega de proyectos al cliente</span>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                                    <span class="font-medium">Elimina errores humanos en la documentación</span>
-                                </li>
-                            </ul>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                Accede a tu cuenta y descarga el ejecutable para Windows. Conéctalo por consola al
+                                equipo
+                                Cisco que deseas probar.
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl p-6 border-2 border-gray-200">
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-clock text-blue-600 text-xl"></i>
+                <!-- Paso 2 -->
+                <div class="relative">
+                    <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                        <div
+                            class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            2
                         </div>
+                        <div class="mt-4">
+                            <div
+                                class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                                <i class="fas fa-terminal text-3xl text-purple-600" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">
+                                Ejecuta las Pruebas Automáticas
+                            </h3>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                El software ejecuta automáticamente todos los comandos CLI necesarios según el modelo
+                                del
+                                dispositivo y captura las evidencias.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paso 3 -->
+                <div class="relative">
+                    <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                        <div
+                            class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            3
+                        </div>
+                        <div class="mt-4">
+                            <div
+                                class="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                                <i class="fas fa-file-word text-3xl text-emerald-600" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">
+                                Genera el Informe
+                            </h3>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                Accede a la plataforma web, sube los datos de la prueba y las imágenes. Obtén un informe
+                                Word profesional en segundos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloque: Qué incluye la suscripción -->
+            <div class="mt-16 bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                    ¿Qué Incluye la Suscripción?
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl mt-1" aria-hidden="true"></i>
                         <div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Proceso Tradicional vs Automatizado</h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <div class="text-sm font-semibold text-gray-700 mb-1">Proceso Manual:</div>
-                                    <div class="text-sm text-gray-600">15-25 min de pruebas + 20 min de informe =
-                                        <strong class="text-red-600">35-45 minutos</strong></div>
-                                </div>
-                                <div class="border-t border-gray-200 pt-3">
-                                    <div class="text-sm font-semibold text-gray-700 mb-1">Con FAT Testing:</div>
-                                    <div class="text-sm text-gray-600">Proceso completo = <strong
-                                            class="text-emerald-600">&lt;10 minutos</strong></div>
-                                </div>
-                                <div class="bg-emerald-50 rounded-lg p-3 mt-3">
-                                    <div class="text-sm font-bold text-emerald-700">Ahorro: ~30 minutos por dispositivo
-                                    </div>
-                                </div>
+                            <div class="font-semibold text-gray-900">Software CLI Automatizado</div>
+                            <div class="text-sm text-gray-600">
+                                Ejecuta pruebas FAT desde tu PC conectado al dispositivo
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl mt-1" aria-hidden="true"></i>
+                        <div>
+                            <div class="font-semibold text-gray-900">Plataforma Web de Informes</div>
+                            <div class="text-sm text-gray-600">
+                                Genera informes Word profesionales con formato corporativo
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl mt-1" aria-hidden="true"></i>
+                        <div>
+                            <div class="font-semibold text-gray-900">Soporte Multi-Modelo</div>
+                            <div class="text-sm text-gray-600">Cisco Catalyst 9200, 9300 y 9500</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-emerald-500 text-xl mt-1" aria-hidden="true"></i>
+                        <div>
+                            <div class="font-semibold text-gray-900">Uso Ilimitado</div>
+                            <div class="text-sm text-gray-600">
+                                Sin restricciones de cantidad de pruebas o informes
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Features Section -->
-<section id="features" class="py-20 px-4 bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Todo lo que necesitas en un solo lugar
-            </h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Sistema profesional de automatización FAT diseñado para ingenieros de redes que ejecutan pruebas de
-                aceptación en equipos Cisco
-            </p>
-        </div>
+    <!-- Sección de beneficios / ROI -->
+    <section id="benefits" class="py-20 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                        El ROI que tu empresa necesita
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                        Con FAT Testing, transforma 35-45 minutos de trabajo manual en menos de 10 minutos de
+                        automatización. Ahorra hasta 30 minutos por dispositivo, permitiendo que tu equipo se enfoque en
+                        proyectos de mayor valor.
+                    </p>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl transition-all duration-300 border border-blue-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-robot text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Automatización Inteligente</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Ejecuta comandos CLI automáticamente, captura datos y genera informes Word con información clave
-                    subrayada. Requiere mínima intervención para desconexión de fans y fuentes.
-                </p>
-            </div>
-
-            <!-- Feature 2 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-xl transition-all duration-300 border border-purple-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-layer-group text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Catalyst 9200/9300/9500</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Soporte especializado para la familia Cisco Catalyst 9200, 9300 y 9500 con comandos CLI predefinidos
-                    y optimizados específicamente para cada modelo.
-                </p>
-            </div>
-
-            <!-- Feature 3 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-xl transition-all duration-300 border border-emerald-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-file-word text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Informes Profesionales</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Documentos Word con formato corporativo, imágenes integradas y datos técnicos perfectamente
-                    organizados.
-                </p>
-            </div>
-
-            <!-- Feature 4 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-orange-50 to-red-50 hover:shadow-xl transition-all duration-300 border border-orange-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-shield-alt text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Seguridad Empresarial</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Autenticación robusta, roles de usuario y protección de datos sensibles del proyecto.
-                </p>
-            </div>
-
-            <!-- Feature 5 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 hover:shadow-xl transition-all duration-300 border border-cyan-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-images text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Gestión de Evidencias</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Carga múltiple de imágenes, organización automática e inserción inteligente en el documento.
-                </p>
-            </div>
-
-            <!-- Feature 6 -->
-            <div
-                class="group p-8 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 hover:shadow-xl transition-all duration-300 border border-yellow-100">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-bolt text-2xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Velocidad Extrema</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    Reduce el proceso completo de 35-45 minutos a menos de 10 minutos por dispositivo. Automatiza
-                    pruebas CLI e informes simultáneamente.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- How it Works Section -->
-<section class="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Cómo Funciona FAT Testing
-            </h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Proceso simple en 3 pasos para automatizar tus pruebas FAT
-            </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <!-- Step 1 -->
-            <div class="relative">
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                    <div
-                        class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                        1
-                    </div>
-                    <div class="mt-4">
-                        <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-download text-3xl text-blue-600"></i>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Ahorro de Tiempo Inmediato</h4>
+                                <p class="text-gray-300">
+                                    Reduce de 35-45 minutos a menos de 10 minutos por dispositivo.
+                                    Ahorra ~30 minutos en cada prueba FAT. Con 100 dispositivos/mes, liberas
+                                    aproximadamente 50 horas de trabajo.
+                                </p>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Descarga el Software CLI</h3>
-                        <p class="text-gray-600 text-center leading-relaxed">
-                            Accede a tu cuenta y descarga el ejecutable para Windows. Conéctalo por consola al equipo
-                            Cisco que deseas probar.
-                        </p>
+
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Calidad Consistente</h4>
+                                <p class="text-gray-300">
+                                    Elimina errores de documentación, inconsistencias de formato y omisiones.
+                                    Cada informe mantiene el mismo estándar profesional con plantilla única y
+                                    resaltado por colores.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check text-xl" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-2">Escalabilidad Total</h4>
+                                <p class="text-gray-300">
+                                    Procesa 1 dispositivo o 100 con el mismo esfuerzo. Crece sin límites.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Step 2 -->
-            <div class="relative">
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                    <div
-                        class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                        2
+                <!-- Tarjeta de resumen de ROI -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                    <div class="text-center mb-8">
+                        <div class="text-sm text-gray-400 mb-2">ROI Mensual Estimado</div>
+                        <div class="text-5xl font-bold mb-2">50+ horas</div>
+                        <div class="text-gray-300">ahorradas con 100 dispositivos/mes</div>
                     </div>
-                    <div class="mt-4">
-                        <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-terminal text-3xl text-purple-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Ejecuta las Pruebas Automáticas
-                        </h3>
-                        <p class="text-gray-600 text-center leading-relaxed">
-                            El software ejecuta automáticamente todos los comandos CLI necesarios según el modelo del
-                            dispositivo y captura las evidencias.
-                        </p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Step 3 -->
-            <div class="relative">
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                    <div
-                        class="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                        3
-                    </div>
-                    <div class="mt-4">
-                        <div class="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center mb-6 mx-auto">
-                            <i class="fas fa-file-word text-3xl text-emerald-600"></i>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between py-3 border-b border-white/10">
+                            <span class="text-gray-300">Ahorro por dispositivo</span>
+                            <span class="font-semibold">~30 minutos</span>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Genera el Informe</h3>
-                        <p class="text-gray-600 text-center leading-relaxed">
-                            Accede a la plataforma web, sube los datos de la prueba y las imágenes. Obtén un informe
-                            Word profesional en segundos.
-                        </p>
+                        <div class="flex justify-between py-3 border-b border-white/10">
+                            <span class="text-gray-300">100 dispositivos × 30 min</span>
+                            <span class="font-semibold">50 horas/mes</span>
+                        </div>
+                        <div class="flex justify-between py-3 text-emerald-400 font-bold text-lg">
+                            <span>Uso Ilimitado</span>
+                            <span>Sin Restricciones</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- What's Included -->
-        <div class="mt-16 bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">¿Qué Incluye la Suscripción?</h3>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="flex items-start space-x-3">
-                    <i class="fas fa-check-circle text-emerald-500 text-xl mt-1"></i>
-                    <div>
-                        <div class="font-semibold text-gray-900">Software CLI Automatizado</div>
-                        <div class="text-sm text-gray-600">Ejecuta pruebas FAT desde tu PC conectado al dispositivo
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <i class="fas fa-check-circle text-emerald-500 text-xl mt-1"></i>
-                    <div>
-                        <div class="font-semibold text-gray-900">Plataforma Web de Informes</div>
-                        <div class="text-sm text-gray-600">Genera informes Word profesionales con formato corporativo
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <i class="fas fa-check-circle text-emerald-500 text-xl mt-1"></i>
-                    <div>
-                        <div class="font-semibold text-gray-900">Soporte Multi-Modelo</div>
-                        <div class="text-sm text-gray-600">Cisco Catalyst 9200, 9300 y 9500</div>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <i class="fas fa-check-circle text-emerald-500 text-xl mt-1"></i>
-                    <div>
-                        <div class="font-semibold text-gray-900">Uso Ilimitado</div>
-                        <div class="text-sm text-gray-600">Sin restricciones de cantidad de pruebas o informes</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Benefits/ROI Section -->
-<section id="benefits" class="py-20 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-    <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
-                    El ROI que tu empresa necesita
+    <!-- Sección de precios (Pricing) -->
+    <section id="pricing" class="py-20 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Planes diseñados para crecer contigo
                 </h2>
-                <p class="text-xl text-gray-300 mb-8 leading-relaxed">
-                    Con FAT Testing, transforma 35-45 minutos de trabajo manual en menos de 10 minutos de
-                    automatización.
-                    Ahorra hasta 30 minutos por dispositivo, permitiendo que tu equipo se enfoque en proyectos de mayor
-                    valor.
+                <p class="text-xl text-gray-600">
+                    Sin costos ocultos. Sin contratos anuales forzados.
                 </p>
-
-                <div class="space-y-6">
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check text-xl"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold mb-2">Ahorro de Tiempo Inmediato</h4>
-                            <p class="text-gray-300">Reduce de 35-45 minutos a menos de 10 minutos por dispositivo.
-                                Ahorra ~30 minutos en cada prueba FAT. Con 100 dispositivos/mes, liberas aproximadamente
-                                50 horas de trabajo.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check text-xl"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold mb-2">Calidad Consistente</h4>
-                            <p class="text-gray-300">Elimina errores de documentación, inconsistencias de formato y
-                                omisiones. Cada informe mantiene el mismo estándar profesional con plantilla única y
-                                resaltado por colores.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-check text-xl"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold mb-2">Escalabilidad Total</h4>
-                            <p class="text-gray-300">Procesa 1 dispositivo o 100 con el mismo esfuerzo. Crece sin
-                                límites.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <div class="text-center mb-8">
-                    <div class="text-sm text-gray-400 mb-2">ROI Mensual Estimado</div>
-                    <div class="text-5xl font-bold mb-2">50+ horas</div>
-                    <div class="text-gray-300">ahorradas con 100 dispositivos/mes</div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Plan Basic -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 opacity-60 relative">
+                    <div
+                        class="absolute top-4 right-4 bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
+                        Próximamente
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-400">-</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-lock text-gray-400 mr-3" aria-hidden="true"></i>
+                            <span class="text-gray-400">Plan en desarrollo</span>
+                        </li>
+                    </ul>
+                    <button disabled
+                        class="block w-full bg-gray-100 text-gray-400 text-center py-3 rounded-xl font-semibold cursor-not-allowed">
+                        No Disponible
+                    </button>
                 </div>
 
-                <div class="space-y-4 text-sm">
-                    <div class="flex justify-between py-3 border-b border-white/10">
-                        <span class="text-gray-300">Ahorro por dispositivo</span>
-                        <span class="font-semibold">~30 minutos</span>
-                    </div>
-                    <div class="flex justify-between py-3 border-b border-white/10">
-                        <span class="text-gray-300">100 dispositivos × 30 min</span>
-                        <span class="font-semibold">50 horas/mes</span>
-                    </div>
-                    <div class="flex justify-between py-3 text-emerald-400 font-bold text-lg">
-                        <span>Uso Ilimitado</span>
-                        <span>Sin Restricciones</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Pricing Section -->
-<section id="pricing" class="py-20 px-4 bg-gray-50">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Planes diseñados para crecer contigo
-            </h2>
-            <p class="text-xl text-gray-600">
-                Sin costos ocultos. Sin contratos anuales forzados.
-            </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <!-- Starter Plan -->
-            <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 opacity-60 relative">
+                <!-- Plan Standard (principal) -->
                 <div
-                    class="absolute top-4 right-4 bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
-                    Próximamente
+                    class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 text-white transform scale-105 shadow-2xl">
+                    <div class="text-center mb-4">
+                        <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-medium">Más Popular</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Standard</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold">$150.000</span>
+                        <span class="opacity-90">CLP/mes</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3" aria-hidden="true"></i>
+                            <span>Uso ilimitado</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3" aria-hidden="true"></i>
+                            <span>Software CLI para pruebas FAT</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3" aria-hidden="true"></i>
+                            <span>Generador de informes web</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3" aria-hidden="true"></i>
+                            <span>Catalyst 9200/9300/9500</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3" aria-hidden="true"></i>
+                            <span>Incluye 1 cuenta de usuario</span>
+                        </li>
+                    </ul>
+                    <a href="{{ url_for('register') }}"
+                        class="block w-full bg-white text-blue-600 text-center py-3 rounded-xl font-semibold hover:shadow-xl transition">
+                        Comenzar Ahora
+                    </a>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Basic</h3>
-                <div class="mb-6">
-                    <span class="text-4xl font-bold text-gray-400">-</span>
-                </div>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-lock text-gray-400 mr-3"></i>
-                        <span class="text-gray-400">Plan en desarrollo</span>
-                    </li>
-                </ul>
-                <button disabled
-                    class="block w-full bg-gray-100 text-gray-400 text-center py-3 rounded-xl font-semibold cursor-not-allowed">
-                    No Disponible
-                </button>
-            </div>
 
-            <!-- Pro Plan -->
-            <div
-                class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 text-white transform scale-105 shadow-2xl">
-                <div class="text-center mb-4">
-                    <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-medium">Más Popular</span>
+                <!-- Plan Enterprise -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 opacity-60 relative">
+                    <div
+                        class="absolute top-4 right-4 bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
+                        Próximamente
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-400">-</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-lock text-gray-400 mr-3" aria-hidden="true"></i>
+                            <span class="text-gray-400">Plan en desarrollo</span>
+                        </li>
+                    </ul>
+                    <button disabled
+                        class="block w-full bg-gray-100 text-gray-400 text-center py-3 rounded-xl font-semibold cursor-not-allowed">
+                        No Disponible
+                    </button>
                 </div>
-                <h3 class="text-2xl font-bold mb-2">Standard</h3>
-                <div class="mb-6">
-                    <span class="text-4xl font-bold">$150.000</span>
-                    <span class="opacity-90">CLP/mes</span>
-                </div>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-check mr-3"></i>
-                        <span>Uso ilimitado</span>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check mr-3"></i>
-                        <span>Software CLI para pruebas FAT</span>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check mr-3"></i>
-                        <span>Generador de informes web</span>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check mr-3"></i>
-                        <span>Catalyst 9200/9300/9500</span>
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check mr-3"></i>
-                        <span>Incluye 1 cuenta de usuario</span>
-                    </li>
-                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección final de llamada a la acción (CTA) -->
+    <section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div class="max-w-4xl mx-auto text-center text-white">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                Comienza a ahorrar tiempo hoy mismo
+            </h2>
+            <p class="text-xl mb-8 opacity-90">
+                Únete a los profesionales que optimizan sus pruebas FAT con automatización
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ url_for('register') }}"
-                    class="block w-full bg-white text-blue-600 text-center py-3 rounded-xl font-semibold hover:shadow-xl transition">
-                    Comenzar Ahora
+                    class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all duration-300">
+                    Suscribirme
+                    <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
+                </a>
+                <a href="{{ url_for('login') }}"
+                    class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transición-all duration-300">
+                    Iniciar Sesión
                 </a>
             </div>
-
-            <!-- Enterprise Plan -->
-            <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 opacity-60 relative">
-                <div
-                    class="absolute top-4 right-4 bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
-                    Próximamente
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
-                <div class="mb-6">
-                    <span class="text-4xl font-bold text-gray-400">-</span>
-                </div>
-                <ul class="space-y-4 mb-8">
-                    <li class="flex items-center">
-                        <i class="fas fa-lock text-gray-400 mr-3"></i>
-                        <span class="text-gray-400">Plan en desarrollo</span>
-                    </li>
-                </ul>
-                <button disabled
-                    class="block w-full bg-gray-100 text-gray-400 text-center py-3 rounded-xl font-semibold cursor-not-allowed">
-                    No Disponible
-                </button>
-            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA Final -->
-<section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600">
-    <div class="max-w-4xl mx-auto text-center text-white">
-        <h2 class="text-4xl lg:text-5xl font-bold mb-6">
-            Comienza a ahorrar tiempo hoy mismo
-        </h2>
-        <p class="text-xl mb-8 opacity-90">
-            Únete a los profesionales que optimizan sus pruebas FAT con automatización
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ url_for('register') }}"
-                class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all duration-300">
-                Suscribirme
-                <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-            <a href="{{ url_for('login') }}"
-                class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300">
-                Iniciar Sesión
-            </a>
-        </div>
-    </div>
-</section>
+</main>
 
 {% endblock %}

@@ -52,7 +52,7 @@ class User(db.Model, UserMixin):
     # Tiempos de auditoría / licencias
     licencia_valida_hasta = db.Column(db.DateTime)
     
-    # CORRECCIÓN AQUÍ: Usamos la función auxiliar para UTC
+    # Uso de la función auxiliar para UTC
     fecha_creacion = db.Column(db.DateTime, default=get_now_utc, nullable=False)
     ultimo_acceso = db.Column(db.DateTime)
 
@@ -90,7 +90,7 @@ class PasswordResetToken(db.Model):
 
     token = db.Column(db.String(100), unique=True, nullable=False, index=True)
 
-    # CORRECCIÓN AQUÍ: Usamos get_now_utc
+    # Uso de la función auxiliar para UTC
     created_at = db.Column(db.DateTime, default=get_now_utc, nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
     used = db.Column(db.Boolean, default=False, nullable=False)
@@ -100,12 +100,12 @@ class PasswordResetToken(db.Model):
     def __init__(self, user_id, expiration_hours=1):
         self.user_id = str(user_id)
         self.token = secrets.token_urlsafe(32)
-        # CORRECCIÓN: Cálculo con timezone
+        # Cálculo con timezone
         self.expires_at = get_now_utc() + timedelta(hours=expiration_hours)
         self.created_at = get_now_utc()
 
     def is_valid(self):
-        # CORRECCIÓN: Comparación con timezone aware
+        # Comparación con timezone aware
         return not self.used and get_now_utc() < self.expires_at.replace(tzinfo=timezone.utc) if self.expires_at.tzinfo is None else get_now_utc() < self.expires_at
 
     def mark_as_used(self):

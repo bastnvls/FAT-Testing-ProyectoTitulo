@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Sobre Nosotros - FAT Testing
+Sobre Nosotros - FAT Testing
 {% endblock %}
 
 {# Aquí iría CSS extra solo para esta página si alguna vez lo necesitas #}
@@ -9,35 +9,45 @@
 
 {% block content %}
 
-    <!-- Hero Section -->
+<main id="main-content" role="main">
+
+    <!-- Sección hero / cabecera principal -->
     <section class="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div class="max-w-7xl mx-auto text-center">
             <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Sobre <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT Testing</span>
+                Sobre <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FAT
+                    Testing</span>
             </h1>
             <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Transformamos la manera en que los ingenieros de redes realizan pruebas de aceptación en fábrica para equipos Cisco Catalyst
+                Transformamos la manera en que los ingenieros de redes realizan pruebas de aceptación en fábrica para
+                equipos Cisco Catalyst
             </p>
         </div>
     </section>
 
-    <!-- Mission Section -->
+    <!-- Sección: misión -->
     <section class="py-20 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
-                        <i class="fas fa-bullseye text-sm"></i>
+                    <div
+                        class="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full mb-6">
+                        <i class="fas fa-bullseye text-sm" aria-hidden="true"></i>
                         <span class="text-sm font-medium">Nuestra Misión</span>
                     </div>
                     <h2 class="text-4xl font-bold text-gray-900 mb-6">
                         Automatizar para Liberar Tiempo Valioso
                     </h2>
                     <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                        En FAT Testing, creemos que los ingenieros de redes no deberían perder tiempo valioso en tareas manuales y repetitivas. Nuestra misión es automatizar el proceso de pruebas FAT para que los profesionales puedan enfocarse en lo que realmente importa: proyectos de mayor valor y desafíos técnicos complejos.
+                        En FAT Testing, creemos que los ingenieros de redes no deberían perder tiempo valioso en tareas
+                        manuales y repetitivas. Nuestra misión es automatizar el proceso de pruebas FAT para que los
+                        profesionales puedan enfocarse en lo que realmente importa: proyectos de mayor valor y desafíos
+                        técnicos complejos.
                     </p>
                     <p class="text-lg text-gray-700 leading-relaxed">
-                        Desarrollamos herramientas que transforman 35-45 minutos de trabajo manual en menos de 10 minutos de automatización, permitiendo a las empresas optimizar sus recursos y mejorar la calidad de sus entregables.
+                        Desarrollamos herramientas que transforman 35-45 minutos de trabajo manual en menos de 10
+                        minutos de automatización, permitiendo a las empresas optimizar sus recursos y mejorar la
+                        calidad de sus entregables.
                     </p>
                 </div>
                 <div class="relative">
@@ -46,29 +56,31 @@
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                                 <div class="flex items-center space-x-4">
                                     <div class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-rocket text-white text-xl"></i>
+                                        <i class="fas fa-rocket text-white text-xl" aria-hidden="true"></i>
                                     </div>
                                     <div>
                                         <div class="text-white font-semibold">Innovación Constante</div>
-                                        <div class="text-blue-100 text-sm">Mejoramos continuamente nuestro software</div>
+                                        <div class="text-blue-100 text-sm">Mejoramos continuamente nuestro software
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                                 <div class="flex items-center space-x-4">
                                     <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-users text-white text-xl"></i>
+                                        <i class="fas fa-users text-white text-xl" aria-hidden="true"></i>
                                     </div>
                                     <div>
                                         <div class="text-white font-semibold">Enfoque en el Cliente</div>
-                                        <div class="text-blue-100 text-sm">Escuchamos y respondemos a sus necesidades</div>
+                                        <div class="text-blue-100 text-sm">Escuchamos y respondemos a sus necesidades
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                                 <div class="flex items-center space-x-4">
                                     <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                                        <i class="fas fa-shield-alt text-white text-xl" aria-hidden="true"></i>
                                     </div>
                                     <div>
                                         <div class="text-white font-semibold">Calidad y Confiabilidad</div>
@@ -83,7 +95,7 @@
         </div>
     </section>
 
-    <!-- Problem We Solve -->
+    <!-- Sección: problema que resolvemos -->
     <section class="py-20 px-4 bg-gray-50">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -96,58 +108,65 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 mb-12">
-                <!-- The Problem -->
+                <!-- Bloque: El Problema -->
                 <div class="bg-white rounded-2xl p-8 shadow-lg border-2 border-red-200">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl" aria-hidden="true"></i>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900">El Problema</h3>
                     </div>
                     <ul class="space-y-4 text-gray-700">
                         <li class="flex items-start">
-                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
-                            <span><strong>Tiempo perdido:</strong> 35-45 minutos por dispositivo en pruebas manuales</span>
+                            <i class="fas fa-times text-red-500 mr-3 mt-1" aria-hidden="true"></i>
+                            <span><strong>Tiempo perdido:</strong> 35-45 minutos por dispositivo en pruebas
+                                manuales</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
-                            <span><strong>Errores humanos:</strong> Inconsistencias en la documentación y datos faltantes</span>
+                            <i class="fas fa-times text-red-500 mr-3 mt-1" aria-hidden="true"></i>
+                            <span><strong>Errores humanos:</strong> Inconsistencias en la documentación y datos
+                                faltantes</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
-                            <span><strong>Documentación tediosa:</strong> 20 minutos adicionales creando informes Word manualmente</span>
+                            <i class="fas fa-times text-red-500 mr-3 mt-1" aria-hidden="true"></i>
+                            <span><strong>Documentación tediosa:</strong> 20 minutos adicionales creando informes Word
+                                manualmente</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
-                            <span><strong>Costos elevados:</strong> Recursos valiosos dedicados a tareas repetitivas</span>
+                            <i class="fas fa-times text-red-500 mr-3 mt-1" aria-hidden="true"></i>
+                            <span><strong>Costos elevados:</strong> Recursos valiosos dedicados a tareas
+                                repetitivas</span>
                         </li>
                     </ul>
                 </div>
 
-                <!-- The Solution -->
-                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 shadow-lg border-2 border-emerald-400">
+                <!-- Bloque: Nuestra solución -->
+                <div
+                    class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 shadow-lg border-2 border-emerald-400">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-                            <i class="fas fa-lightbulb text-emerald-600 text-xl"></i>
+                            <i class="fas fa-lightbulb text-emerald-600 text-xl" aria-hidden="true"></i>
                         </div>
                         <h3 class="text-2xl font-bold text-white">Nuestra Solución</h3>
                     </div>
                     <ul class="space-y-4 text-white">
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg" aria-hidden="true"></i>
                             <span><strong>Automatización:</strong> Proceso completo en menos de 10 minutos</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg" aria-hidden="true"></i>
                             <span><strong>Precisión:</strong> Datos consistentes y confiables en cada prueba</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                            <span><strong>Informes profesionales:</strong> Documentos Word generados automáticamente con datos subrayados</span>
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg" aria-hidden="true"></i>
+                            <span><strong>Informes profesionales:</strong> Documentos Word generados automáticamente con
+                                datos subrayados</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg"></i>
-                            <span><strong>ROI inmediato:</strong> Ahorro de 30 minutos por dispositivo desde el primer día</span>
+                            <i class="fas fa-check-circle text-emerald-200 mr-3 mt-1 text-lg" aria-hidden="true"></i>
+                            <span><strong>ROI inmediato:</strong> Ahorro de 30 minutos por dispositivo desde el primer
+                                día</span>
                         </li>
                     </ul>
                 </div>
@@ -155,7 +174,7 @@
         </div>
     </section>
 
-    <!-- Our Technology -->
+    <!-- Sección: nuestra tecnología -->
     <section class="py-20 px-4 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -163,45 +182,52 @@
                     Nuestra Tecnología
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Desarrollamos software especializado para las necesidades específicas de pruebas FAT en equipos Cisco Catalyst
+                    Desarrollamos software especializado para las necesidades específicas de pruebas FAT en equipos
+                    Cisco Catalyst
                 </p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
+                <!-- Tarjeta: Software CLI -->
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
                     <div class="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-terminal text-white text-2xl"></i>
+                        <i class="fas fa-terminal text-white text-2xl" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Software CLI</h3>
                     <p class="text-gray-700 leading-relaxed">
-                        Ejecutable para Windows que se conecta directamente a los equipos Cisco y ejecuta automáticamente los comandos CLI predefinidos para cada modelo.
+                        Ejecutable para Windows que se conecta directamente a los equipos Cisco y ejecuta
+                        automáticamente los comandos CLI predefinidos para cada modelo.
                     </p>
                 </div>
 
+                <!-- Tarjeta: Plataforma web -->
                 <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
                     <div class="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-globe text-white text-2xl"></i>
+                        <i class="fas fa-globe text-white text-2xl" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Plataforma Web</h3>
                     <p class="text-gray-700 leading-relaxed">
-                        Interfaz web intuitiva donde subes los datos capturados y las evidencias fotográficas para generar informes profesionales instantáneamente.
+                        Interfaz web intuitiva donde subes los datos capturados y las evidencias fotográficas para
+                        generar informes profesionales instantáneamente.
                     </p>
                 </div>
 
+                <!-- Tarjeta: Generador de informes -->
                 <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border-2 border-emerald-200">
                     <div class="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-file-word text-white text-2xl"></i>
+                        <i class="fas fa-file-word text-white text-2xl" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Generador de Informes</h3>
                     <p class="text-gray-700 leading-relaxed">
-                        Motor de generación de documentos Word con formato corporativo, información clave subrayada y estructura profesional predefinida.
+                        Motor de generación de documentos Word con formato corporativo, información clave subrayada y
+                        estructura profesional predefinida.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Who We Serve -->
+    <!-- Sección: a quién servimos -->
     <section class="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
@@ -211,30 +237,34 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Tarjeta: Ingenieros de redes -->
                 <div class="bg-white rounded-xl p-8 shadow-lg">
                     <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-user-tie text-blue-600 text-2xl"></i>
+                        <i class="fas fa-user-tie text-blue-600 text-2xl" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Ingenieros de Redes</h3>
                     <p class="text-gray-700 leading-relaxed text-center">
-                        Profesionales que realizan pruebas FAT frecuentemente y buscan optimizar su tiempo, reducir errores y generar documentación profesional de manera eficiente.
+                        Profesionales que realizan pruebas FAT frecuentemente y buscan optimizar su tiempo, reducir
+                        errores y generar documentación profesional de manera eficiente.
                     </p>
                 </div>
 
+                <!-- Tarjeta: Empresas de integración -->
                 <div class="bg-white rounded-xl p-8 shadow-lg">
                     <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-                        <i class="fas fa-building text-purple-600 text-2xl"></i>
+                        <i class="fas fa-building text-purple-600 text-2xl" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Empresas de Integración</h3>
                     <p class="text-gray-700 leading-relaxed text-center">
-                        Organizaciones que gestionan proyectos de implementación de redes y necesitan escalar sus operaciones FAT sin aumentar costos ni comprometer la calidad.
+                        Organizaciones que gestionan proyectos de implementación de redes y necesitan escalar sus
+                        operaciones FAT sin aumentar costos ni comprometer la calidad.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Our Commitment -->
+    <!-- Sección: nuestro compromiso -->
     <section class="py-20 px-4 bg-white">
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
@@ -242,10 +272,12 @@
             </h2>
             <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-12 text-white shadow-2xl">
                 <p class="text-xl leading-relaxed mb-6">
-                    Nos comprometemos a seguir innovando y mejorando nuestro servicio para mantenernos como la solución líder en automatización de pruebas FAT en Chile.
+                    Nos comprometemos a seguir innovando y mejorando nuestro servicio para mantenernos como la solución
+                    líder en automatización de pruebas FAT en Chile.
                 </p>
                 <p class="text-lg leading-relaxed">
-                    Escuchamos a nuestros clientes, iteramos rápidamente y entregamos valor real en cada actualización. Nuestro éxito se mide por el tiempo y dinero que ahorramos a nuestros usuarios.
+                    Escuchamos a nuestros clientes, iteramos rápidamente y entregamos valor real en cada actualización.
+                    Nuestro éxito se mide por el tiempo y dinero que ahorramos a nuestros usuarios.
                 </p>
                 <div class="mt-8 pt-8 border-t border-white/20">
                     <p class="text-2xl font-bold">
@@ -256,7 +288,7 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- Sección CTA final -->
     <section class="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-600">
         <div class="max-w-4xl mx-auto text-center text-white">
             <h2 class="text-4xl lg:text-5xl font-bold mb-6">
@@ -266,15 +298,19 @@
                 Únete a las empresas que ya están ahorrando tiempo y dinero con FAT Testing
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ url_for('register') }}" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all duration-300">
+                <a href="{{ url_for('register') }}"
+                    class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl transition-all durée-300">
                     Suscribirme
-                    <i class="fas fa-arrow-right ml-2"></i>
+                    <i class="fas fa-arrow-right ml-2" aria-hidden="true"></i>
                 </a>
-                <a href="{{ url_for('landing') }}" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+                <a href="{{ url_for('landing') }}"
+                    class="bg-white/10 backdrop-blur-sm text-white border-2 border-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all durée-300">
                     Conocer Más
                 </a>
             </div>
         </div>
     </section>
+
+</main>
 
 {% endblock %}

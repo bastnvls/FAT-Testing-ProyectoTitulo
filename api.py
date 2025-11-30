@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import User
-from utils import suscripcion_vigente  # Reusamos tu lógica existente
+from utils import suscripcion_vigente 
 
 
 # Creamos un "grupo" de rutas llamado 'api
@@ -35,7 +35,7 @@ def validar_acceso_desktop():
                 "motivo": "CUENTA_BLOQUEADA"
             }), 403
 
-        # 5. Validar SUSCRIPCIÓN (Usando tu función 'suscripcion_vigente' de utils.py)
+        # 5. Validar SUSCRIPCIÓN (Usando función 'suscripcion_vigente' de utils.py)
         tiene_suscripcion = suscripcion_vigente(user)
 
         if tiene_suscripcion:
@@ -52,7 +52,6 @@ def validar_acceso_desktop():
                 "mensaje": "Suscripción inactiva o vencida. Por favor renueva en la web.",
                 "permitir_acceso": False,
                 "motivo": "SIN_SUSCRIPCION",
-                "url_pago": "https://tusitio.com/suscripcion" # Para que el exe pueda abrirla
             }), 403
 
     # CASO ERROR: Usuario no existe o contraseña mal
