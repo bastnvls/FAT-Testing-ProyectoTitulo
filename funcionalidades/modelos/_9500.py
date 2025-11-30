@@ -12,17 +12,11 @@ def prueba_1_9500():
     pt_unicas = [
         'INICIO PRUEBA 1',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'Version',
         'uptime is',
         'Model Number',
         'System Serial Number',
         'show inventory',
-        'show inv',
-        'sh inventory',
-        'sh inv',
         'FIN PRUEBA 1',
     ]
     pt_linea = [
@@ -100,10 +94,6 @@ def prueba_2_9500():
     pt_unicas = [
         'INICIO PRUEBA 2',
         'show environment status',
-        'show env status',
-        'show env st',
-        'sh env status',
-        'sh environment st',
         'FIN PRUEBA 2',
     ]
     pt_linea = [
@@ -202,10 +192,6 @@ def prueba_3_9500():
     pt_unicas = [
         'INICIO PRUEBA 3',
         'show environment status',
-        'show env status',
-        'show env st',
-        'sh env status',
-        'sh environment st',
         'FIN PRUEBA 3',
     ]
     pt_linea = [
@@ -264,15 +250,8 @@ def prueba_4_9500():
         'reload',
         'Initializing Hardware',
         '>enable',
-        '>ena',
-        '>en',
-        '> en',
-        '> enable',
-        '> ena',
+        '#enable',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'uptime is',
         'Cisco IOS XE Software,',
         'FIN PRUEBA 4',
@@ -327,26 +306,15 @@ def prueba_5_9500():
     ]
     pt_unicas = [
         'INICIO PRUEBA 5',
-        'show inventory all',
-        'show inv all',
-        'sh inventory all',
-        'sh inv all',
-        'show interface ethernet',
-        'sh int eth',
-        'sh int ethernet',
-        'show int eth',
-        'show int ethernet',
+        'show inventory',
+        'show interface',
         'FIN PRUEBA 5',
     ]
     pt_linea = [
         'PID: SFP',
     ]
     pt_to_end = [
-        'show interface ethernet',
-        'sh int eth',
-        'sh int ethernet',
-        'show int eth',
-        'show int ethernet',
+        'show interface',
     ]
     pt_until_comma = [
         'Name: Ethernet',

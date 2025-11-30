@@ -16,17 +16,11 @@ def prueba_1_9300():
     pt_unicas = [
         'INICIO PRUEBA 1',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'Version',
         'uptime is',
         'Model Number',
         'System Serial Number',
         'show inventory',
-        'show inv',
-        'sh inventory',
-        'sh inv',
         'FIN PRUEBA 1',
     ]
     # 3. Qué dispara full‐line
@@ -104,9 +98,6 @@ def prueba_2_9300():
     pt_unicas = [
         'INICIO PRUEBA 2',
         'show environment power',
-        'show env power',
-        'sh env power',
-        'sh environment power',
         'FIN PRUEBA 2',
     ]
     # 3. Qué dispara full‐line
@@ -178,9 +169,6 @@ def prueba_3_9300():
     pt_unicas = [
         'INICIO PRUEBA 3',
         'show environment fan',
-        'show env fan',
-        'sh env fan',
-        'sh environment fan',
         'FIN PRUEBA 3',
     ]
     # 3. Qué dispara full‐line
@@ -244,15 +232,8 @@ def prueba_4_9300():
         'reload',
         'Initializing Hardware',
         '>enable',
-        '>ena',
-        '>en',
-        '> en',
-        '> enable',
-        '> ena',
+        '#enable',
         'show version',
-        'show ver',
-        'sh version',
-        'sh ver',
         'uptime is',
         'Cisco IOS XE Software,',
         'FIN PRUEBA 4',
@@ -315,15 +296,8 @@ def prueba_5_9300():
     # 2. Palabras únicas → resaltado OK, from word to end
     pt_unicas = [
         'INICIO PRUEBA 5',
-        'show inventory all',
-        'show inv all',
-        'sh inventory all',
-        'sh inv all',
-        'show interface ethernet',
-        'sh int eth',
-        'sh int ethernet',
-        'show int eth',
-        'show int ethernet',
+        'show inventory',
+        'show interface',
         'FIN PRUEBA 5',
     ]
     # 3. Qué dispara full‐line
