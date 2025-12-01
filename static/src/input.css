@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Breakpoint personalizado para el navbar */
+@theme {
+  /* 1400px / 16 = 87.5rem */
+  --breakpoint-nav: 87.5rem;
+}

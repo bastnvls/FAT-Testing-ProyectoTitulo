@@ -1,0 +1,22 @@
+/* Fuente Inter variable (normal) */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    /* todos los pesos */
+    src: url('../fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
+/* Fuente Inter variable (itálica) */
+@font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    src: url('../fonts/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+
+}
+
+/* Aplicamos Inter como fuente por defecto del body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}

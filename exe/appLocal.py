@@ -2755,12 +2755,44 @@ class LoginWindow(QMainWindow):
                 timeout=10
             )
 
-        except requests.exceptions.RequestException as e:
-            # Error de red / servidor caído / timeout
+        except requests.exceptions.ConnectionError as e:
+            # Log técnico, pero NO se muestra al usuario
+            logger.error("Error de conexión con el backend", exc_info=True)
+
             show_message(
                 self,
                 "Error de conexión",
-                f"No se pudo conectar con el servidor de FAT Testing.\n\nDetalle: {e}",
+                "No se pudo conectar con el servidor de FAT Testing.\n"
+                "Verifique su conexión o inténtelo más tarde.",
+                "error"
+            )
+            self.login_button.setEnabled(True)
+            self.login_button.setText("Sign In")
+            return
+
+        except requests.exceptions.Timeout as e:
+            logger.error("Timeout al conectar con el backend", exc_info=True)
+
+            show_message(
+                self,
+                "Servidor sin respuesta",
+                "El servidor de FAT Testing tardó demasiado en responder.\n"
+                "Intente nuevamente en unos minutos.",
+                "error"
+            )
+            self.login_button.setEnabled(True)
+            self.login_button.setText("Sign In")
+            return
+
+        except requests.exceptions.RequestException as e:
+            # Cualquier otro error de requests
+            logger.error("Error HTTP inesperado", exc_info=True)
+
+            show_message(
+                self,
+                "Error inesperado",
+                "Ocurrió un problema al comunicarse con el servidor.\n"
+                "Si el problema persiste, contacte a soporte.",
                 "error"
             )
             self.login_button.setEnabled(True)
