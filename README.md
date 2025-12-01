@@ -103,3 +103,8 @@ app.run(host='0.0.0.0', port=5000, debug=True)
 ```
 
 Luego acceder a `http://localhost:5000`
+
+Se adjunta base de datos con usuario ya con cuenta activa
+
+Correo: nicolas.huenchuen.r@gmail.com
+contraseña: Hola1234#
