@@ -65,28 +65,38 @@ Generación de Informes FAT - FAT Testing
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                                <i class="fas fa-upload text-blue-500 mr-1"></i>
+                            <label for="file" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                                <i class="fas fa-upload text-blue-500 mr-1" aria-hidden="true"></i>
                                 Archivo CLI principal (.txt)
+                                <span class="text-red-600" aria-label="Campo obligatorio">*</span>
                             </label>
                             <div
-                                class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-400 transition duration-200 cursor-pointer relative bg-slate-50">
+                                class="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-400 transition duration-200 cursor-pointer relative bg-slate-50"
+                                role="button" tabindex="0" aria-label="Zona de carga de archivo. Arrastra un archivo aquí o haz clic para seleccionar">
                                 <input type="file" id="file" name="file" required accept=".txt"
-                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    aria-describedby="file-help file-limits" />
                                 <div class="pointer-events-none">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-1.5"></i>
+                                    <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-1.5" aria-hidden="true"></i>
                                     <p class="text-slate-800 font-medium text-xs mb-0.5">Arrastra aquí</p>
                                     <p class="text-slate-500 text-xs mb-1.5">o haz clic para seleccionar</p>
                                     <span
                                         class="inline-block bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
                                         Buscar archivo
                                     </span>
-                                    <div id="mainFileList" class="mt-1.5 text-xs text-slate-700"></div>
+                                    <div id="mainFileList" class="mt-1.5 text-xs text-slate-700" aria-live="polite"></div>
                                 </div>
                             </div>
-                            <p class="mt-1 text-[11px] text-slate-500 text-left">
-                                Utiliza el archivo .txt de la ejecución de comandos generada por la app de escritorio.
-                            </p>
+                            <div id="file-help" class="mt-2 space-y-1">
+                                <p class="text-[11px] text-slate-500 flex items-start">
+                                    <i class="fas fa-info-circle text-blue-500 mr-1.5 mt-0.5" aria-hidden="true"></i>
+                                    <span>Utiliza el archivo .txt de la ejecución de comandos generada por la app de escritorio.</span>
+                                </p>
+                                <p id="file-limits" class="text-[11px] text-slate-700 font-medium flex items-start bg-blue-50 border border-blue-200 rounded px-2 py-1.5">
+                                    <i class="fas fa-exclamation-triangle text-amber-600 mr-1.5 mt-0.5" aria-hidden="true"></i>
+                                    <span><strong>Tamaño máximo:</strong> 20 MB | <strong>Formato:</strong> Archivo de texto (.txt)</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -140,31 +150,50 @@ Generación de Informes FAT - FAT Testing
             <section class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div class="bg-slate-50 px-5 py-3 border-b border-slate-200">
                     <h2 class="text-slate-900 font-semibold flex items-center text-sm">
-                        <i class="fas fa-images mr-2 text-blue-500"></i>
+                        <i class="fas fa-images mr-2 text-blue-500" aria-hidden="true"></i>
                         Imágenes de Pruebas FAT
                     </h2>
+                    <p class="text-[11px] text-slate-600 mt-1.5 flex items-start">
+                        <i class="fas fa-info-circle text-blue-500 mr-1.5 mt-0.5 flex-shrink-0" aria-hidden="true"></i>
+                        <span><strong>Formatos aceptados:</strong> Solo JPG y PNG | <strong>Tamaño máximo por imagen:</strong> 5 MB</span>
+                    </p>
                 </div>
                 <div class="p-4 grid md:grid-cols-3 gap-4">
                     <div>
                         <label for="file11" class="block text-xs font-semibold text-slate-700 mb-1.5">
                             Prueba 1.1 – Imágenes
+                            <span class="text-red-600" aria-label="Campo obligatorio">*</span>
                         </label>
-                        <input type="file" id="file11" name="imageFiles1" multiple accept="image/*" required
+                        <input type="file" id="file11" name="imageFiles1" multiple accept="image/jpeg,image/png" required
+                            aria-describedby="file11-help"
                             class="block w-full text-xs text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-3 file:py-2 file:px-3 file:rounded-l-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+                        <p id="file11-help" class="mt-1 text-[10px] text-slate-500">
+                            Máximo 5 imágenes JPG/PNG. 5 MB c/u
+                        </p>
                     </div>
                     <div>
                         <label for="file12" class="block text-xs font-semibold text-slate-700 mb-1.5">
                             Prueba 1.2 – Imágenes
+                            <span class="text-red-600" aria-label="Campo obligatorio">*</span>
                         </label>
-                        <input type="file" id="file12" name="imageFiles2" multiple accept="image/*" required
+                        <input type="file" id="file12" name="imageFiles2" multiple accept="image/jpeg,image/png" required
+                            aria-describedby="file12-help"
                             class="block w-full text-xs text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-3 file:py-2 file:px-3 file:rounded-l-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+                        <p id="file12-help" class="mt-1 text-[10px] text-slate-500">
+                            Máximo 9 imágenes JPG/PNG. 5 MB c/u
+                        </p>
                     </div>
                     <div>
                         <label for="file13" class="block text-xs font-semibold text-slate-700 mb-1.5">
                             Prueba 1.3 – Imágenes
+                            <span class="text-red-600" aria-label="Campo obligatorio">*</span>
                         </label>
-                        <input type="file" id="file13" name="imageFiles3" multiple accept="image/*" required
+                        <input type="file" id="file13" name="imageFiles3" multiple accept="image/jpeg,image/png" required
+                            aria-describedby="file13-help"
                             class="block w-full text-xs text-slate-900 border border-slate-300 rounded-lg cursor-pointer bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-3 file:py-2 file:px-3 file:rounded-l-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+                        <p id="file13-help" class="mt-1 text-[10px] text-slate-500">
+                            Máximo 2 imágenes JPG/PNG. 5 MB c/u
+                        </p>
                     </div>
                 </div>
             </section>

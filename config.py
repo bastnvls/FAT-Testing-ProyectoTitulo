@@ -44,6 +44,14 @@ class Config:
     PASSWORD_REQUIRE_DIGITS = True
     PASSWORD_REQUIRE_SPECIAL = True
 
+    # Configuración de carga de archivos
+    # Límite total de tamaño de request (incluye todos los archivos del formulario)
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100 MB total (logs de router pueden ser extensos)
+
+    # Límites específicos por tipo de archivo (en bytes)
+    MAX_FILE_SIZE_TXT = 20 * 1024 * 1024  # 20 MB para archivos .txt (logs de consola Cisco)
+    MAX_FILE_SIZE_IMAGE = 5 * 1024 * 1024  # 5 MB por imagen (JPG/PNG optimizado)
+
     # MercadoPago
     sdk_mp = mercadopago.SDK(os.environ["MP_ACCESS_TOKEN"])
     MP_WEBHOOK_SECRET = os.environ.get('MP_WEBHOOK_SECRET')

@@ -1468,6 +1468,20 @@ def register():
 
     # Revisamos si la petición es de tipo POST (envío del formulario de registro).
     if request.method == "POST":
+        # ================================================================
+        # HONEYPOT: Validación anti-bot
+        # ================================================================
+        # Obtenemos el valor del campo honeypot (debe estar vacío si es humano).
+        honeypot = request.form.get("website", "").strip()
+        # Si el campo honeypot contiene algún valor, es muy probable que sea un bot.
+        if honeypot:
+            # Registramos el intento de bot en los logs para monitoreo.
+            app.logger.warning(f"Intento de registro de bot detectado. Honeypot llenado: {honeypot}")
+            # Redirigimos silenciosamente al login para no alertar al bot.
+            # No mostramos mensajes de error para evitar que el bot ajuste su comportamiento.
+            return redirect(url_for("login"))
+        # ================================================================
+
         # Obtenemos el email del formulario y quitamos espacios extra al inicio y final.
         email = request.form.get("email", "").strip()
         # Obtenemos la contraseña tal como fue ingresada por el usuario.

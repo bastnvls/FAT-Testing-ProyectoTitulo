@@ -47,6 +47,12 @@ Crear Cuenta - FAT Testing
                         aria-label="Formulario de creación de cuenta">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+                        <!-- Honeypot: Campo trampa para bots -->
+                        <div class="honeypot-field" aria-hidden="true">
+                            <label for="website">Sitio web (no llenar si eres humano)</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+                        </div>
+
                         <!-- Nombre -->
                         <div>
                             <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">

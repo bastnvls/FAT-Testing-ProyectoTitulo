@@ -15,16 +15,34 @@ function setupFileUpload(inputId, listId) {
   });
 }
 
-// 2) Validar .TXT para el input principal
+// 2) Validar .TXT para el input principal (tipo y tamaño)
 document.getElementById('file').addEventListener('change', function (e) {
   const file = e.target.files[0];
+  const MAX_SIZE_TXT = 20 * 1024 * 1024; // 20 MB en bytes (logs de consola Cisco)
+
   if (file && file.type !== "text/plain") {
     // SweetAlert2
     Swal.fire({
       icon: 'warning',
       title: 'Archivo inválido',
       text: 'Por favor, selecciona un archivo de texto (.txt)',
-      confirmButtonText: 'Entendido'
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3b82f6'
+    });
+    e.target.value = ''; // resetea el input
+    return;
+  }
+
+  // Validar tamaño del archivo TXT
+  if (file && file.size > MAX_SIZE_TXT) {
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    Swal.fire({
+      icon: 'error',
+      title: 'Archivo demasiado grande',
+      html: `El archivo seleccionado pesa <strong>${sizeMB} MB</strong>.<br>El tamaño máximo permitido es <strong>20 MB</strong>.`,
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#3b82f6',
+      footer: '<span style="color: #64748b;">Sugerencia: Los logs de consola Cisco pueden ser extensos. Si excede este límite, contacte a soporte.</span>'
     });
     e.target.value = ''; // resetea el input
   }
@@ -73,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFileUpload('file', 'mainFileList');
 
   const form = document.getElementById('uploadForm');
+  const MAX_SIZE_IMAGE = 5 * 1024 * 1024; // 5 MB por imagen (JPG/PNG optimizado)
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png']; // Solo JPG y PNG
   const limits = {
     file11: { name: 'Sección 1.1', max: 5 },
     file12: { name: 'Sección 1.2', max: 9 },
@@ -82,12 +102,30 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', e => {
     const errors = [];
 
+    // Validar cantidad de imágenes, tamaño y formato
     Object.keys(limits).forEach(id => {
       const input = document.getElementById(id);
       const { name, max } = limits[id];
+
+      // Validar cantidad
       if (input.files.length > max) {
         errors.push(`${name}: máximo ${max} imágenes (seleccionaste ${input.files.length}).`);
       }
+
+      // Validar tamaño y formato de cada imagen
+      Array.from(input.files).forEach((file, index) => {
+        // Validar formato (solo JPG y PNG)
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+          const extension = file.name.split('.').pop().toUpperCase();
+          errors.push(`${name} - Imagen ${index + 1} (${file.name}): formato ${extension} no permitido. Solo se aceptan JPG y PNG.`);
+        }
+
+        // Validar tamaño
+        if (file.size > MAX_SIZE_IMAGE) {
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          errors.push(`${name} - Imagen ${index + 1} (${file.name}): tamaño ${sizeMB} MB excede el límite de 5 MB.`);
+        }
+      });
     });
 
     if (errors.length) {
@@ -96,9 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       Swal.fire({
         icon: 'warning',
-        title: 'Errores en imágenes',
+        title: 'Errores en archivos',
         html: errors.join('<br>'),
-        confirmButtonText: 'Corregir'
+        confirmButtonText: 'Corregir',
+        confirmButtonColor: '#3b82f6',
+        footer: '<span style="color: #64748b;">Solo se permiten imágenes JPG y PNG de máximo 5 MB cada una</span>'
       });
     }
     // si no hay errores, NO hacemos preventDefault ni stopImmediatePropagation
